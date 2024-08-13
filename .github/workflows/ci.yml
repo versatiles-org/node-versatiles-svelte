@@ -102,6 +102,9 @@ jobs:
       - name: Run unit tests
         run: npm run test:unit
 
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
       - name: Run integration tests
         run: npm run test:integration
 
