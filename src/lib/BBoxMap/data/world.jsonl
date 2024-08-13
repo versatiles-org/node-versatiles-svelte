@@ -1,0 +1,7 @@
+{"label":"World", "population":8100000000, "bbox":[-180,-90,180,90]}
+{"label":"Asia", "population":4561000000, "bbox":[31.6,-13.1,180,84.53]}
+{"label":"North America", "population":579000000, "bbox":[-180,5.5,-18,90]}
+{"label":"Europe", "population":746000000, "bbox":[-31.3,34.9,69,81.9]}
+{"label":"Africa", "population":1216000000, "bbox":[-25.4,-34.9,63.5,37.4]}
+{"label":"South America", "population":422000000, "bbox":[-91.7,-56,-34.8,12.5]}
+{"label":"Oceania", "population":46000000, "bbox":[91,-57,180,28]}
