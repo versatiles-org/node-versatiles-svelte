@@ -1,9 +1,8 @@
 <!-- AutoComplete.svelte -->
-<script lang="ts">
+<script lang="ts" generics="T">
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 
-	type T = $$Generic;
 	type Item = { key: string; value: T };
 	type ResultItem = Item & { _label: string };
 
@@ -121,7 +120,7 @@
 				role="option"
 				aria-selected={i === selectedIndex}
 			>
-				{@html result._label}
+				{result._label}
 			</button>
 		{/each}
 	</div>
