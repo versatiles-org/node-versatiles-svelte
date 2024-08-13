@@ -13,18 +13,21 @@ let input = process.argv[2];
 const labelTemplate = process.argv[3];
 const populationKey = process.argv[4];
 
-
 if (!input || !labelTemplate) {
 	console.log('Expected: ./geojson2bboxes.ts $FILENAME $LABEL_KEY $POPULATION_KEY');
 	console.log('where:');
 	console.log(' - $FILENAME is the name of the GeoJSON(L) file (can be compressed with br/gz)');
-	console.log(' - $LABEL is a template to generate the label in the form e.g. "{country} - {name}"');
-	console.log(' - $POPULATION_KEY (optional) is the key in the properties containing the population');
+	console.log(
+		' - $LABEL is a template to generate the label in the form e.g. "{country} - {name}"'
+	);
+	console.log(
+		' - $POPULATION_KEY (optional) is the key in the properties containing the population'
+	);
 	process.exit(1);
 }
 
 let stream: Stream = createReadStream(input);
-input = basename(input)
+input = basename(input);
 
 if (input.endsWith('.br')) {
 	stream = stream.pipe(createBrotliDecompress());
@@ -42,8 +45,13 @@ if (input.endsWith('.geojson')) {
 	result = await mapJSONStream(stream.pipe(split()), processFeature);
 }
 
-writeFileSync(input + '.jsonl', result.map(f => JSON.stringify(f)).sort().join('\n'));
-
+writeFileSync(
+	input + '.jsonl',
+	result
+		.map((f) => JSON.stringify(f))
+		.sort()
+		.join('\n')
+);
 
 function processFeature(feature: Feature): Entry {
 	const { properties } = feature;
@@ -54,7 +62,7 @@ function processFeature(feature: Feature): Entry {
 		const value = properties[key];
 		if (value === undefined) console.error(`key "${key}" not found`);
 		return value;
-	})
+	});
 	let population;
 	if (populationKey) {
 		population = properties[populationKey];
@@ -66,8 +74,8 @@ function processFeature(feature: Feature): Entry {
 	return {
 		label,
 		population,
-		bbox,
-	}
+		bbox
+	};
 }
 
 function streamToString(stream: Stream): Promise<string> {
@@ -76,9 +84,8 @@ function streamToString(stream: Stream): Promise<string> {
 		stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
 		stream.on('error', (err) => reject(err));
 		stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
-	})
+	});
 }
-
 
 function mapJSONStream(stream: NodeJS.WritableStream, cb: (f: Feature) => Entry): Promise<Entry[]> {
 	const result: Entry[] = [];
@@ -86,45 +93,51 @@ function mapJSONStream(stream: NodeJS.WritableStream, cb: (f: Feature) => Entry)
 		stream.on('data', (chunk) => result.push(cb(JSON.parse(chunk))));
 		stream.on('error', (err) => reject(err));
 		stream.on('end', () => resolve(result));
-	})
+	});
 }
 
 function guessPopulation(f: Feature): number {
 	const feature = f as Feature<Polygon | MultiPolygon>;
-	if (!popBuffer) popBuffer = brotliDecompressSync(readFileSync(resolve(import.meta.dirname, 'population.raw.br')));
+	if (!popBuffer)
+		popBuffer = brotliDecompressSync(
+			readFileSync(resolve(import.meta.dirname, 'population.raw.br'))
+		);
 
 	let sum = 0;
 
-	turf.flattenEach(feature, f => {
+	turf.flattenEach(feature, (f) => {
 		const bbox = turf.bbox(f);
 		sum += rec(f, bbox, 0, 0, 4320, 4320);
 		sum += rec(f, bbox, 4320, 0, 8640, 4320);
-	})
+	});
 	return sum;
 
-	function rec(feature: Feature<Polygon | MultiPolygon>, bboxF: BBox, x0: number, y0: number, x1: number, y1: number): number {
+	function rec(
+		feature: Feature<Polygon | MultiPolygon>,
+		bboxF: BBox,
+		x0: number,
+		y0: number,
+		x1: number,
+		y1: number
+	): number {
 		if (!feature) return 0;
 		if (x0 == x1) return 0;
 		if (y0 == y1) return 0;
 
-
-		const bbox: BBox = [
-			x0 / 24 - 180,
-			y0 / 24 - 90,
-			x1 / 24 - 180,
-			y1 / 24 - 90,
-		]
+		const bbox: BBox = [x0 / 24 - 180, y0 / 24 - 90, x1 / 24 - 180, y1 / 24 - 90];
 		if (!bboxOverlap(bbox, bboxF)) return 0;
 		const bboxPolygon = turf.bboxPolygon(bbox);
-		const intersection = turf.intersect(turf.featureCollection<Polygon | MultiPolygon>([feature, bboxPolygon]));
+		const intersection = turf.intersect(
+			turf.featureCollection<Polygon | MultiPolygon>([feature, bboxPolygon])
+		);
 		if (intersection == null) return 0;
 
-		if ((x1 - x0 == 1) && (y1 - y0 == 1)) {
+		if (x1 - x0 == 1 && y1 - y0 == 1) {
 			const a1 = turf.area(bboxPolygon);
 			const a2 = turf.area(intersection);
 			const v = Math.pow(2, popBuffer[y0 * 8640 + x0] / 10);
 			//console.log(v);
-			return v * a2 / a1;
+			return (v * a2) / a1;
 		}
 
 		bboxF = turf.bbox(intersection);

@@ -118,7 +118,7 @@
 			const transform = map.cameraForBounds(selectedBBox);
 			if (transform == null) return;
 			transform.zoom = transform.zoom ?? 0 - 0.5;
-			
+
 			map.flyTo({
 				...transform,
 				essential: true,

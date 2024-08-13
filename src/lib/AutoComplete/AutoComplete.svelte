@@ -5,7 +5,7 @@
 
 	type T = $$Generic;
 	type Item = { key: string; value: T };
-	type ResultItem = (Item & { _label: string });
+	type ResultItem = Item & { _label: string };
 
 	// Component properties
 	export let placeholder: string = '';
