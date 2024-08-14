@@ -9,8 +9,6 @@ on:
 jobs:
   screenshots:
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.46.0-jammy
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,6 +24,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install firefox
 
       - name: Run screenshots
         run: npm run screenshots
