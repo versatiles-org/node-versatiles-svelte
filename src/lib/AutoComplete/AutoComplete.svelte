@@ -11,6 +11,7 @@
 	export let minChar: number = 0;
 	export let maxItems: number = 10;
 	export let initialText: string = '';
+	export let className: string = ''; // New className prop
 
 	// Reactive variables
 	export let items: Item[];
@@ -97,7 +98,7 @@
 
 <svelte:window on:click={() => close()} />
 
-<div class="autocomplete">
+<div class={`autocomplete ${className}`}>
 	<input
 		type="text"
 		bind:value={inputText}
@@ -120,22 +121,21 @@
 				role="option"
 				aria-selected={i === selectedIndex}
 			>
-				{result._label}
+				{@html result._label}
 			</button>
 		{/each}
 	</div>
 </div>
 
 <style>
-	* {
-		box-sizing: border-box;
-		line-height: normal;
-	}
-
 	.autocomplete {
+		--bg-color: var(--autocomplete-bg-color, light-dark(white, black));
+		--fg-color: var(--autocomplete-text-color, light-dark(black, white));
 		position: relative;
 		border-radius: 0.5em;
-		background: rgba(0, 0, 0, 0.8);
+		background: color-mix(in srgb, var(--bg-color) 90%, transparent);
+		box-sizing: border-box;
+		line-height: normal;
 	}
 
 	input {
@@ -144,11 +144,7 @@
 		padding: 0.3em 0.6em;
 		border: none;
 		background: none;
-		color: white;
-	}
-
-	.hide-results {
-		display: none;
+		color: var(--fg-color);
 	}
 
 	.autocomplete-results {
@@ -156,12 +152,12 @@
 		margin: 0;
 		background: none;
 		width: 100%;
-		z-index: 100;
-		position: absolute;
-		top: 100%;
-		left: 0;
-		background: rgba(0, 0, 0, 0.9);
+		display: block;
 		border-radius: 0 0 0.5em 0.5em;
+	}
+
+	.autocomplete-results.hide-results {
+		display: none;
 	}
 
 	button {
@@ -171,18 +167,17 @@
 		display: block;
 		background: transparent;
 		font-weight: normal;
-		color: rgba(255, 255, 255, 0.5);
+		color: color-mix(in srgb, var(--fg-color) 50%, transparent);
 		width: 100%;
 		text-align: left;
 	}
 
 	button > :global(span) {
-		color: rgba(255, 255, 255, 1);
+		color: var(--fg-color);
 	}
 
 	button.is-active,
 	button:hover {
-		background-color: #444;
-		color: white;
+		background-color: color-mix(in srgb, var(--fg-color) 10%, transparent);
 	}
 </style>
