@@ -1,34 +1,26 @@
 <!-- BBoxMap.svelte -->
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import maplibregl, { type Point } from 'maplibre-gl';
+	import maplibregl, { type CameraOptions, type Point } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import type { BBox, BBoxDrag } from './BBoxMap.js';
-	import { dragBBox, getBBoxDrag, getBBoxGeometry, getCursor, loadBBoxes } from './BBoxMap.js';
+	import { dragBBox, getBBoxDrag, getBBoxes, getBBoxGeometry, getCursor } from './BBoxMap.js';
 	import AutoComplete from '$lib/AutoComplete/AutoComplete.svelte';
+	import { getMapStyle } from '$lib/utils/style.js';
+	import { getCountry } from '$lib/utils/location.js';
 
-	let bboxes: { key: string; value: BBox }[];
+	const bboxes: { key: string; value: BBox }[] = getBBoxes();
 	let container: HTMLDivElement;
 	const worldBBox: BBox = [-180, -85, 180, 85];
+	const startTime = Date.now();
 	export let selectedBBox: BBox = worldBBox;
 	let map: maplibregl.Map; // Declare map instance at the top level
-	let initialCountry: string = ''; // Initial search text
+	let initialCountry: string = getCountry(); // Initial search text
 
 	onMount(() => {
-		// Fetch country from timezone
-		try {
-			const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-			const region = new Intl.DisplayNames([locale], { type: 'region' });
-			const country = region.of(locale.split('-')[1]);
-			initialCountry = country || '';
-		} catch (error) {
-			console.error('Could not determine country from timezone:', error);
-			initialCountry = ''; // Fallback if no country can be determined
-		}
-
 		map = new maplibregl.Map({
 			container,
-			style: 'https://tiles.versatiles.org/assets/styles/colorful.json',
+			style: getMapStyle(),
 			bounds: selectedBBox,
 			renderWorldCopies: false,
 			dragRotate: false,
@@ -55,8 +47,6 @@
 				filter: ['==', '$type', 'Polygon'],
 				paint: { 'fill-color': '#000000', 'fill-opacity': 0.2 }
 			});
-
-			loadBBoxes((entries) => (bboxes = entries));
 		});
 
 		function getDrag(point: Point): BBoxDrag {
@@ -110,21 +100,20 @@
 
 	function flyTo(bbox: BBox) {
 		selectedBBox = bbox ?? worldBBox;
-		console.log(selectedBBox);
-		if (map && map.getSource('bbox')) {
-			redrawBBox();
+		if (map) {
+			if (map.getSource('bbox')) redrawBBox();
 
-			const transform = map.cameraForBounds(selectedBBox);
+			const transform = map.cameraForBounds(selectedBBox) as CameraOptions;
 			if (transform == null) return;
 			transform.zoom = transform.zoom ?? 0 - 0.5;
+			transform.bearing = 0;
+			transform.pitch = 0;
 
-			map.flyTo({
-				...transform,
-				essential: true,
-				speed: 5,
-				bearing: 0,
-				pitch: 0
-			});
+			if (Date.now() - startTime < 1000) {
+				map.jumpTo(transform);
+			} else {
+				map.flyTo({ ...transform, essential: true, speed: 5 });
+			}
 		}
 	}
 </script>
@@ -160,9 +149,15 @@
 		right: 0px;
 	}
 	:global(.maplibregl-ctrl-attrib) {
-		background: none;
+		background-color: color-mix(in srgb, var(--bg-color) 50%, transparent) !important;
 		color: var(--fg-color) !important;
 		opacity: 0.5;
+		font-size: 0.85em;
+		padding: 0.1em !important;
+		line-height: normal !important;
+	}
+	:global(.maplibregl-ctrl-attrib a) {
+		color: var(--fg-color) !important;
 	}
 	.input {
 		position: absolute;
