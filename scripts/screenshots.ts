@@ -1,7 +1,7 @@
 import { ChildProcess, spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { webkit } from 'playwright';
+import { firefox } from 'playwright';
 
 const path = resolve(import.meta.dirname, '../screenshots');
 mkdirSync(path, { recursive: true });
@@ -12,7 +12,7 @@ mkdirSync(path, { recursive: true });
 
 	const names = ['bbox-map'];
 
-	const browser = await webkit.launch();
+	const browser = await firefox.launch();
 	const context = await browser.newContext({
 		colorScheme: 'light',
 		deviceScaleFactor: 1,
@@ -22,7 +22,7 @@ mkdirSync(path, { recursive: true });
 	});
 
 	const page = await context.newPage();
-	page.on('console', (msg) => console.log(msg.text()));
+	//page.on('console', (msg) => console.log(msg.text()));
 
 	for (const name of names) {
 		console.log('generate screenshot: ' + name);
