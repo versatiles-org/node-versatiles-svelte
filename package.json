@@ -26,8 +26,10 @@
   },
   "files": [
     "dist",
+    "!dist/**/*.spec.*",
     "!dist/**/*.test.*",
-    "!dist/**/*.spec.*"
+    "!dist/BBoxMap/data/*",
+    "!dist/BBoxMap/helpers/*"
   ],
   "peerDependencies": {
     "svelte": "^4.0.0"
