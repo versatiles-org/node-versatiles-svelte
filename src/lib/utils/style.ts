@@ -2,8 +2,7 @@
 import { styles } from '@versatiles/style';
 import { getLanguage } from './location.js';
 
-export function getMapStyle() {
-	const darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+export function getMapStyle(darkMode: boolean) {
 	return styles.colorful({
 		baseUrl: 'https://tiles.versatiles.org',
 		languageSuffix: getLanguage(),
@@ -12,4 +11,12 @@ export function getMapStyle() {
 			gamma: darkMode ? 0.5 : 1,
 		}
 	});
+}
+
+export function isDarkMode(element: HTMLElement): boolean {
+	const colorScheme = getComputedStyle(element).getPropertyValue('color-scheme');
+	if (colorScheme.includes('dark')) return true;
+	if (colorScheme.includes('light')) return false;
+
+	return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }

@@ -6,7 +6,7 @@
 	import type { BBox, BBoxDrag } from './BBoxMap.js';
 	import { dragBBox, getBBoxDrag, getBBoxes, getBBoxGeometry, getCursor } from './BBoxMap.js';
 	import AutoComplete from '$lib/AutoComplete/AutoComplete.svelte';
-	import { getMapStyle } from '$lib/utils/style.js';
+	import { getMapStyle, isDarkMode } from '$lib/utils/style.js';
 	import { getCountry } from '$lib/utils/location.js';
 
 	const bboxes: { key: string; value: BBox }[] = getBBoxes();
@@ -18,9 +18,11 @@
 	let initialCountry: string = getCountry(); // Initial search text
 
 	onMount(() => {
+		const darkMode = isDarkMode(container);
+
 		map = new maplibregl.Map({
 			container,
-			style: getMapStyle(),
+			style: getMapStyle(darkMode),
 			bounds: selectedBBox,
 			renderWorldCopies: false,
 			dragRotate: false,
@@ -38,14 +40,14 @@
 				source: 'bbox',
 				filter: ['==', '$type', 'LineString'],
 				layout: { 'line-cap': 'round', 'line-join': 'round' },
-				paint: { 'line-color': '#000000', 'line-width': 0.5 }
+				paint: { 'line-color': darkMode ? '#FFFFFF' : '#000000', 'line-width': 0.5 }
 			});
 			map.addLayer({
 				id: 'bbox-fill',
 				type: 'fill',
 				source: 'bbox',
 				filter: ['==', '$type', 'Polygon'],
-				paint: { 'fill-color': '#000000', 'fill-opacity': 0.2 }
+				paint: { 'fill-color': darkMode ? '#FFFFFF' : '#000000', 'fill-opacity': 0.2 }
 			});
 		});
 
