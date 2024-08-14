@@ -31,7 +31,8 @@ jobs:
         run: npm run screenshots
 
       - name: Upload screenshots to release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./screenshots/*.png
-          token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG=$(gh release view --json "tagName" --jq ".tagName")
+          gh release upload "$TAG" ./screenshots/*.png --clobber
