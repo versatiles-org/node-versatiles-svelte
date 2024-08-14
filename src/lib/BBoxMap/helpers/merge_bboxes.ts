@@ -66,15 +66,15 @@ console.log('Writing data to output file...');
 writeFileSync(
 	'../bboxes.json',
 	'[\n' +
-	data
-		.map((e) => {
-			const r = [e.label, ...e.bbox];
-			// Ensure the array has exactly 5 elements (label + 4 bbox values)
-			if (r.length !== 5) throw new Error('Error: Incorrect entry length');
-			return JSON.stringify(r);
-		})
-		.join(',\n') +
-	'\n]'
+		data
+			.map((e) => {
+				const r = [e.label, ...e.bbox];
+				// Ensure the array has exactly 5 elements (label + 4 bbox values)
+				if (r.length !== 5) throw new Error('Error: Incorrect entry length');
+				return JSON.stringify(r);
+			})
+			.join(',\n') +
+		'\n]'
 );
 
 console.log('Data processing complete.');
@@ -105,6 +105,6 @@ function roundBBox(bbox: BBox): BBox {
 		if (n > 300) return 1; // No rounding for large values
 		if (n > 30) return 10; // Round to the nearest 0.1
 		if (n > 3) return 100; // Round to the nearest 0.01
-		return 1000;           // Round to the nearest 0.001 for small values
+		return 1000; // Round to the nearest 0.001 for small values
 	}
 }
