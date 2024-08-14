@@ -1,5 +1,7 @@
 <!-- AutoComplete.svelte -->
 <script lang="ts" generics="T">
+	/* eslint svelte/no-at-html-tags: off */
+
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 
