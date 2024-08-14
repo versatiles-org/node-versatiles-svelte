@@ -34,6 +34,7 @@
 			dragRotate: false,
 			attributionControl: { compact: false }
 		});
+		map.setPadding({ top: 31 + 5, right: 5, bottom: 5, left: 5 });
 
 		const canvas = map.getCanvasContainer();
 
@@ -55,9 +56,7 @@
 				paint: { 'fill-color': '#000000', 'fill-opacity': 0.2 }
 			});
 
-			loadBBoxes((entries) => {
-				bboxes = entries;
-			});
+			loadBBoxes((entries) => (bboxes = entries));
 		});
 
 		function getDrag(point: Point): BBoxDrag {
@@ -146,9 +145,12 @@
 
 <style>
 	.container {
+		--bg-color: var(--bboxmap-bg-color, light-dark(white, black));
+		--fg-color: var(--bboxmap-text-color, light-dark(black, white));
 		width: 100%;
 		height: 100%;
 		position: relative;
+		min-height: 6em;
 	}
 	.map {
 		position: absolute;
@@ -159,7 +161,7 @@
 	}
 	:global(.maplibregl-ctrl-attrib) {
 		background: none;
-		color: #000 !important;
+		color: var(--fg-color) !important;
 		opacity: 0.5;
 	}
 	.input {

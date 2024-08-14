@@ -11,7 +11,6 @@
 	export let minChar: number = 0;
 	export let maxItems: number = 10;
 	export let initialText: string = '';
-	export let className: string = ''; // New className prop
 
 	// Reactive variables
 	export let items: Item[];
@@ -98,7 +97,7 @@
 
 <svelte:window on:click={() => close()} />
 
-<div class={`autocomplete ${className}`}>
+<div class="autocomplete">
 	<input
 		type="text"
 		bind:value={inputText}
@@ -133,7 +132,7 @@
 		--fg-color: var(--autocomplete-text-color, light-dark(black, white));
 		position: relative;
 		border-radius: 0.5em;
-		background: color-mix(in srgb, var(--bg-color) 90%, transparent);
+		background: color-mix(in srgb, var(--bg-color) 80%, transparent);
 		box-sizing: border-box;
 		line-height: normal;
 	}
@@ -141,6 +140,7 @@
 	input {
 		width: 100%;
 		display: block;
+		box-sizing: border-box;
 		padding: 0.3em 0.6em;
 		border: none;
 		background: none;
@@ -178,6 +178,6 @@
 
 	button.is-active,
 	button:hover {
-		background-color: color-mix(in srgb, var(--fg-color) 10%, transparent);
+		background-color: color-mix(in srgb, var(--fg-color) 15%, transparent);
 	}
 </style>
