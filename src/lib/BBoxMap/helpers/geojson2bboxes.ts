@@ -23,8 +23,8 @@ if (!input || !labelTemplate) {
 		'where:',
 		'<FILENAME>: The name of the input GeoJSON or GeoJSONL file. The file can be optionally compressed with .br (Brotli) or .gz (Gzip).',
 		'<LABEL_TEMPLATE>: A template string used to generate labels for each feature. The template can include placeholders in the form {propertyName} which will be replaced by the corresponding property value from each feature.',
-		'[POPULATION_KEY]: (Optional) The key in the feature\'s properties that contains the population value. If not provided, the script will attempt to estimate the population using a predefined algorithm.'
-	].forEach(m => console.error(m));
+		"[POPULATION_KEY]: (Optional) The key in the feature's properties that contains the population value. If not provided, the script will attempt to estimate the population using a predefined algorithm."
+	].forEach((m) => console.error(m));
 	process.exit(1);
 }
 
@@ -69,7 +69,7 @@ writeFileSync(
  * @returns An object containing the label, population, and bounding box.
  */
 function processFeature(feature: Feature): Entry {
-	if ((feature.geometry.type !== 'Polygon') && (feature.geometry.type !== 'MultiPolygon')) {
+	if (feature.geometry.type !== 'Polygon' && feature.geometry.type !== 'MultiPolygon') {
 		throw new Error('Feature must be Polygon or MultiPolygon');
 	}
 	const polygon = feature as Feature<Polygon | MultiPolygon>;

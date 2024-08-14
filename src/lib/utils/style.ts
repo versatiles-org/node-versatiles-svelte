@@ -1,4 +1,3 @@
-
 import { styles } from '@versatiles/style';
 import { getLanguage } from './location.js';
 
@@ -8,7 +7,7 @@ export function getMapStyle(darkMode: boolean) {
 		languageSuffix: getLanguage(),
 		recolor: {
 			invertBrightness: darkMode,
-			gamma: darkMode ? 0.5 : 1,
+			gamma: darkMode ? 0.5 : 1
 		}
 	});
 }

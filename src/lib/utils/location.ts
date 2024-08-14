@@ -1,5 +1,5 @@
-import type { LanguageSuffix } from "@versatiles/style/dist/style_builder/types.js";
-import { timezone2countrycode } from "./zones.js";
+import type { LanguageSuffix } from '@versatiles/style/dist/style_builder/types.js';
+import { timezone2countrycode } from './zones.js';
 
 export function getCountry() {
 	try {
