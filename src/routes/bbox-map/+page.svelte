@@ -18,14 +18,15 @@
 		color: light-dark(black, white);
 		padding: 1em;
 		font-family: sans-serif;
+		width: 90vw;
+		box-sizing: border-box;
+		margin: 1em 0;
 	}
 	h3 {
 		margin: 0 0 1em 0;
 		text-align: center;
 	}
 	.wrapper > div {
-		width: 80%;
-		height: 30vh;
-		margin: 1em auto;
+		height: 60vw;
 	}
 </style>
