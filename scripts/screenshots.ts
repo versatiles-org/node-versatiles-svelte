@@ -1,4 +1,3 @@
-
 import { ChildProcess, spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -23,7 +22,7 @@ mkdirSync(path, { recursive: true });
 	});
 
 	const page = await context.newPage();
-	page.on('console', msg => console.log(msg.text()));
+	page.on('console', (msg) => console.log(msg.text()));
 
 	for (const name of names) {
 		console.log('generate screenshot: ' + name);
@@ -43,9 +42,8 @@ mkdirSync(path, { recursive: true });
 			await page.screenshot({
 				path: resolve(path, `${name}-${suffix}.png`),
 				clip,
-				fullPage: true,
+				fullPage: true
 			});
-
 		}
 	}
 
@@ -53,9 +51,9 @@ mkdirSync(path, { recursive: true });
 	server.kill();
 
 	process.exit(0);
-})()
+})();
 
 async function npm_run_preview(): Promise<ChildProcess> {
 	const cp = spawn('npm', ['run', 'preview'], { stdio: 'pipe' });
-	return new Promise<ChildProcess>(r => setTimeout(() => r(cp), 1500));
+	return new Promise<ChildProcess>((r) => setTimeout(() => r(cp), 1500));
 }
