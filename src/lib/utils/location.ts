@@ -5,8 +5,8 @@ export function getCountry() {
 	try {
 		const options = Intl.DateTimeFormat().resolvedOptions();
 		let countryCode = timezone2countrycode(options.timeZone);
-		if (!countryCode) countryCode = options.locale.split('-')[1];
-		const region = new Intl.DisplayNames([options.locale], { type: 'region' });
+		if (!countryCode) countryCode = navigator.language.split('-')[1];
+		const region = new Intl.DisplayNames(['en-GB'], { type: 'region' });
 		const country = region.of(countryCode);
 		return country || '';
 	} catch (error) {
