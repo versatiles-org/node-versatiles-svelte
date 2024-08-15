@@ -1,5 +1,5 @@
-# Package Managers
 /src/lib/BBoxMap/bboxes.json
 package-lock.json
+package.json
 pnpm-lock.yaml
 yarn.lock
