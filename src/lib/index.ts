@@ -1,5 +1,3 @@
-// Reexport your entry components here
-
-import BBoxMap from './BBoxMap/BBoxMap.svelte';
+import BBoxMap from './components/BBoxMap/BBoxMap.svelte';
 
 export { BBoxMap };
