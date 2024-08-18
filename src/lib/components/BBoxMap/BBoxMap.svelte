@@ -1,9 +1,9 @@
 <!-- BBoxMap.svelte -->
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import type { CameraOptions, Point, Map as MaplibreMapType } from 'maplibre-gl';
-	import 'maplibre-gl/dist/maplibre-gl.css';
+	import type { CameraOptions, Point, Map as MaplibreMapType, GeoJSONSource } from 'maplibre-gl';
 	import type { BBox, BBoxDrag } from './BBoxMap.js';
+	import { onMount } from 'svelte';
+	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { dragBBox, getBBoxDrag, loadBBoxes, getBBoxGeometry, getCursor } from './BBoxMap.js';
 	import AutoComplete from '$lib/components/AutoComplete.svelte';
 	import { getMapStyle, isDarkMode } from '$lib/utils/style.js';
@@ -107,7 +107,7 @@
 	}
 
 	function redrawBBox() {
-		const bboxSource = map.getSource('bbox') as maplibregl.GeoJSONSource;
+		const bboxSource = map.getSource('bbox') as GeoJSONSource;
 		bboxSource.setData(getBBoxGeometry(selectedBBox));
 	}
 
