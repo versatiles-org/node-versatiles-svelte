@@ -1,7 +1,7 @@
 <!-- BBoxMap.svelte -->
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import maplibregl, { type CameraOptions, type Point } from 'maplibre-gl';
+	import type { CameraOptions, Point, Map as MaplibreMapType } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import type { BBox, BBoxDrag } from './BBoxMap.js';
 	import { dragBBox, getBBoxDrag, loadBBoxes, getBBoxGeometry, getCursor } from './BBoxMap.js';
@@ -14,15 +14,24 @@
 	const worldBBox: BBox = [-180, -85, 180, 85];
 	const startTime = Date.now();
 	export let selectedBBox: BBox = worldBBox;
-	let map: maplibregl.Map; // Declare map instance at the top level
+	let map: MaplibreMapType; // Declare map instance at the top level
 	let initialCountry: string = getCountry(); // Initial search text
 
-	loadBBoxes((b) => (bboxes = b));
+	onMount(() => init());
 
-	onMount(() => {
+	async function init() {
+		let MaplibreMap: typeof MaplibreMapType | undefined = undefined;
+		await Promise.all([
+			(async () => (bboxes = await loadBBoxes()))(),
+			(async () => (MaplibreMap = (await import('maplibre-gl')).Map))()
+		]);
+		if (MaplibreMap == null) throw Error();
+		initMap(MaplibreMap);
+	}
+
+	function initMap(MaplibreMap: typeof MaplibreMapType) {
 		const darkMode = isDarkMode(container);
-
-		map = new maplibregl.Map({
+		map = new MaplibreMap({
 			container,
 			style: getMapStyle(darkMode),
 			bounds: selectedBBox,
@@ -95,7 +104,7 @@
 		map.on('mouseup', () => (dragging = false));
 
 		return () => map.remove();
-	});
+	}
 
 	function redrawBBox() {
 		const bboxSource = map.getSource('bbox') as maplibregl.GeoJSONSource;
