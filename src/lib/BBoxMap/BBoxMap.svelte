@@ -4,18 +4,20 @@
 	import maplibregl, { type CameraOptions, type Point } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import type { BBox, BBoxDrag } from './BBoxMap.js';
-	import { dragBBox, getBBoxDrag, getBBoxes, getBBoxGeometry, getCursor } from './BBoxMap.js';
+	import { dragBBox, getBBoxDrag, loadBBoxes, getBBoxGeometry, getCursor } from './BBoxMap.js';
 	import AutoComplete from '$lib/AutoComplete/AutoComplete.svelte';
 	import { getMapStyle, isDarkMode } from '$lib/utils/style.js';
 	import { getCountry } from '$lib/utils/location.js';
 
-	const bboxes: { key: string; value: BBox }[] = getBBoxes();
+	let bboxes: { key: string; value: BBox }[] | undefined = undefined;
 	let container: HTMLDivElement;
 	const worldBBox: BBox = [-180, -85, 180, 85];
 	const startTime = Date.now();
 	export let selectedBBox: BBox = worldBBox;
 	let map: maplibregl.Map; // Declare map instance at the top level
 	let initialCountry: string = getCountry(); // Initial search text
+
+	loadBBoxes((b) => (bboxes = b));
 
 	onMount(() => {
 		const darkMode = isDarkMode(container);
