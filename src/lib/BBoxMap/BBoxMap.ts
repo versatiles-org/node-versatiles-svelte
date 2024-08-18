@@ -1,6 +1,5 @@
 import type { Feature, GeoJSON, Position } from 'geojson';
 import type { LngLat, Point } from 'maplibre-gl';
-import bboxes from './bboxes.json';
 
 export type BBox = [number, number, number, number];
 export type BBoxDrag = '0_' | '1_' | '_0' | '_1' | '00' | '01' | '10' | '11' | false;
@@ -203,14 +202,17 @@ export function getBBoxGeometry(bbox: BBox): GeoJSON {
 	}
 }
 
-export function getBBoxes(): { key: string; value: BBox }[] {
-	return bboxes.map((e) => {
-		const key = e[0] as string;
+export function loadBBoxes(cb: (b: { key: string; value: BBox; }[]) => void) {
+	import('./bboxes.json').then(d => {
+		const bboxes = d.default.map((e) => {
+			const key = e[0] as string;
 
-		const value = e.slice(1, 5) as BBox;
-		value[2] = Math.round((value[2] + value[0]) * 1e5) / 1e5;
-		value[3] = Math.round((value[3] + value[1]) * 1e5) / 1e5;
+			const value = e.slice(1, 5) as BBox;
+			value[2] = Math.round((value[2] + value[0]) * 1e5) / 1e5;
+			value[3] = Math.round((value[3] + value[1]) * 1e5) / 1e5;
 
-		return { key, value };
-	});
+			return { key, value };
+		})
+		cb(bboxes);
+	})
 }
