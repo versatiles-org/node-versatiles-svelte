@@ -5,7 +5,7 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import type { BBox, BBoxDrag } from './BBoxMap.js';
 	import { dragBBox, getBBoxDrag, loadBBoxes, getBBoxGeometry, getCursor } from './BBoxMap.js';
-	import AutoComplete from '$lib/AutoComplete/AutoComplete.svelte';
+	import AutoComplete from '$lib/components/AutoComplete.svelte';
 	import { getMapStyle, isDarkMode } from '$lib/utils/style.js';
 	import { getCountry } from '$lib/utils/location.js';
 
