@@ -22,7 +22,7 @@ jobs:
       - name: Init cache
         uses: actions/cache@v4
         with:
-          path: ".vite\nnode_modules"
+          path: "~/.npm\nnode_modules"
           key: cache-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
@@ -39,9 +39,9 @@ jobs:
         uses: actions/setup-node@v4
 
       - name: Init cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
-          path: ".vite\nnode_modules"
+          path: "~/.npm\nnode_modules"
           key: cache-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
@@ -64,9 +64,9 @@ jobs:
         uses: actions/setup-node@v4
 
       - name: Init cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
-          path: ".vite\nnode_modules"
+          path: "~/.npm\nnode_modules"
           key: cache-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
@@ -88,9 +88,9 @@ jobs:
         uses: actions/setup-node@v4
 
       - name: Init cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
-          path: ".vite\nnode_modules"
+          path: "~/.npm\nnode_modules"
           key: cache-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
@@ -113,9 +113,9 @@ jobs:
         uses: actions/setup-node@v4
 
       - name: Init cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
-          path: ".vite\nnode_modules"
+          path: "~/.npm\nnode_modules"
           key: cache-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
