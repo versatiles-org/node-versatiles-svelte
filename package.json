@@ -1,6 +1,6 @@
 {
   "name": "@versatiles/svelte",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "scripts": {
     "build": "vite build && npm run package",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
