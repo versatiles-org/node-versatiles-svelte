@@ -202,7 +202,7 @@ export function getBBoxGeometry(bbox: BBox): GeoJSON {
 	}
 }
 
-export async function loadBBoxes(): Promise<{ key: string; value: BBox; }[]> {
+export async function loadBBoxes(): Promise<{ key: string; value: BBox }[]> {
 	const data = await import('./bboxes.json');
 
 	const bboxes = data.default.map((e) => {
@@ -213,7 +213,7 @@ export async function loadBBoxes(): Promise<{ key: string; value: BBox; }[]> {
 		value[3] = Math.round((value[3] + value[1]) * 1e5) / 1e5;
 
 		return { key, value };
-	})
-	
+	});
+
 	return bboxes;
 }
