@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { BBoxMap } from '$lib/index.js';
+	import { BasicMap } from '$lib/index.js';
 </script>
 
 <div class="wrapper">
-	<BBoxMap />
+	<BasicMap />
 </div>

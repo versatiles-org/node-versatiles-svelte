@@ -6,39 +6,22 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { dragBBox, getBBoxDrag, loadBBoxes, getBBoxGeometry, getCursor } from './BBoxMap.js';
 	import AutoComplete from '$lib/components/AutoComplete.svelte';
-	import { getMapStyle, isDarkMode } from '$lib/utils/style.js';
 	import { getCountry } from '$lib/utils/location.js';
+	import BasicMap from '../BasicMap/BasicMap.svelte';
 
 	let bboxes: { key: string; value: BBox }[] | undefined = undefined;
-	let container: HTMLDivElement;
+	let mapContainer: HTMLDivElement;
 	const worldBBox: BBox = [-180, -85, 180, 85];
 	const startTime = Date.now();
 	export let selectedBBox: BBox = worldBBox;
 	let map: MaplibreMapType; // Declare map instance at the top level
 	let initialCountry: string = getCountry(); // Initial search text
+	let darkMode: boolean;
 
 	onMount(() => init());
 
-	async function init() {
-		let MaplibreMap: typeof MaplibreMapType | undefined = undefined;
-		await Promise.all([
-			(async () => (bboxes = await loadBBoxes()))(),
-			(async () => (MaplibreMap = (await import('maplibre-gl')).Map))()
-		]);
-		if (MaplibreMap == null) throw Error();
-		initMap(MaplibreMap);
-	}
-
-	function initMap(MaplibreMap: typeof MaplibreMapType) {
-		const darkMode = isDarkMode(container);
-		map = new MaplibreMap({
-			container,
-			style: getMapStyle(darkMode),
-			bounds: selectedBBox,
-			renderWorldCopies: false,
-			dragRotate: false,
-			attributionControl: { compact: false }
-		});
+	async function init(): Promise<void> {
+		bboxes = await loadBBoxes();
 		map.setPadding({ top: 31 + 5, right: 5, bottom: 5, left: 5 });
 
 		const canvas = map.getCanvasContainer();
@@ -102,8 +85,6 @@
 		});
 
 		map.on('mouseup', () => (dragging = false));
-
-		return () => map.remove();
 	}
 
 	function redrawBBox() {
@@ -142,7 +123,12 @@
 			/>
 		</div>
 	{/if}
-	<div class="map" bind:this={container}></div>
+	<BasicMap
+		{map}
+		{darkMode}
+		bind:mapContainer
+		style="position: absolute;top: 0px;left: 0px;bottom: 0px;right: 0px;"
+	></BasicMap>
 </div>
 
 <style>
@@ -153,13 +139,6 @@
 		height: 100%;
 		position: relative;
 		min-height: 6em;
-	}
-	.map {
-		position: absolute;
-		top: 0px;
-		left: 0px;
-		bottom: 0px;
-		right: 0px;
 	}
 	:global(.maplibregl-ctrl-attrib) {
 		background-color: color-mix(in srgb, var(--bg-color) 50%, transparent) !important;
