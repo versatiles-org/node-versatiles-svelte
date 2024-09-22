@@ -24,3 +24,6 @@ vite.config.ts.timestamp-*
 
 # Test
 /test-results
+
+# VS Code
+*.code-workspace
