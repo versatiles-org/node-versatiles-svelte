@@ -11,9 +11,5 @@
 		"strict": true,
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext"
-	},
-	"include": [
-		"scripts/**/*.ts",
-		"src/**/*.ts"
-	]
+	}
 }
