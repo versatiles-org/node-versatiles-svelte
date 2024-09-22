@@ -45,7 +45,7 @@
     "@types/eslint": "^9.6.1",
     "@types/node": "^22.5.5",
     "@types/split2": "^4.2.3",
-    "@versatiles/release-tool": "^1.2.5",
+    "@versatiles/release-tool": "^1.2.6",
     "eslint": "^9.11.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-svelte": "^2.44.0",
