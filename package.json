@@ -15,7 +15,7 @@
     "screenshots": "npm run build && npx tsx ./scripts/screenshots.ts",
     "release": "npm run build && npx vrt release-npm",
     "test:integration": "playwright test",
-    "test:unit": "vitest",
+    "test:unit": "vitest run",
     "test": "npm run test:integration && npm run test:unit",
     "upgrade": "npm-check-updates -u && rm -f package-lock.json; rm -rf node_modules; npm i && npm update"
   },
