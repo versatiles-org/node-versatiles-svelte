@@ -79,7 +79,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: install
     container:
-      image: mcr.microsoft.com/playwright:v1.46.0-jammy
+      image: mcr.microsoft.com/playwright:v1.47.2-jammy
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
