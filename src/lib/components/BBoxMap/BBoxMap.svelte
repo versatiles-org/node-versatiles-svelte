@@ -12,14 +12,15 @@
 
 	let bboxes: { key: string; value: BBox }[] | undefined = undefined;
 	let mapContainer: HTMLDivElement;
+	let autoComplete: AutoComplete<BBox> | undefined = undefined;
 	const worldBBox: BBox = [-180, -85, 180, 85];
 	const startTime = Date.now();
 	export let selectedBBox: BBox = worldBBox;
 	let map: MaplibreMapType; // Declare map instance at the top level
-	let initialCountry: string = getCountry(); // Initial search text
 
 	onMount(async () => {
 		bboxes = await loadBBoxes();
+		start();
 	});
 
 	function handleMapReady(event: CustomEvent) {
@@ -88,6 +89,15 @@
 		});
 
 		map.on('mouseup', () => (dragging = false));
+
+		start();
+	}
+
+	function start() {
+		if (!bboxes) return;
+		if (!map) return;
+		if (!autoComplete) return;
+		autoComplete.setInputText(getCountry()); // Initial search text
 	}
 
 	function redrawBBox() {
@@ -121,8 +131,8 @@
 			<AutoComplete
 				items={bboxes}
 				placeholder="Find country, region or city …"
-				initialText={initialCountry}
 				on:change={(e) => flyTo(e.detail)}
+				bind:this={autoComplete}
 			/>
 		</div>
 	{/if}

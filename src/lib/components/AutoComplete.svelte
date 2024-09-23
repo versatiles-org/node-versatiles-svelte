@@ -13,7 +13,6 @@
 	export let placeholder: string = '';
 	export let minChar: number = 0;
 	export let maxItems: number = 10;
-	export let initialText: string = '';
 
 	// Reactive variables
 	export let items: Item[];
@@ -22,8 +21,8 @@
 	let autocompleteElement: HTMLDivElement; // Reference to DOM element
 	let isOpen = false;
 	let results: ResultItem[] = [];
-	let inputText: string = initialText; // Set initial text
 	let selectedIndex = 0;
+	let inputText: string = '';
 
 	// Escape special characters in search string for use in regex
 	const regExpEscape = (s: string) => s.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -37,6 +36,13 @@
 		} else {
 			inputText = '';
 		}
+	}
+
+	export function setInputText(text: string) {
+		console.log(text);
+		inputText = text;
+		results = filterResults();
+		close(0);
 	}
 
 	// Handle input change
