@@ -1,14 +1,15 @@
-import { styles } from '@versatiles/style';
+import { styles, type ColorfulOptions } from '@versatiles/style';
 import { getLanguage } from './location.js';
 
-export function getMapStyle(darkMode: boolean) {
+export function getMapStyle(darkMode: boolean, styleOptions: ColorfulOptions = {}) {
 	return styles.colorful({
 		baseUrl: 'https://tiles.versatiles.org',
 		languageSuffix: getLanguage(),
 		recolor: {
 			invertBrightness: darkMode,
 			gamma: darkMode ? 0.5 : 1
-		}
+		},
+		...styleOptions
 	});
 }
 

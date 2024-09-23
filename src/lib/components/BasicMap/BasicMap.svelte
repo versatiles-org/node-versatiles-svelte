@@ -1,17 +1,18 @@
 <!-- BasicMap.svelte -->
 <script lang="ts">
-	import type { Map as MaplibreMapType } from 'maplibre-gl';
+	import type { Map as MaplibreMapType, MapOptions } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { getMapStyle, isDarkMode } from '$lib/utils/style.js';
+	import type { ColorfulOptions } from '@versatiles/style';
 
 	export let style: string = 'position:absolute;left:0px;top:0px;width:100%;height:100%;';
 	export let mapContainer: HTMLDivElement | undefined = undefined;
 	export let map: MaplibreMapType | undefined = undefined;
-	export let renderWorldCopies: boolean = false;
-	export let dragRotate: boolean = false;
 	export let darkMode = false;
-	
+	export let styleOptions: ColorfulOptions = {};
+	export let mapOptions: Partial<MapOptions> = {};
+
 	$: {
 		if (mapContainer) {
 			mapContainer.style.setProperty('--bg-color', darkMode ? '#000' : '#fff');
@@ -33,10 +34,11 @@
 		darkMode = isDarkMode(mapContainer);
 		map = new MaplibreMap({
 			container: mapContainer,
-			style: getMapStyle(darkMode),
-			renderWorldCopies,
-			dragRotate,
-			attributionControl: { compact: false }
+			style: getMapStyle(darkMode, styleOptions),
+			renderWorldCopies: false,
+			dragRotate: false,
+			attributionControl: { compact: false },
+			...mapOptions
 		});
 		return () => map?.remove();
 	}
