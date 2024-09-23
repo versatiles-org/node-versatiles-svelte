@@ -18,7 +18,7 @@ mkdirSync(path, { recursive: true });
 		colorScheme: 'light',
 		deviceScaleFactor: 1,
 		locale: 'de-DE',
-		viewport: { width: 642, height: 642 },
+		viewport: { width: 514, height: 514 },
 		timezoneId: 'Europe/Berlin'
 	};
 	const contextLight = await browser.newContext({ ...option, colorScheme: 'light' });
@@ -33,8 +33,8 @@ mkdirSync(path, { recursive: true });
 
 		async function screenShot(page: Page, suffix: string) {
 			console.log('generate screenshot: ' + name + ' - ' + suffix);
-			await page.goto('http://localhost:4173/' + name, { waitUntil: 'load' });
-			await wait(2);
+			await page.goto('http://localhost:4173/' + name, { waitUntil: 'networkidle' });
+			await wait(1);
 
 			const l = page.locator('.wrapper');
 			const clip = await l.boundingBox();
@@ -59,10 +59,10 @@ mkdirSync(path, { recursive: true });
 
 async function npm_run_preview(): Promise<ChildProcess> {
 	const cp = spawn('npm', ['run', 'preview'], { stdio: 'pipe' });
-	await wait(1.5);
+	await wait(3);
 	return cp;
 }
 
 function wait(seconds: number): Promise<void> {
-	return new Promise<void>((r) => setTimeout(() => r(), seconds * 1000));
+	return new Promise<void>((r) => setTimeout(() => r(), seconds * 1500));
 }
