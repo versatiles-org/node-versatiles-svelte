@@ -28,7 +28,6 @@ mkdirSync(path, { recursive: true });
 	const pageDark = await contextDark.newPage();
 
 	for (const name of names) {
-
 		await screenShot(pageLight, 'light');
 		await screenShot(pageDark, 'dark');
 
@@ -66,4 +65,4 @@ async function npm_run_preview(): Promise<ChildProcess> {
 
 function wait(seconds: number): Promise<void> {
 	return new Promise<void>((r) => setTimeout(() => r(), seconds * 1000));
-} 
+}
