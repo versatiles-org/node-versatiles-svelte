@@ -96,14 +96,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps firefox
-
       - name: Run unit tests
         run: npm run test:unit
 
       - name: Run integration tests
         run: npm run test:integration
+        env:
+          HOME: /root
 
   build:
     runs-on: ubuntu-latest
