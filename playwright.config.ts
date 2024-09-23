@@ -1,18 +1,16 @@
-import type { PlaywrightTestConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 
-const config: PlaywrightTestConfig = {
+export default defineConfig({
 	webServer: {
 		command: 'npm run build && npm run preview',
 		port: 4173
 	},
 	testDir: 'tests',
 	testMatch: /(.+\.)?(test|spec)\.[jt]s/,
-	use: {
-		channel: 'firefox',
-		launchOptions: {
-			args: ['--use-gl=egl']
-		}
-	}
-};
-
-export default config;
+	projects: [
+		{
+			name: 'firefox',
+			use: { ...devices['Desktop Firefox'] },
+		},
+	]
+});
