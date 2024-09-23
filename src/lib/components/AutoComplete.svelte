@@ -1,8 +1,9 @@
 <!-- AutoComplete.svelte -->
 <script lang="ts" generics="T">
+	import { isDarkMode } from '$lib/utils/style.js';
 	/* eslint svelte/no-at-html-tags: off */
 
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	const dispatch = createEventDispatcher();
 
 	type Item = { key: string; value: T };
@@ -17,7 +18,8 @@
 	// Reactive variables
 	export let items: Item[];
 
-	let input: HTMLInputElement; // Reference to DOM element
+	let inputElement: HTMLInputElement; // Reference to DOM element
+	let autocompleteElement: HTMLDivElement; // Reference to DOM element
 	let isOpen = false;
 	let results: ResultItem[] = [];
 	let inputText: string = initialText; // Set initial text
@@ -49,7 +51,7 @@
 	}
 
 	function onFocus() {
-		input.setSelectionRange(0, 1000);
+		inputElement.setSelectionRange(0, 1000);
 	}
 
 	// Filter results based on search query
@@ -95,11 +97,17 @@
 			dispatch('change', JSON.parse(JSON.stringify(value)));
 		}
 	}
+
+	onMount(() => {
+		const darkMode = isDarkMode(autocompleteElement);
+		autocompleteElement.style.setProperty('--bg-color', darkMode ? '#000' : '#fff');
+		autocompleteElement.style.setProperty('--fg-color', darkMode ? '#fff' : '#000');
+	});
 </script>
 
 <svelte:window on:click={() => close()} />
 
-<div class="autocomplete">
+<div class="autocomplete" bind:this={autocompleteElement}>
 	<input
 		type="text"
 		bind:value={inputText}
@@ -109,7 +117,7 @@
 		on:keydown={onKeyDown}
 		on:focusin={onFocus}
 		on:click={(e) => e.stopPropagation()}
-		bind:this={input}
+		bind:this={inputElement}
 		aria-activedescendant={isOpen ? `result-${selectedIndex}` : undefined}
 		aria-autocomplete="list"
 		aria-controls="autocomplete-results"
@@ -130,8 +138,6 @@
 
 <style>
 	.autocomplete {
-		--bg-color: var(--autocomplete-bg-color, light-dark(white, black));
-		--fg-color: var(--autocomplete-text-color, light-dark(black, white));
 		position: relative;
 		border-radius: 0.5em;
 		background: color-mix(in srgb, var(--bg-color) 80%, transparent);
