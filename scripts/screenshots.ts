@@ -34,7 +34,7 @@ mkdirSync(path, { recursive: true });
 		async function screenShot(page: Page, suffix: string) {
 			console.log('generate screenshot: ' + name + ' - ' + suffix);
 			await page.goto('http://localhost:4173/' + name, { waitUntil: 'networkidle' });
-			await wait(1);
+			await wait(5);
 
 			const l = page.locator('.wrapper');
 			const clip = await l.boundingBox();
@@ -59,7 +59,7 @@ mkdirSync(path, { recursive: true });
 
 async function npm_run_preview(): Promise<ChildProcess> {
 	const cp = spawn('npm', ['run', 'preview'], { stdio: 'pipe' });
-	await wait(3);
+	await wait(5);
 	return cp;
 }
 
