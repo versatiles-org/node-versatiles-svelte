@@ -68,6 +68,6 @@
   "type": "module",
   "dependencies": {
     "@versatiles/style": "^4.4.1",
-    "maplibre-gl": "^4.7.0"
+    "maplibre-gl": "^4.7.1"
   }
 }
