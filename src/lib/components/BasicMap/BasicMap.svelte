@@ -1,50 +1,44 @@
 <!-- BasicMap.svelte -->
 <script lang="ts">
 	import type { Map as MaplibreMapType, MapOptions } from 'maplibre-gl';
-	import { onMount } from 'svelte';
+	import { onMount, createEventDispatcher } from 'svelte';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { getMapStyle, isDarkMode } from '$lib/utils/style.js';
 	import type { ColorfulOptions } from '@versatiles/style';
 
-	export let style: string = 'position:absolute;left:0px;top:0px;width:100%;height:100%;';
-	export let mapContainer: HTMLDivElement | undefined = undefined;
+	// Props
+	export let style: string = 'position:absolute; left:0px; top:0px; width:100%; height:100%;';
+	export let container: HTMLDivElement | undefined = undefined;
 	export let map: MaplibreMapType | undefined = undefined;
-	export let darkMode = false;
 	export let styleOptions: ColorfulOptions = {};
 	export let mapOptions: Partial<MapOptions> = {};
 
-	$: {
-		if (mapContainer) {
-			mapContainer.style.setProperty('--bg-color', darkMode ? '#000' : '#fff');
-			mapContainer.style.setProperty('--fg-color', darkMode ? '#fff' : '#000');
-		}
-	}
+	// Create the event dispatcher
+	const dispatch = createEventDispatcher();
 
-	onMount(() => init());
+	onMount(async (): Promise<void> => {
+		let MaplibreMap: typeof MaplibreMapType = (await import('maplibre-gl')).Map;
 
-	async function init() {
-		let MaplibreMap: typeof MaplibreMapType | undefined = undefined;
-		await Promise.all([(async () => (MaplibreMap = (await import('maplibre-gl')).Map))()]);
-		if (MaplibreMap == null) throw Error();
-		initMap(MaplibreMap);
-	}
+		if (!container) throw Error();
 
-	function initMap(MaplibreMap: typeof MaplibreMapType) {
-		if (!mapContainer) throw Error();
-		darkMode = isDarkMode(mapContainer);
+		const darkMode = isDarkMode(container);
+		container.style.setProperty('--bg-color', darkMode ? '#000' : '#fff');
+		container.style.setProperty('--fg-color', darkMode ? '#fff' : '#000');
+
 		map = new MaplibreMap({
-			container: mapContainer,
+			container,
 			style: getMapStyle(darkMode, styleOptions),
 			renderWorldCopies: false,
 			dragRotate: false,
 			attributionControl: { compact: false },
 			...mapOptions
 		});
-		return () => map?.remove();
-	}
+
+		dispatch('mapReady', { map });
+	});
 </script>
 
-<div class="map" {style} bind:this={mapContainer}></div>
+<div class="map" {style} bind:this={container}></div>
 
 <style>
 	.map :global(.maplibregl-ctrl-attrib) {
@@ -53,9 +47,6 @@
 		opacity: 0.5;
 		font-size: 0.85em;
 		line-height: normal !important;
-	}
-	.map :global(.maplibregl-ctrl-attrib-inner) {
-		padding: 0 0.2em !important;
 	}
 	.map :global(.maplibregl-ctrl-attrib a) {
 		color: var(--fg-color) !important;

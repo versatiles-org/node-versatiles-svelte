@@ -8,6 +8,7 @@
 	import AutoComplete from '$lib/components/AutoComplete.svelte';
 	import { getCountry } from '$lib/utils/location.js';
 	import BasicMap from '../BasicMap/BasicMap.svelte';
+	import { isDarkMode } from '$lib/utils/style.js';
 
 	let bboxes: { key: string; value: BBox }[] | undefined = undefined;
 	let mapContainer: HTMLDivElement;
@@ -16,15 +17,17 @@
 	export let selectedBBox: BBox = worldBBox;
 	let map: MaplibreMapType; // Declare map instance at the top level
 	let initialCountry: string = getCountry(); // Initial search text
-	let darkMode: boolean;
 
-	onMount(() => init());
-
-	async function init(): Promise<void> {
+	onMount(async () => {
 		bboxes = await loadBBoxes();
+	});
+
+	function handleMapReady(event: CustomEvent) {
+		map = event.detail.map;
 		map.setPadding({ top: 31 + 5, right: 5, bottom: 5, left: 5 });
 
 		const canvas = map.getCanvasContainer();
+		const bboxColor = isDarkMode(mapContainer) ? '#FFFFFF' : '#000000';
 
 		map.on('load', () => {
 			map.addSource('bbox', { type: 'geojson', data: getBBoxGeometry(selectedBBox) });
@@ -34,14 +37,14 @@
 				source: 'bbox',
 				filter: ['==', '$type', 'LineString'],
 				layout: { 'line-cap': 'round', 'line-join': 'round' },
-				paint: { 'line-color': darkMode ? '#FFFFFF' : '#000000', 'line-width': 0.5 }
+				paint: { 'line-color': bboxColor, 'line-width': 0.5 }
 			});
 			map.addLayer({
 				id: 'bbox-fill',
 				type: 'fill',
 				source: 'bbox',
 				filter: ['==', '$type', 'Polygon'],
-				paint: { 'fill-color': darkMode ? '#FFFFFF' : '#000000', 'fill-opacity': 0.2 }
+				paint: { 'fill-color': bboxColor, 'fill-opacity': 0.2 }
 			});
 		});
 
@@ -123,33 +126,15 @@
 			/>
 		</div>
 	{/if}
-	<BasicMap
-		{map}
-		{darkMode}
-		bind:mapContainer
-		style="position: absolute;top: 0px;left: 0px;bottom: 0px;right: 0px;"
-	></BasicMap>
+	<BasicMap {map} bind:container={mapContainer} on:mapReady={handleMapReady}></BasicMap>
 </div>
 
 <style>
 	.container {
-		--bg-color: var(--bboxmap-bg-color, light-dark(white, black));
-		--fg-color: var(--bboxmap-text-color, light-dark(black, white));
 		width: 100%;
 		height: 100%;
 		position: relative;
 		min-height: 6em;
-	}
-	:global(.maplibregl-ctrl-attrib) {
-		background-color: color-mix(in srgb, var(--bg-color) 50%, transparent) !important;
-		color: var(--fg-color) !important;
-		opacity: 0.5;
-		font-size: 0.85em;
-		padding: 0.1em !important;
-		line-height: normal !important;
-	}
-	:global(.maplibregl-ctrl-attrib a) {
-		color: var(--fg-color) !important;
 	}
 	.input {
 		position: absolute;
