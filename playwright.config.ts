@@ -6,7 +6,13 @@ const config: PlaywrightTestConfig = {
 		port: 4173
 	},
 	testDir: 'tests',
-	testMatch: /(.+\.)?(test|spec)\.[jt]s/
+	testMatch: /(.+\.)?(test|spec)\.[jt]s/,
+	use: {
+		channel: 'firefox',
+		launchOptions: {
+			args: ['--use-gl=egl']
+		}
+	}
 };
 
 export default config;
