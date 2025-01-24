@@ -78,8 +78,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: install
-    container:
-      image: mcr.microsoft.com/playwright:v1.48.0-jammy
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -95,6 +93,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: npx playwright test
 
       - name: Run unit tests
         run: npm run test:unit
