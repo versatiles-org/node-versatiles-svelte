@@ -4,13 +4,13 @@
 	import { onMount, createEventDispatcher } from 'svelte';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { getMapStyle, isDarkMode } from '$lib/utils/style.js';
-	import type { ColorfulOptions } from '@versatiles/style';
+	import type { StyleBuilderOptions } from '@versatiles/style';
 
 	// Props
 	export let style: string = 'position:absolute; left:0px; top:0px; width:100%; height:100%;';
 	export let container: HTMLDivElement | undefined = undefined;
 	export let map: MaplibreMapType | undefined = undefined;
-	export let styleOptions: ColorfulOptions = {};
+	export let styleOptions: StyleBuilderOptions = {};
 	export let mapOptions: Partial<MapOptions> = {};
 
 	// Create the event dispatcher
