@@ -1,4 +1,4 @@
-import type { LanguageSuffix } from '@versatiles/style/dist/style_builder/types.js';
+import type { Language } from '@versatiles/style';
 import { timezone2countrycode } from './zones.js';
 
 export function getCountry() {
@@ -15,7 +15,7 @@ export function getCountry() {
 	}
 }
 
-export function getLanguage(): LanguageSuffix {
+export function getLanguage(): Language {
 	try {
 		const language = Intl.DateTimeFormat().resolvedOptions().locale.split('-')[0];
 		switch (language) {
@@ -23,9 +23,9 @@ export function getLanguage(): LanguageSuffix {
 			case 'de':
 				return language;
 		}
-		return undefined;
+		return null;
 	} catch (error) {
 		console.error('Could not determine country from timezone:', error);
-		return undefined; // Fallback if no country can be determined
+		return null; // Fallback if no country can be determined
 	}
 }
