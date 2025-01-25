@@ -57,7 +57,7 @@
     "prettier-plugin-svelte": "^3.3.3",
     "publint": "^0.3.2",
     "split2": "^4.2.0",
-    "svelte": "^5.19.2",
+    "svelte": "^5.19.3",
     "svelte-check": "^4.1.4",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
