@@ -5,7 +5,7 @@ import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { brotliCompressSync, gzipSync } from 'node:zlib';
 
-describe('processData', () => {
+describe('scripts/bboxes/geojson2bboxes.ts', () => {
 	const mockGeoJSON = {
 		type: 'FeatureCollection',
 		features: [

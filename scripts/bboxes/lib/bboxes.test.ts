@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { roundBBox, bboxOverlap } from './bboxes.js';
 import type { BBox } from 'geojson';
 
-describe('bboxes.ts', () => {
+describe('scripts/bboxes/lib/bboxes.ts', () => {
 	describe('roundBBox', () => {
 		it('should round values of a large bounding box with no significant rounding', () => {
 			const bbox: BBox = [-200, -100, 200, 100];

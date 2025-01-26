@@ -5,7 +5,7 @@ import { timezone2countrycode } from './zones.js';
 // Mock the `timezone2countrycode` function
 vi.mock('./zones.js', { spy: true });
 
-describe('location.ts', () => {
+describe('src/lib/utils/location.ts', () => {
 	function mockResolvedOptions(options: { timeZone?: string; locale?: string }): void {
 		vi.spyOn(Intl.DateTimeFormat.prototype, 'resolvedOptions').mockReturnValue(
 			options as Intl.ResolvedDateTimeFormatOptions

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { mergeBBoxes } from './merge_bboxes.js';
 
-describe('mergeBBoxes', () => {
+describe('scripts/bboxes/merge_bboxes.ts', () => {
 	it('should merge bounding boxes', async () => {
 		const result = mergeBBoxes();
 		const lines = result.split('\n');
