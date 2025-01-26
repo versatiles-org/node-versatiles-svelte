@@ -16,6 +16,7 @@
     "release": "npm run build && npx vrt release-npm",
     "test:integration": "playwright test",
     "test:unit": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test": "npm run test:unit && npm run test:integration",
     "upgrade": "npm-check-updates -u && rm -f package-lock.json; rm -rf node_modules; npm update --save && npm install"
   },
@@ -45,6 +46,7 @@
     "@types/eslint": "^9.6.1",
     "@types/node": "^22.10.10",
     "@versatiles/release-tool": "^1.2.6",
+    "@vitest/coverage-v8": "^3.0.4",
     "cookie": "^1.0.2",
     "eslint": "^9.19.0",
     "eslint-config-prettier": "^10.0.1",
