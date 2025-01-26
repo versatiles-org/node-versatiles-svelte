@@ -7,16 +7,17 @@ const { LngLatBounds } = maplibregl;
 
 export type DragPoint = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | false;
 export type BBox = [number, number, number, number];
+const worldBBox: BBox = [-180, -85, 180, 85];
 
 export class BBoxDrawer extends AbstractDrawer {
 	public source?: maplibregl.GeoJSONSource;
 	private bboxColor = '#000000';
+	public inverted: boolean = false;
 	private bbox: BBox;
-	private static outerRing = BBoxDrawer.getRing([-180, -86, 180, 86]);
 	private dragPoint: DragPoint = false;
 	private map: maplibregl.Map;
 
-	constructor(map: maplibregl.Map, bbox: BBox = [-180, -85, 180, 85]) {
+	constructor(map: maplibregl.Map, bbox: BBox = worldBBox) {
 		super();
 		this.bbox = bbox;
 		this.map = map;
@@ -79,11 +80,39 @@ export class BBoxDrawer extends AbstractDrawer {
 	}
 
 	public getAsFeatureCollection(): FeatureCollection {
-		const ring = BBoxDrawer.getRing(this.bbox);
+		const ring = getRing(this.bbox);
 		return {
 			type: 'FeatureCollection',
-			features: [BBoxDrawer.polygon(BBoxDrawer.outerRing, ring), BBoxDrawer.linestring(ring)]
+			features: [
+				this.inverted ? polygon(getRing(worldBBox), ring) : polygon(ring),
+				linestring(ring)
+			]
 		};
+
+		function getRing(bbox: BBox): Position[] {
+			const x0 = Math.min(bbox[0], bbox[2]);
+			const x1 = Math.max(bbox[0], bbox[2]);
+			const y0 = Math.min(bbox[1], bbox[3]);
+			const y1 = Math.max(bbox[1], bbox[3]);
+			// prettier-ignore
+			return [[x0, y0], [x1, y0], [x1, y1], [x0, y1], [x0, y0]];
+		}
+
+		function polygon(...coordinates: Position[][]): Feature<Polygon> {
+			return {
+				type: 'Feature',
+				geometry: { type: 'Polygon', coordinates },
+				properties: {}
+			};
+		}
+
+		function linestring(coordinates: Position[]): Feature<LineString> {
+			return {
+				type: 'Feature',
+				geometry: { type: 'LineString', coordinates },
+				properties: {}
+			};
+		}
 	}
 
 	public setBBox(bbox: geojson.BBox): void {
@@ -128,19 +157,16 @@ export class BBoxDrawer extends AbstractDrawer {
 	}
 
 	private getCursor(drag: DragPoint): string {
+		// prettier-ignore
 		switch (drag) {
 			case 'n':
-			case 's':
-				return 'ns-resize';
+			case 's': return 'ns-resize';
 			case 'e':
-			case 'w':
-				return 'ew-resize';
+			case 'w': return 'ew-resize';
 			case 'nw':
-			case 'se':
-				return 'nwse-resize';
+			case 'se': return 'nwse-resize';
 			case 'ne':
-			case 'sw':
-				return 'nesw-resize';
+			case 'sw': return 'nesw-resize';
 		}
 		return 'default';
 	}
@@ -148,115 +174,48 @@ export class BBoxDrawer extends AbstractDrawer {
 	private doDrag(lngLat: maplibregl.LngLat): void {
 		const x = Math.round(lngLat.lng * 1e3) / 1e3;
 		const y = Math.round(lngLat.lat * 1e3) / 1e3;
+		
+		// prettier-ignore
 		switch (this.dragPoint) {
-			case 'n':
-				this.bbox[3] = y;
-				break;
-			case 'ne':
-				this.bbox[2] = x;
-				this.bbox[3] = y;
-				break;
-			case 'e':
-				this.bbox[2] = x;
-				break;
-			case 'se':
-				this.bbox[2] = x;
-				this.bbox[1] = y;
-				break;
-			case 's':
-				this.bbox[1] = y;
-				break;
-			case 'sw':
-				this.bbox[0] = x;
-				this.bbox[1] = y;
-				break;
-			case 'w':
-				this.bbox[0] = x;
-				break;
-			case 'nw':
-				this.bbox[0] = x;
-				this.bbox[3] = y;
-				break;
-			default:
-				return;
+			case 'n': this.bbox[3] = y; break;
+			case 'ne': this.bbox[2] = x; this.bbox[3] = y; break;
+			case 'e': this.bbox[2] = x; break;
+			case 'se': this.bbox[2] = x; this.bbox[1] = y; break;
+			case 's': this.bbox[1] = y; break;
+			case 'sw': this.bbox[0] = x; this.bbox[1] = y; break;
+			case 'w': this.bbox[0] = x; break;
+			case 'nw': this.bbox[0] = x; this.bbox[3] = y; break;
+			default: return;
 		}
+
 		if (this.bbox[2] < this.bbox[0]) {
 			// flip horizontal
 			this.bbox = [this.bbox[2], this.bbox[1], this.bbox[0], this.bbox[3]];
+			
+			// prettier-ignore
 			switch (this.dragPoint) {
-				case 'ne':
-					this.dragPoint = 'nw';
-					break;
-				case 'nw':
-					this.dragPoint = 'ne';
-					break;
-				case 'se':
-					this.dragPoint = 'sw';
-					break;
-				case 'sw':
-					this.dragPoint = 'se';
-					break;
-				case 'e':
-					this.dragPoint = 'w';
-					break;
-				case 'w':
-					this.dragPoint = 'e';
-					break;
+				case 'ne': this.dragPoint = 'nw'; break;
+				case 'nw': this.dragPoint = 'ne'; break;
+				case 'se': this.dragPoint = 'sw'; break;
+				case 'sw': this.dragPoint = 'se'; break;
+				case 'e': this.dragPoint = 'w'; break;
+				case 'w': this.dragPoint = 'e'; break;
 			}
 		}
+
 		if (this.bbox[3] < this.bbox[1]) {
 			// flip vertical
 			this.bbox = [this.bbox[0], this.bbox[3], this.bbox[2], this.bbox[1]];
+			
+			// prettier-ignore
 			switch (this.dragPoint) {
-				case 'ne':
-					this.dragPoint = 'se';
-					break;
-				case 'nw':
-					this.dragPoint = 'sw';
-					break;
-				case 'se':
-					this.dragPoint = 'ne';
-					break;
-				case 'sw':
-					this.dragPoint = 'nw';
-					break;
-				case 'e':
-					this.dragPoint = 'e';
-					break;
-				case 'w':
-					this.dragPoint = 'w';
-					break;
+				case 'ne': this.dragPoint = 'se'; break;
+				case 'nw': this.dragPoint = 'sw'; break;
+				case 'se': this.dragPoint = 'ne'; break;
+				case 'sw': this.dragPoint = 'nw'; break;
+				case 'e': this.dragPoint = 'e'; break;
+				case 'w': this.dragPoint = 'w'; break;
 			}
 		}
-	}
-
-	private static getRing(bbox: BBox): Position[] {
-		const x0 = Math.min(bbox[0], bbox[2]);
-		const x1 = Math.max(bbox[0], bbox[2]);
-		const y0 = Math.min(bbox[1], bbox[3]);
-		const y1 = Math.max(bbox[1], bbox[3]);
-		return [
-			[x0, y0],
-			[x1, y0],
-			[x1, y1],
-			[x0, y1],
-			[x0, y0]
-		];
-	}
-
-	private static polygon(...coordinates: Position[][]): Feature<Polygon> {
-		return {
-			type: 'Feature',
-			geometry: { type: 'Polygon', coordinates },
-			properties: {}
-		};
-	}
-
-	private static linestring(coordinates: Position[]): Feature<LineString> {
-		return {
-			type: 'Feature',
-			geometry: { type: 'LineString', coordinates },
-			properties: {}
-		};
 	}
 }
