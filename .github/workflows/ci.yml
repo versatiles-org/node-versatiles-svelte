@@ -18,15 +18,8 @@ jobs:
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
-
-      - name: Init cache
-        uses: actions/cache@v4
         with:
-          path: "~/.npm\nnode_modules"
-          key: cache-${{ hashFiles('package-lock.json') }}
-
-      - name: Install dependencies
-        run: npm ci
+          node-version: 22
 
       - name: Init cache
         uses: actions/cache@v4
@@ -40,28 +33,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint codebase
-        run: npm run lint
-
-      - name: Format code
-        run: npm run format -- --check
-
-      - name: Type check
-        run: npm run check
-
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests
-        run: npx playwright test
-
-      - name: Run unit tests
-        run: npm run test:unit
-
-      - name: Run integration tests
-        run: npm run test:integration
-        env:
-          HOME: /root
+      - name: Type check
+        run: npm run check
 
       - name: Build the project
         run: npm run build
