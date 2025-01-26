@@ -51,10 +51,11 @@ export async function processData(input: string, labelTemplate: string, populati
 		input = input.replace(/\.geojson$/, '');
 	} else if (input.endsWith('.geojsonl')) {
 		// If the input is a GeoJSONL file, process it line by line
-		result = buffer.toString()
+		result = buffer
+			.toString()
 			.split('\n')
-			.filter(line => line.length > 1)
-			.map(line => processFeature(JSON.parse(line)));
+			.filter((line) => line.length > 1)
+			.map((line) => processFeature(JSON.parse(line)));
 		input = input.replace(/\.geojsonl$/, '');
 	} else {
 		throw new Error('Input file must be GeoJSON or GeoJSONL');
@@ -64,7 +65,7 @@ export async function processData(input: string, labelTemplate: string, populati
 	writeFileSync(
 		input + '.jsonl',
 		result
-			.map(f => JSON.stringify(f))
+			.map((f) => JSON.stringify(f))
 			.sort() // Sort the results before writing
 			.join('\n')
 	);

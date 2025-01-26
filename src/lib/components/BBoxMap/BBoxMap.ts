@@ -23,15 +23,12 @@ export class BBoxPixel {
 			Math.min(p0.x, p1.x),
 			Math.min(p0.y, p1.y),
 			Math.max(p0.x, p1.x),
-			Math.max(p0.y, p1.y),
+			Math.max(p0.y, p1.y)
 		);
 	}
 
 	static fromGeoBBox(map: maplibregl.Map, bbox: BBox): BBoxPixel {
-		return BBoxPixel.fromPoints(
-			map.project([bbox[0], bbox[1]]),
-			map.project([bbox[2], bbox[3]])
-		);
+		return BBoxPixel.fromPoints(map.project([bbox[0], bbox[1]]), map.project([bbox[2], bbox[3]]));
 	}
 
 	asArray(): [number, number, number, number] {
@@ -97,14 +94,34 @@ export function dragBBox(
 	const x = Math.round(lngLat.lng * 1e3) / 1e3;
 	const y = Math.round(lngLat.lat * 1e3) / 1e3;
 	switch (drag) {
-		case '_0': bbox[3] = y; break;
-		case '_1': bbox[1] = y; break;
-		case '0_': bbox[0] = x; break;
-		case '00': bbox[0] = x; bbox[1] = y; break;
-		case '01': bbox[0] = x; bbox[3] = y; break;
-		case '1_': bbox[2] = x; break;
-		case '10': bbox[2] = x; bbox[1] = y; break;
-		case '11': bbox[2] = x; bbox[3] = y; break;
+		case '_0':
+			bbox[3] = y;
+			break;
+		case '_1':
+			bbox[1] = y;
+			break;
+		case '0_':
+			bbox[0] = x;
+			break;
+		case '00':
+			bbox[0] = x;
+			bbox[1] = y;
+			break;
+		case '01':
+			bbox[0] = x;
+			bbox[3] = y;
+			break;
+		case '1_':
+			bbox[2] = x;
+			break;
+		case '10':
+			bbox[2] = x;
+			bbox[1] = y;
+			break;
+		case '11':
+			bbox[2] = x;
+			bbox[3] = y;
+			break;
 	}
 	if (bbox[2] < bbox[0]) {
 		// flip horizontal
@@ -112,12 +129,24 @@ export function dragBBox(
 		bbox[0] = bbox[2];
 		bbox[2] = t;
 		switch (drag) {
-			case '0_': drag = '1_'; break;
-			case '00': drag = '10'; break;
-			case '01': drag = '11'; break;
-			case '1_': drag = '0_'; break;
-			case '10': drag = '00'; break;
-			case '11': drag = '01'; break;
+			case '0_':
+				drag = '1_';
+				break;
+			case '00':
+				drag = '10';
+				break;
+			case '01':
+				drag = '11';
+				break;
+			case '1_':
+				drag = '0_';
+				break;
+			case '10':
+				drag = '00';
+				break;
+			case '11':
+				drag = '01';
+				break;
 		}
 	}
 	if (bbox[3] < bbox[1]) {
@@ -126,12 +155,24 @@ export function dragBBox(
 		bbox[1] = bbox[3];
 		bbox[3] = t;
 		switch (drag) {
-			case '_0': drag = '_1'; break;
-			case '_1': drag = '_0'; break;
-			case '00': drag = '01'; break;
-			case '01': drag = '00'; break;
-			case '10': drag = '11'; break;
-			case '11': drag = '10'; break;
+			case '_0':
+				drag = '_1';
+				break;
+			case '_1':
+				drag = '_0';
+				break;
+			case '00':
+				drag = '01';
+				break;
+			case '01':
+				drag = '00';
+				break;
+			case '10':
+				drag = '11';
+				break;
+			case '11':
+				drag = '10';
+				break;
 		}
 	}
 	return { drag, bbox };
@@ -139,14 +180,22 @@ export function dragBBox(
 
 export function getCursor(drag: BBoxDrag): string | false {
 	switch (drag) {
-		case '_0': return 'ns-resize';
-		case '_1': return 'ns-resize';
-		case '0_': return 'ew-resize';
-		case '00': return 'nwse-resize';
-		case '01': return 'nesw-resize';
-		case '1_': return 'ew-resize';
-		case '10': return 'nesw-resize';
-		case '11': return 'nwse-resize';
+		case '_0':
+			return 'ns-resize';
+		case '_1':
+			return 'ns-resize';
+		case '0_':
+			return 'ew-resize';
+		case '00':
+			return 'nwse-resize';
+		case '01':
+			return 'nesw-resize';
+		case '1_':
+			return 'ew-resize';
+		case '10':
+			return 'nesw-resize';
+		case '11':
+			return 'nwse-resize';
 	}
 	return false;
 }
@@ -175,7 +224,13 @@ export function getBBoxGeometry(bbox: BBox): FeatureCollection {
 		const x1 = Math.max(bbox[0], bbox[2]);
 		const y0 = Math.min(bbox[1], bbox[3]);
 		const y1 = Math.max(bbox[1], bbox[3]);
-		return [[x0, y0], [x1, y0], [x1, y1], [x0, y1], [x0, y0]];
+		return [
+			[x0, y0],
+			[x1, y0],
+			[x1, y1],
+			[x0, y1],
+			[x0, y0]
+		];
 	}
 }
 
