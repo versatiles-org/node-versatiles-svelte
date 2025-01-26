@@ -3,7 +3,7 @@ import { GuessPopulation } from './guess_population.js';
 import * as turf from '@turf/turf';
 import type { Feature, MultiPolygon } from 'geojson';
 
-describe('GuessPopulation', () => {
+describe('scripts/bboxes/lib/guess_population.ts', () => {
 	const guessPopulation = new GuessPopulation();
 
 	describe('guess', () => {
