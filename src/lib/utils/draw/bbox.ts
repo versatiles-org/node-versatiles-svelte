@@ -1,6 +1,8 @@
-import { AbstractDrawer } from './abstract.js';
 import type { FeatureCollection, Feature, LineString, Position, Polygon } from 'geojson';
 import type geojson from 'geojson';
+import type { FillLayerPaint, FillStyle, LineLayerPaint, LineStyle } from './style.js';
+import { AbstractDrawer } from './abstract.js';
+import { getFillStyle, getLineStyle } from './style.js';
 
 const maplibregl = await import('maplibre-gl');
 const { LngLatBounds } = maplibregl;
@@ -10,16 +12,21 @@ export type BBox = [number, number, number, number];
 const worldBBox: BBox = [-180, -85, 180, 85];
 
 export class BBoxDrawer extends AbstractDrawer {
-	public source?: maplibregl.GeoJSONSource;
-	private bboxColor = '#000000';
-	public inverted: boolean = false;
-	private bbox: BBox;
+	private source?: maplibregl.GeoJSONSource;
 	private dragPoint: DragPoint = false;
 	private map: maplibregl.Map;
 
-	constructor(map: maplibregl.Map, bbox: BBox = worldBBox) {
+	private fillStyle: FillLayerPaint;
+	private lineStyle: LineLayerPaint;
+	private inverted: boolean;
+	private bbox: BBox;
+
+	constructor(map: maplibregl.Map, options?: { bbox?: BBox; inverted?: boolean } & LineStyle & FillStyle) {
 		super();
-		this.bbox = bbox;
+		this.bbox = options?.bbox ?? worldBBox;
+		this.fillStyle = getFillStyle(options);
+		this.lineStyle = getLineStyle(options);
+		this.inverted = options?.inverted ?? true;
 		this.map = map;
 
 		const sourceId = 'bbox' + Math.random().toString(36).substr(2, 9);
@@ -32,14 +39,14 @@ export class BBoxDrawer extends AbstractDrawer {
 			source: sourceId,
 			filter: ['==', '$type', 'LineString'],
 			layout: { 'line-cap': 'round', 'line-join': 'round' },
-			paint: { 'line-color': this.bboxColor, 'line-width': 0.5 }
+			paint: this.lineStyle,
 		});
 		map.addLayer({
 			id: 'bbox-fill',
 			type: 'fill',
 			source: sourceId,
 			filter: ['==', '$type', 'Polygon'],
-			paint: { 'fill-color': this.bboxColor, 'fill-opacity': 0.2 }
+			paint: this.fillStyle
 		});
 		this.source = map.getSource(sourceId);
 
@@ -73,10 +80,6 @@ export class BBoxDrawer extends AbstractDrawer {
 		map.on('mouseup', () => {
 			this.dragPoint = false;
 		});
-	}
-
-	public setColor(color: string): void {
-		this.bboxColor = color;
 	}
 
 	public getAsFeatureCollection(): FeatureCollection {
@@ -174,7 +177,7 @@ export class BBoxDrawer extends AbstractDrawer {
 	private doDrag(lngLat: maplibregl.LngLat): void {
 		const x = Math.round(lngLat.lng * 1e3) / 1e3;
 		const y = Math.round(lngLat.lat * 1e3) / 1e3;
-		
+
 		// prettier-ignore
 		switch (this.dragPoint) {
 			case 'n': this.bbox[3] = y; break;
@@ -191,7 +194,7 @@ export class BBoxDrawer extends AbstractDrawer {
 		if (this.bbox[2] < this.bbox[0]) {
 			// flip horizontal
 			this.bbox = [this.bbox[2], this.bbox[1], this.bbox[0], this.bbox[3]];
-			
+
 			// prettier-ignore
 			switch (this.dragPoint) {
 				case 'ne': this.dragPoint = 'nw'; break;
@@ -206,7 +209,7 @@ export class BBoxDrawer extends AbstractDrawer {
 		if (this.bbox[3] < this.bbox[1]) {
 			// flip vertical
 			this.bbox = [this.bbox[0], this.bbox[3], this.bbox[2], this.bbox[1]];
-			
+
 			// prettier-ignore
 			switch (this.dragPoint) {
 				case 'ne': this.dragPoint = 'se'; break;
