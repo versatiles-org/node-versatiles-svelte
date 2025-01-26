@@ -5,5 +5,9 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	test: {
 		include: ['{src,scripts}/**/*.{test,spec}.{js,ts}']
+	},
+	build: {
+		target: 'esnext',
+		chunkSizeWarningLimit: 1024
 	}
 });
