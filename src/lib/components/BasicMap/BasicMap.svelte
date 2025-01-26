@@ -3,7 +3,7 @@
 	import type { Map as MaplibreMapType, MapOptions } from 'maplibre-gl';
 	import { onMount, createEventDispatcher } from 'svelte';
 	import 'maplibre-gl/dist/maplibre-gl.css';
-	import { getMapStyle, isDarkMode } from '$lib/utils/style.js';
+	import { getMapStyle, isDarkMode } from '$lib/utils/map_style.js';
 	import type { StyleBuilderOptions } from '@versatiles/style';
 
 	// Props
