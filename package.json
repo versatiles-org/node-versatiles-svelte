@@ -68,7 +68,7 @@
   "types": "./dist/index.d.ts",
   "type": "module",
   "dependencies": {
-    "@versatiles/style": "^5.2.6",
+    "@versatiles/style": "^5.2.9",
     "maplibre-gl": "^5.0.1"
   }
 }
