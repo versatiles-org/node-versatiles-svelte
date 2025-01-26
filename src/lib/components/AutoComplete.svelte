@@ -39,7 +39,6 @@
 	}
 
 	export function setInputText(text: string) {
-		console.log(text);
 		inputText = text;
 		results = filterResults();
 		close(0);
