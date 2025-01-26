@@ -7,5 +7,10 @@ export default defineConfig({
 			provider: 'v8',
 			include: ['scripts/**/*.ts', 'src/**/*.ts']
 		}
+	},
+	esbuild: {
+		supported: {
+			'top-level-await': true
+		}
 	}
 });
