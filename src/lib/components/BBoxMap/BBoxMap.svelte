@@ -21,7 +21,7 @@
 	import AutoComplete from '$lib/components/AutoComplete.svelte';
 	import { getCountryName } from '$lib/utils/location.js';
 	import BasicMap from '../BasicMap/BasicMap.svelte';
-	import { isDarkMode } from '$lib/utils/style.js';
+	import { isDarkMode } from '$lib/utils/map_style.js';
 	import type { BBox } from 'geojson';
 
 	let bboxes: { key: string; value: BBox }[] | undefined = undefined;
@@ -110,7 +110,7 @@
 		if (!bboxes) return;
 		if (!map) return;
 		if (!autoComplete) return;
-		autoComplete.setInputText(getCountryName()); // Initial search text
+		autoComplete.setInputText(getCountryName() ?? ''); // Initial search text
 	}
 
 	function redrawBBox() {
