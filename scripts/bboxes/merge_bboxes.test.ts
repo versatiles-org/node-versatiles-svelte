@@ -15,5 +15,5 @@ describe('mergeBBoxes', () => {
 		const data = JSON.parse(result);
 		expect(data.length).toBeGreaterThan(2000);
 		expect(data[0]).toStrictEqual(['World', -180, -90, 360, 180]);
-	})
-})
+	});
+});

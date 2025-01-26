@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { getBBoxDrag, dragBBox, getCursor, getBBoxGeometry, loadBBoxes, BBoxPixel } from './BBoxMap.js';
+import {
+	getBBoxDrag,
+	dragBBox,
+	getCursor,
+	getBBoxGeometry,
+	loadBBoxes,
+	BBoxPixel
+} from './BBoxMap.js';
 import type { BBoxDrag } from './BBoxMap.js';
 import { LngLat, Point } from 'maplibre-gl';
 import type { BBox } from 'geojson';

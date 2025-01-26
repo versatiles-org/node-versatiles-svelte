@@ -1,6 +1,12 @@
 <!-- BBoxMap.svelte -->
 <script lang="ts">
-	import type { CameraOptions, Point, Map as MaplibreMapType, GeoJSONSource, LngLatBoundsLike } from 'maplibre-gl';
+	import type {
+		CameraOptions,
+		Point,
+		Map as MaplibreMapType,
+		GeoJSONSource,
+		LngLatBoundsLike
+	} from 'maplibre-gl';
 	import type { BBoxDrag } from './BBoxMap.js';
 	import { onMount } from 'svelte';
 	import 'maplibre-gl/dist/maplibre-gl.css';
@@ -13,7 +19,7 @@
 		BBoxPixel
 	} from './BBoxMap.js';
 	import AutoComplete from '$lib/components/AutoComplete.svelte';
-	import { getCountry } from '$lib/utils/location.js';
+	import { getCountryName } from '$lib/utils/location.js';
 	import BasicMap from '../BasicMap/BasicMap.svelte';
 	import { isDarkMode } from '$lib/utils/style.js';
 	import type { BBox } from 'geojson';
@@ -104,7 +110,7 @@
 		if (!bboxes) return;
 		if (!map) return;
 		if (!autoComplete) return;
-		autoComplete.setInputText(getCountry()); // Initial search text
+		autoComplete.setInputText(getCountryName()); // Initial search text
 	}
 
 	function redrawBBox() {

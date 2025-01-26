@@ -13,14 +13,26 @@ describe('processData', () => {
 				type: 'Feature',
 				geometry: {
 					type: 'Polygon',
-					coordinates: [[[-10, -10], [-10, 10], [10, 10], [10, -10], [-10, -10]]],
+					coordinates: [
+						[
+							[-10, -10],
+							[-10, 10],
+							[10, 10],
+							[10, -10],
+							[-10, -10]
+						]
+					]
 				},
-				properties: { name: 'Test Feature', population: 500 },
-			},
-		],
+				properties: { name: 'Test Feature', population: 500 }
+			}
+		]
 	};
 
-	const mockGeoJSONResult = JSON.stringify({ label: "Test Feature", population: 500, bbox: [-10, -10, 10, 10] });
+	const mockGeoJSONResult = JSON.stringify({
+		label: 'Test Feature',
+		population: 500,
+		bbox: [-10, -10, 10, 10]
+	});
 
 	const mockGeoJSONL = `
 {"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-10,-10],[-10,10],[10,10],[10,-10],[-10,-10]]]},"properties":{"name":"A Test Feature","population":500}}
@@ -29,7 +41,10 @@ describe('processData', () => {
 
 	const tempDir = mkdtempSync(join(tmpdir(), 'vitest-'));
 
-	function saveAsTempFile(data: string | object, extension: string): { filenameIn: string; filenameOut: string; } {
+	function saveAsTempFile(
+		data: string | object,
+		extension: string
+	): { filenameIn: string; filenameOut: string } {
 		const tempFile = resolve(tempDir, Math.random().toString(36).slice(2));
 		const filenameIn = tempFile + '.' + extension;
 		const filenameOut = tempFile + '.jsonl';
@@ -51,11 +66,12 @@ describe('processData', () => {
 	it('should process a GeoJSONL file and write results to JSONL', async () => {
 		const { filenameIn, filenameOut } = saveAsTempFile(mockGeoJSONL, 'geojsonl');
 		await processData(filenameIn, '{name}', 'population');
-		expect(readFileSync(filenameOut, 'utf8'))
-			.toStrictEqual([
+		expect(readFileSync(filenameOut, 'utf8')).toStrictEqual(
+			[
 				'{"label":"A Test Feature","population":500,"bbox":[-10,-10,10,10]}',
 				'{"label":"Different Feature","population":1000,"bbox":[-20,-20,-10,-10]}'
-			].join('\n'));
+			].join('\n')
+		);
 	});
 
 	it('should handle Brotli-compressed files', async () => {
@@ -73,14 +89,15 @@ describe('processData', () => {
 	it('should estimate population if populationKey is not provided', async () => {
 		const { filenameIn, filenameOut } = saveAsTempFile(mockGeoJSON, 'geojson');
 		await processData(filenameIn, '{name}');
-		expect(readFileSync(filenameOut, 'utf8')).toStrictEqual('{"label":"Test Feature","population":220698576.62801403,"bbox":[-10,-10,10,10]}');
+		expect(readFileSync(filenameOut, 'utf8')).toStrictEqual(
+			'{"label":"Test Feature","population":220698576.62801403,"bbox":[-10,-10,10,10]}'
+		);
 	});
-
 
 	it('should throw an error for features without properties', async () => {
 		const invalidGeoJSON = {
 			...mockGeoJSON,
-			features: [{ type: 'Feature', geometry: mockGeoJSON.features[0].geometry }],
+			features: [{ type: 'Feature', geometry: mockGeoJSON.features[0].geometry }]
 		};
 		const { filenameIn } = saveAsTempFile(invalidGeoJSON, 'geojson');
 		await expect(processData(filenameIn, '{name}')).rejects.toThrow('Feature has no properties');
@@ -89,9 +106,11 @@ describe('processData', () => {
 	it('should throw an error for non-Polygon/MultiPolygon features', async () => {
 		const invalidGeoJSON = {
 			...mockGeoJSON,
-			features: [{ type: 'Feature', geometry: { type: 'Point', coordinates: [0, 0] } }],
+			features: [{ type: 'Feature', geometry: { type: 'Point', coordinates: [0, 0] } }]
 		};
 		const { filenameIn } = saveAsTempFile(invalidGeoJSON, 'geojson');
-		await expect(processData(filenameIn, '{name}')).rejects.toThrow('Feature must be Polygon or MultiPolygon');
+		await expect(processData(filenameIn, '{name}')).rejects.toThrow(
+			'Feature must be Polygon or MultiPolygon'
+		);
 	});
 });

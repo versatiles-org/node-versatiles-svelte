@@ -16,13 +16,16 @@ type Entry = {
 
 if (fileURLToPath(import.meta.url) === argv[1]) {
 	const result = mergeBBoxes();
-	writeFileSync(resolve(import.meta.dirname, '../../src/lib/components/BBoxMap/bboxes.json'), result);
+	writeFileSync(
+		resolve(import.meta.dirname, '../../src/lib/components/BBoxMap/bboxes.json'),
+		result
+	);
 }
 
 export function mergeBBoxes() {
 	console.log('Loading data...');
 
-	const dirIn = resolve(import.meta.dirname, './data')
+	const dirIn = resolve(import.meta.dirname, './data');
 
 	// Initialize an array to hold the processed data
 	const data: Entry[] = [];
@@ -74,12 +77,14 @@ export function mergeBBoxes() {
 	data.sort((a, b) => b.population - a.population);
 
 	// Write the processed data to a JSON file
-	return `[\n${data.map((e) => {
-		const r = [e.label, ...e.bbox];
-		// Ensure the array has exactly 5 elements (label + 4 bbox values)
-		if (r.length !== 5) throw new Error('Error: Incorrect entry length');
-		return JSON.stringify(r);
-	}).join(',\n')}\n]`;
+	return `[\n${data
+		.map((e) => {
+			const r = [e.label, ...e.bbox];
+			// Ensure the array has exactly 5 elements (label + 4 bbox values)
+			if (r.length !== 5) throw new Error('Error: Incorrect entry length');
+			return JSON.stringify(r);
+		})
+		.join(',\n')}\n]`;
 }
 
 export function round(num: number) {
