@@ -1,14 +1,49 @@
-import type { Feature, GeoJSON, Position } from 'geojson';
+import type { BBox, Feature, FeatureCollection, Position } from 'geojson';
 import type { LngLat, Point } from 'maplibre-gl';
 
-export type BBox = [number, number, number, number];
 export type BBoxDrag = '0_' | '1_' | '_0' | '_1' | '00' | '01' | '10' | '11' | false;
 
-export function getBBoxDrag(point: Point, bboxPixel: BBox): BBoxDrag {
+export class BBoxPixel {
+	x0: number;
+	y0: number;
+	x1: number;
+	y1: number;
+
+	constructor(x0: number, y0: number, x1: number, y1: number) {
+		if (x0 > x1) throw new Error('x0 must be less than x1');
+		if (y0 > y1) throw new Error('y0 must be less than y1');
+		this.x0 = x0;
+		this.y0 = y0;
+		this.x1 = x1;
+		this.y1 = y1;
+	}
+
+	static fromPoints(p0: Point, p1: Point): BBoxPixel {
+		return new BBoxPixel(
+			Math.min(p0.x, p1.x),
+			Math.min(p0.y, p1.y),
+			Math.max(p0.x, p1.x),
+			Math.max(p0.y, p1.y),
+		);
+	}
+
+	static fromGeoBBox(map: maplibregl.Map, bbox: BBox): BBoxPixel {
+		return BBoxPixel.fromPoints(
+			map.project([bbox[0], bbox[1]]),
+			map.project([bbox[2], bbox[3]])
+		);
+	}
+
+	asArray(): [number, number, number, number] {
+		return [this.x0, this.y0, this.x1, this.y1];
+	}
+}
+
+export function getBBoxDrag(point: Point, bboxPixel: BBoxPixel): BBoxDrag {
 	const maxDistance = 5;
 
 	const { x, y } = point;
-	const [x0, y0, x1, y1] = bboxPixel;
+	const [x0, y0, x1, y1] = bboxPixel.asArray();
 
 	// Don't think outside the box
 	if (x < x0 - maxDistance) return false;
@@ -40,17 +75,17 @@ export function getBBoxDrag(point: Point, bboxPixel: BBox): BBoxDrag {
 	}
 
 	if (drag[0]) {
-		if (drag[1]) return '01';
-		if (drag[3]) return '00';
+		if (drag[1]) return '00';
+		if (drag[3]) return '01';
 		return '0_';
 	} else if (drag[1]) {
-		if (drag[2]) return '11';
-		return '_1';
+		if (drag[2]) return '10';
+		return '_0';
 	} else if (drag[2]) {
-		if (drag[3]) return '10';
+		if (drag[3]) return '11';
 		return '1_';
 	} else if (drag[3]) {
-		return '_0';
+		return '_1';
 	} else return false;
 }
 
@@ -62,8 +97,8 @@ export function dragBBox(
 	const x = Math.round(lngLat.lng * 1e3) / 1e3;
 	const y = Math.round(lngLat.lat * 1e3) / 1e3;
 	switch (drag) {
-		case '_0': bbox[1] = y; break;
-		case '_1': bbox[3] = y; break;
+		case '_0': bbox[3] = y; break;
+		case '_1': bbox[1] = y; break;
 		case '0_': bbox[0] = x; break;
 		case '00': bbox[0] = x; bbox[1] = y; break;
 		case '01': bbox[0] = x; bbox[3] = y; break;
@@ -107,16 +142,16 @@ export function getCursor(drag: BBoxDrag): string | false {
 		case '_0': return 'ns-resize';
 		case '_1': return 'ns-resize';
 		case '0_': return 'ew-resize';
-		case '00': return 'nesw-resize';
-		case '01': return 'nwse-resize';
+		case '00': return 'nwse-resize';
+		case '01': return 'nesw-resize';
 		case '1_': return 'ew-resize';
-		case '10': return 'nwse-resize';
-		case '11': return 'nesw-resize';
+		case '10': return 'nesw-resize';
+		case '11': return 'nwse-resize';
 	}
 	return false;
 }
 
-export function getBBoxGeometry(bbox: BBox): GeoJSON {
+export function getBBoxGeometry(bbox: BBox): FeatureCollection {
 	return {
 		type: 'FeatureCollection',
 		features: [polygon(getRing([-180, -86, 180, 86]), getRing(bbox)), linestring(getRing(bbox))]
