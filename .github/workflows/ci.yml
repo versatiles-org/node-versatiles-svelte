@@ -30,17 +30,23 @@ jobs:
       - name: Fix NPM permissions
         run: sudo chown -R 1001:118 "/root/.npm"
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install
+        run: |
+          npm ci
+          npx svelte-kit sync
+          npx svelte-check --tsconfig ./tsconfig.json
 
       - name: Lint
         run: npm run lint
 
+      - name: Test Code
+        run: npx vitest run --testTimeout 10000
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Check
-        run: npm run check
+      - name: Test Playwright
+        run: npx playwright test
 
       - name: Build the project
         run: npm run build

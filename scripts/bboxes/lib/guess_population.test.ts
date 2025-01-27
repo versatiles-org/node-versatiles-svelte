@@ -40,19 +40,19 @@ describe('scripts/bboxes/lib/guess_population.ts', () => {
 		it('should handle multi-polygons and calculate population for all parts', () => {
 			const polygonA = turf.polygon([
 				[
-					[-10, -10],
-					[-10, 10],
+					[9, 9],
+					[9, 10],
 					[10, 10],
-					[10, -10],
-					[-10, -10]
+					[10, 9],
+					[9, 9]
 				]
 			]);
 			const polygonB = turf.polygon([
 				[
 					[20, 20],
-					[20, 30],
-					[30, 30],
-					[30, 20],
+					[20, 21],
+					[21, 21],
+					[21, 20],
 					[20, 20]
 				]
 			]);
@@ -63,8 +63,8 @@ describe('scripts/bboxes/lib/guess_population.ts', () => {
 			const populationA = guessPopulation.guess(polygonA);
 			const populationB = guessPopulation.guess(polygonB);
 			const populationAB = guessPopulation.guess(multiPolygon);
-			expect(populationA).toBe(220698576.62801403);
-			expect(populationB).toBe(592696.647596751);
+			expect(populationA).toBe(2135743.3417579005);
+			expect(populationB).toBe(4689.739920382195);
 			expect(populationAB).toBe(populationA + populationB);
 		});
 
