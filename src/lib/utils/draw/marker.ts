@@ -20,7 +20,8 @@ export class MarkerDrawer extends AbstractDrawer<geojson.BBox> {
 
 	constructor(map: maplibregl.Map, options?: { point?: Point } & SymbolStyle) {
 		super();
-		this.point = options?.point ?? [0, 0];
+		const center = map.getCenter();
+		this.point = options?.point ?? [center.lng, center.lat];
 		this.symbolStyle = getSymbolStyle(options);
 		this.map = map;
 
