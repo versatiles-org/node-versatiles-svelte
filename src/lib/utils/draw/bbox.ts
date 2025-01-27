@@ -23,7 +23,10 @@ export class BBoxDrawer extends AbstractDrawer {
 	private inverted: boolean;
 	private bbox: BBox;
 
-	constructor(map: maplibregl.Map, options?: { bbox?: BBox; inverted?: boolean } & LineStyle & FillStyle) {
+	constructor(
+		map: maplibregl.Map,
+		options?: { bbox?: BBox; inverted?: boolean } & LineStyle & FillStyle
+	) {
 		super();
 		this.bbox = options?.bbox ?? worldBBox;
 		this.fillStyle = getFillStyle(options);
@@ -41,7 +44,7 @@ export class BBoxDrawer extends AbstractDrawer {
 			source: sourceId,
 			filter: ['==', '$type', 'LineString'],
 			layout: { 'line-cap': 'round', 'line-join': 'round' },
-			paint: this.lineStyle,
+			paint: this.lineStyle
 		});
 		map.addLayer({
 			id: 'bbox-fill',
@@ -56,7 +59,7 @@ export class BBoxDrawer extends AbstractDrawer {
 
 		map.on('mousemove', (e) => {
 			if (e.originalEvent.buttons % 2 === 0) return this.checkDragPointAt(e.point);
-			if (!this.isDragging) return
+			if (!this.isDragging) return;
 			if (!this.dragPoint) return this.checkDragPointAt(e.point);
 
 			this.doDrag(e.lngLat);

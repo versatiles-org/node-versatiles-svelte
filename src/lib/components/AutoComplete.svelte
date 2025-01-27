@@ -11,7 +11,7 @@
 
 	// Component properties
 	export let placeholder: string = '';
-	export let minChar: number = 0;
+	export let minChar: number = 3;
 	export let maxItems: number = 10;
 
 	// Reactive variables
@@ -32,7 +32,7 @@
 		if (r.length > 0) {
 			const { key, value } = r[0];
 			inputText = key;
-			setTimeout(() => dispatch('change', JSON.parse(JSON.stringify(value))), 0);
+			dispatch('change', JSON.parse(JSON.stringify(value)));
 		} else {
 			inputText = '';
 		}
@@ -96,7 +96,7 @@
 	// Close the autocomplete and select an item
 	function close(index = -1) {
 		isOpen = false;
-		if (index > -1 && results[index]) {
+		if (index >= 0 && results[index]) {
 			const { key, value } = results[index];
 			inputText = key;
 			dispatch('change', JSON.parse(JSON.stringify(value)));
