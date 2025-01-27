@@ -29,4 +29,9 @@ npm i @versatiles/svelte
 		<td><img src="https://github.com/versatiles-org/node-versatiles-svelte/releases/latest/download/bbox-map-light.png"></td>
 		<td><img src="https://github.com/versatiles-org/node-versatiles-svelte/releases/latest/download/bbox-map-dark.png"></td>
 	</tr>
+	<tr>
+		<th>LocatorMap</th>
+		<td><img src="https://github.com/versatiles-org/node-versatiles-svelte/releases/latest/download/locator-map-light.png"></td>
+		<td><img src="https://github.com/versatiles-org/node-versatiles-svelte/releases/latest/download/locator-map-dark.png"></td>
+	</tr>
 </table>

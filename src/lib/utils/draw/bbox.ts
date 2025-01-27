@@ -1,8 +1,8 @@
-import type { FeatureCollection, Feature, LineString, Position, Polygon } from 'geojson';
 import type geojson from 'geojson';
-import type { FillLayerPaint, FillStyle, LineLayerPaint, LineStyle } from './style.js';
+import type { FillStyle, AbstractLayerStyle, LineStyle } from './style.js';
 import { AbstractDrawer } from './abstract.js';
 import { getFillStyle, getLineStyle } from './style.js';
+import type { FillLayerSpecification, LineLayerSpecification } from 'maplibre-gl';
 
 const maplibregl = await import('maplibre-gl');
 const { LngLatBounds } = maplibregl;
@@ -21,7 +21,7 @@ export const DragPointMap = new Map<DragPoint, { cursor: string, flipH: DragPoin
 	[false, { cursor: 'default', flipH: false, flipV: false }],
 ])
 
-type BBox = [number, number, number, number];
+export type BBox = [number, number, number, number];
 const worldBBox: BBox = [-180, -85, 180, 85];
 
 export class BBoxDrawer extends AbstractDrawer<geojson.BBox> {
@@ -31,8 +31,8 @@ export class BBoxDrawer extends AbstractDrawer<geojson.BBox> {
 	private map: maplibregl.Map;
 	private canvas: HTMLElement;
 
-	private fillStyle: FillLayerPaint;
-	private lineStyle: LineLayerPaint;
+	private fillStyle: AbstractLayerStyle<FillLayerSpecification>;
+	private lineStyle: AbstractLayerStyle<LineLayerSpecification>;
 	private inverted: boolean;
 	private bbox: BBox;
 
@@ -47,24 +47,23 @@ export class BBoxDrawer extends AbstractDrawer<geojson.BBox> {
 		this.inverted = options?.inverted ?? true;
 		this.map = map;
 
-		const sourceId = 'bbox' + Math.random().toString(36).substr(2, 9);
+		const sourceId = 'bbox_' + Math.random().toString(36).slice(2);
 
 		if (this.source) throw new Error('BBoxDrawer already added to map');
 		map.addSource(sourceId, { type: 'geojson', data: this.getAsFeatureCollection() });
 		map.addLayer({
-			id: 'bbox-line',
+			id: 'bbox-line_' + Math.random().toString(36).slice(2),
 			type: 'line',
 			source: sourceId,
 			filter: ['==', '$type', 'LineString'],
-			layout: { 'line-cap': 'round', 'line-join': 'round' },
-			paint: this.lineStyle
+			...this.lineStyle
 		});
 		map.addLayer({
-			id: 'bbox-fill',
+			id: 'bbox-fill_' + Math.random().toString(36).slice(2),
 			type: 'fill',
 			source: sourceId,
 			filter: ['==', '$type', 'Polygon'],
-			paint: this.fillStyle
+			...this.fillStyle
 		});
 		this.source = map.getSource(sourceId);
 
@@ -85,7 +84,7 @@ export class BBoxDrawer extends AbstractDrawer<geojson.BBox> {
 			if (e.originalEvent.buttons % 2) {
 				this.checkDragPointAt(e.point);
 				if (this.dragPoint) this.isDragging = true;
-				e.preventDefault();
+				if (this.isDragging) e.preventDefault();
 			}
 		});
 
@@ -101,7 +100,7 @@ export class BBoxDrawer extends AbstractDrawer<geojson.BBox> {
 		this.canvas.style.cursor = this.getCursor(dragPoint);
 	}
 
-	private getAsFeatureCollection(): FeatureCollection {
+	private getAsFeatureCollection(): geojson.FeatureCollection {
 		const ring = getRing(this.bbox);
 		return {
 			type: 'FeatureCollection',
@@ -111,7 +110,7 @@ export class BBoxDrawer extends AbstractDrawer<geojson.BBox> {
 			]
 		};
 
-		function getRing(bbox: BBox): Position[] {
+		function getRing(bbox: BBox): geojson.Position[] {
 			const x0 = Math.min(bbox[0], bbox[2]);
 			const x1 = Math.max(bbox[0], bbox[2]);
 			const y0 = Math.min(bbox[1], bbox[3]);
@@ -120,11 +119,11 @@ export class BBoxDrawer extends AbstractDrawer<geojson.BBox> {
 			return [[x0, y0], [x1, y0], [x1, y1], [x0, y1], [x0, y0]];
 		}
 
-		function polygon(...coordinates: Position[][]): Feature<Polygon> {
+		function polygon(...coordinates: geojson.Position[][]): geojson.Feature<geojson.Polygon> {
 			return { type: 'Feature', geometry: { type: 'Polygon', coordinates }, properties: {} };
 		}
 
-		function linestring(coordinates: Position[]): Feature<LineString> {
+		function linestring(coordinates: geojson.Position[]): geojson.Feature<geojson.LineString> {
 			return { type: 'Feature', geometry: { type: 'LineString', coordinates }, properties: {} };
 		}
 	}

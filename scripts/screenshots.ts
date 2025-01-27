@@ -11,7 +11,7 @@ mkdirSync(path, { recursive: true });
 	console.log('start server');
 	const server = await npm_run_preview();
 
-	const names = ['basic-map', 'bbox-map'];
+	const names = ['basic-map', 'bbox-map', 'locator-map'];
 
 	const browser = await firefox.launch();
 	const option = {
