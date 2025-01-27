@@ -3,7 +3,8 @@
 	<p>
 		Available components:<br />
 		<a href="basic-map">BasicMap</a><br />
-		<a href="bbox-map">BBoxMap</a>
+		<a href="bbox-map">BBoxMap</a><br />
+		<a href="locator-map">LocatorMap</a>
 	</p>
 </div>
 
