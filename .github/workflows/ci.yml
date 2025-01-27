@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  install:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -51,6 +51,12 @@ jobs:
       - name: Build the project
         run: npm run build
 
+      - name: Upload Artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./build
+
       - name: Generate test coverage
         run: npm run test:coverage
 
@@ -58,3 +64,21 @@ jobs:
         uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  page:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
