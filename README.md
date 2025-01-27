@@ -21,17 +21,17 @@ npm i @versatiles/svelte
 	</tr>
 	<tr>
 		<th>BasicMap</th>
-		<td><img src="https://github.com/versatiles-org/node-versatiles-svelte/releases/latest/download/basic-map-light.png"></td>
-		<td><img src="https://github.com/versatiles-org/node-versatiles-svelte/releases/latest/download/basic-map-dark.png"></td>
+		<td><img src="./screenshots/basic-map-light.png"></td>
+		<td><img src="./screenshots/basic-map-dark.png"></td>
 	</tr>
 	<tr>
 		<th>BBoxMap</th>
-		<td><img src="https://github.com/versatiles-org/node-versatiles-svelte/releases/latest/download/bbox-map-light.png"></td>
-		<td><img src="https://github.com/versatiles-org/node-versatiles-svelte/releases/latest/download/bbox-map-dark.png"></td>
+		<td><img src="./screenshots/bbox-map-light.png"></td>
+		<td><img src="./screenshots/bbox-map-dark.png"></td>
 	</tr>
 	<tr>
 		<th>LocatorMap</th>
-		<td><img src="https://github.com/versatiles-org/node-versatiles-svelte/releases/latest/download/locator-map-light.png"></td>
-		<td><img src="https://github.com/versatiles-org/node-versatiles-svelte/releases/latest/download/locator-map-dark.png"></td>
+		<td><img src="./screenshots/locator-map-light.png"></td>
+		<td><img src="./screenshots/locator-map-dark.png"></td>
 	</tr>
 </table>
