@@ -17,10 +17,6 @@
 	let bbox: BBoxDrawer;
 	let map: MaplibreMapType; // Declare map instance at the top level
 
-	export function getBounds(): LngLatBounds | undefined {
-		return bbox?.getBounds();
-	}
-
 	function handleMapReady(event: CustomEvent) {
 		map = event.detail.map;
 		map.setPadding({ top: 31 + 5, right: 5, bottom: 5, left: 5 });
@@ -35,7 +31,7 @@
 
 	function flyTo(newBBox: BBox) {
 		if (bbox) {
-			bbox.setBBox(newBBox);
+			bbox.setGeometry(newBBox);
 
 			const transform = map.cameraForBounds(bbox.getBounds()) as CameraOptions;
 			if (transform == null) return;

@@ -7,11 +7,24 @@ import { getFillStyle, getLineStyle } from './style.js';
 const maplibregl = await import('maplibre-gl');
 const { LngLatBounds } = maplibregl;
 
-export type DragPoint = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | false;
-export type BBox = [number, number, number, number];
+type DragPoint = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | false;
+// prettier-ignore
+export const DragPointMap = new Map<DragPoint, { cursor: string, flipH: DragPoint, flipV: DragPoint }>([
+	['n', { cursor: 'ns-resize', flipH: 'n', flipV: 's' }],
+	['ne', { cursor: 'nesw-resize', flipH: 'n', flipV: 'se' }],
+	['e', { cursor: 'ew-resize', flipH: 'w', flipV: 'e' }],
+	['se', { cursor: 'nwse-resize', flipH: 'sw', flipV: 'ne' }],
+	['s', { cursor: 'ns-resize', flipH: 's', flipV: 'n' }],
+	['sw', { cursor: 'nesw-resize', flipH: 'se', flipV: 'nw' }],
+	['w', { cursor: 'ew-resize', flipH: 'e', flipV: 'w' }],
+	['nw', { cursor: 'nwse-resize', flipH: 'ne', flipV: 'sw' }],
+	[false, { cursor: 'default', flipH: false, flipV: false }],
+])
+
+type BBox = [number, number, number, number];
 const worldBBox: BBox = [-180, -85, 180, 85];
 
-export class BBoxDrawer extends AbstractDrawer {
+export class BBoxDrawer extends AbstractDrawer<geojson.BBox> {
 	private source?: maplibregl.GeoJSONSource;
 	private dragPoint: DragPoint = false;
 	private isDragging = false;
@@ -82,13 +95,13 @@ export class BBoxDrawer extends AbstractDrawer {
 		});
 	}
 
-	public updateDragPoint(dragPoint: DragPoint) {
+	private updateDragPoint(dragPoint: DragPoint) {
 		if (this.dragPoint === dragPoint) return;
 		this.dragPoint = dragPoint;
 		this.canvas.style.cursor = this.getCursor(dragPoint);
 	}
 
-	public getAsFeatureCollection(): FeatureCollection {
+	private getAsFeatureCollection(): FeatureCollection {
 		const ring = getRing(this.bbox);
 		return {
 			type: 'FeatureCollection',
@@ -108,23 +121,15 @@ export class BBoxDrawer extends AbstractDrawer {
 		}
 
 		function polygon(...coordinates: Position[][]): Feature<Polygon> {
-			return {
-				type: 'Feature',
-				geometry: { type: 'Polygon', coordinates },
-				properties: {}
-			};
+			return { type: 'Feature', geometry: { type: 'Polygon', coordinates }, properties: {} };
 		}
 
 		function linestring(coordinates: Position[]): Feature<LineString> {
-			return {
-				type: 'Feature',
-				geometry: { type: 'LineString', coordinates },
-				properties: {}
-			};
+			return { type: 'Feature', geometry: { type: 'LineString', coordinates }, properties: {} };
 		}
 	}
 
-	public setBBox(bbox: geojson.BBox): void {
+	public setGeometry(bbox: geojson.BBox): void {
 		this.bbox = bbox.slice(0, 4) as BBox;
 		this.redraw();
 	}
@@ -133,7 +138,7 @@ export class BBoxDrawer extends AbstractDrawer {
 		return new LngLatBounds(this.bbox);
 	}
 
-	public redraw(): void {
+	private redraw(): void {
 		this.source?.setData(this.getAsFeatureCollection());
 	}
 
@@ -166,18 +171,7 @@ export class BBoxDrawer extends AbstractDrawer {
 	}
 
 	private getCursor(drag: DragPoint): string {
-		// prettier-ignore
-		switch (drag) {
-			case 'n':
-			case 's': return 'ns-resize';
-			case 'e':
-			case 'w': return 'ew-resize';
-			case 'nw':
-			case 'se': return 'nwse-resize';
-			case 'ne':
-			case 'sw': return 'nesw-resize';
-		}
-		return 'default';
+		return DragPointMap.get(drag)?.cursor ?? 'default';
 	}
 
 	private doDrag(lngLat: maplibregl.LngLat): void {
@@ -200,31 +194,13 @@ export class BBoxDrawer extends AbstractDrawer {
 		if (this.bbox[2] < this.bbox[0]) {
 			// flip horizontal
 			this.bbox = [this.bbox[2], this.bbox[1], this.bbox[0], this.bbox[3]];
-
-			// prettier-ignore
-			switch (this.dragPoint) {
-				case 'ne': this.updateDragPoint('nw'); break;
-				case 'nw': this.updateDragPoint('ne'); break;
-				case 'se': this.updateDragPoint('sw'); break;
-				case 'sw': this.updateDragPoint('se'); break;
-				case 'e': this.updateDragPoint('w'); break;
-				case 'w': this.updateDragPoint('e'); break;
-			}
+			this.updateDragPoint(DragPointMap.get(this.dragPoint)?.flipH ?? false);
 		}
 
 		if (this.bbox[3] < this.bbox[1]) {
 			// flip vertical
 			this.bbox = [this.bbox[0], this.bbox[3], this.bbox[2], this.bbox[1]];
-
-			// prettier-ignore
-			switch (this.dragPoint) {
-				case 'ne': this.updateDragPoint('se'); break;
-				case 'nw': this.updateDragPoint('sw'); break;
-				case 'se': this.updateDragPoint('ne'); break;
-				case 'sw': this.updateDragPoint('nw'); break;
-				case 'e': this.updateDragPoint('e'); break;
-				case 'w': this.updateDragPoint('w'); break;
-			}
+			this.updateDragPoint(DragPointMap.get(this.dragPoint)?.flipV ?? false);
 		}
 	}
 }
