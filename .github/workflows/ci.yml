@@ -32,7 +32,7 @@ jobs:
 
       - name: Install
         run: |
-          npm ci
+          npm install
           npx svelte-kit sync
           npx svelte-check --tsconfig ./tsconfig.json
 
