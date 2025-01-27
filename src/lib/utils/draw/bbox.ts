@@ -14,7 +14,9 @@ const worldBBox: BBox = [-180, -85, 180, 85];
 export class BBoxDrawer extends AbstractDrawer {
 	private source?: maplibregl.GeoJSONSource;
 	private dragPoint: DragPoint = false;
+	private isDragging = false;
 	private map: maplibregl.Map;
+	private canvas: HTMLElement;
 
 	private fillStyle: FillLayerPaint;
 	private lineStyle: LineLayerPaint;
@@ -50,36 +52,37 @@ export class BBoxDrawer extends AbstractDrawer {
 		});
 		this.source = map.getSource(sourceId);
 
-		const canvas = map.getCanvasContainer();
+		this.canvas = map.getCanvasContainer();
 
 		map.on('mousemove', (e) => {
-			if (this.dragPoint) {
-				if (e.originalEvent.buttons % 2) {
-					this.doDrag(e.lngLat);
-					this.redraw();
-					e.preventDefault();
-				} else {
-					this.dragPoint = false;
-				}
-			} else {
-				const drag = this.getDragPoint(e.point);
-				if (drag !== this.dragPoint) {
-					this.dragPoint = drag;
-					canvas.style.cursor = this.getCursor(drag);
-				}
-			}
+			if (e.originalEvent.buttons % 2 === 0) return this.checkDragPointAt(e.point);
+			if (!this.isDragging) return
+			if (!this.dragPoint) return this.checkDragPointAt(e.point);
+
+			this.doDrag(e.lngLat);
+			this.redraw();
+			e.preventDefault();
 		});
 
 		map.on('mousedown', (e) => {
+			if (this.isDragging) return;
 			if (e.originalEvent.buttons % 2) {
-				this.dragPoint = this.getDragPoint(e.point);
+				this.checkDragPointAt(e.point);
+				if (this.dragPoint) this.isDragging = true;
 				e.preventDefault();
 			}
 		});
 
 		map.on('mouseup', () => {
-			this.dragPoint = false;
+			this.isDragging = false;
+			this.updateDragPoint(false);
 		});
+	}
+
+	public updateDragPoint(dragPoint: DragPoint) {
+		if (this.dragPoint === dragPoint) return;
+		this.dragPoint = dragPoint;
+		this.canvas.style.cursor = this.getCursor(dragPoint);
 	}
 
 	public getAsFeatureCollection(): FeatureCollection {
@@ -137,17 +140,17 @@ export class BBoxDrawer extends AbstractDrawer {
 		return [Math.min(p0.x, p1.x), Math.min(p0.y, p1.y), Math.max(p0.x, p1.x), Math.max(p0.y, p1.y)];
 	}
 
-	private getDragPoint(point: maplibregl.Point): DragPoint {
+	private checkDragPointAt(point: maplibregl.Point): void {
 		const maxDistance = 5;
 
 		const { x, y } = point;
 		const [x0, y0, x1, y1] = this.getAsPixel();
 
 		// Don't think outside the box
-		if (x < x0 - maxDistance) return false;
-		if (x > x1 + maxDistance) return false;
-		if (y < y0 - maxDistance) return false;
-		if (y > y1 + maxDistance) return false;
+		if (x < x0 - maxDistance) return this.updateDragPoint(false);
+		if (x > x1 + maxDistance) return this.updateDragPoint(false);
+		if (y < y0 - maxDistance) return this.updateDragPoint(false);
+		if (y > y1 + maxDistance) return this.updateDragPoint(false);
 
 		let dragX = (Math.abs(x0 - x) < maxDistance ? 1 : 0) + (Math.abs(x1 - x) < maxDistance ? 2 : 0);
 		let dragY = (Math.abs(y0 - y) < maxDistance ? 1 : 0) + (Math.abs(y1 - y) < maxDistance ? 2 : 0);
@@ -156,7 +159,7 @@ export class BBoxDrawer extends AbstractDrawer {
 		if (dragY === 3) dragY = Math.abs(y0 - y) < Math.abs(y1 - y) ? 1 : 2;
 
 		const directions: DragPoint[] = [false, 'w', 'e', 'n', 'nw', 'ne', 's', 'sw', 'se'];
-		return directions[dragX + dragY * 3];
+		this.updateDragPoint(directions[dragX + dragY * 3]);
 	}
 
 	private getCursor(drag: DragPoint): string {
@@ -197,12 +200,12 @@ export class BBoxDrawer extends AbstractDrawer {
 
 			// prettier-ignore
 			switch (this.dragPoint) {
-				case 'ne': this.dragPoint = 'nw'; break;
-				case 'nw': this.dragPoint = 'ne'; break;
-				case 'se': this.dragPoint = 'sw'; break;
-				case 'sw': this.dragPoint = 'se'; break;
-				case 'e': this.dragPoint = 'w'; break;
-				case 'w': this.dragPoint = 'e'; break;
+				case 'ne': this.updateDragPoint('nw'); break;
+				case 'nw': this.updateDragPoint('ne'); break;
+				case 'se': this.updateDragPoint('sw'); break;
+				case 'sw': this.updateDragPoint('se'); break;
+				case 'e': this.updateDragPoint('w'); break;
+				case 'w': this.updateDragPoint('e'); break;
 			}
 		}
 
@@ -212,12 +215,12 @@ export class BBoxDrawer extends AbstractDrawer {
 
 			// prettier-ignore
 			switch (this.dragPoint) {
-				case 'ne': this.dragPoint = 'se'; break;
-				case 'nw': this.dragPoint = 'sw'; break;
-				case 'se': this.dragPoint = 'ne'; break;
-				case 'sw': this.dragPoint = 'nw'; break;
-				case 'e': this.dragPoint = 'e'; break;
-				case 'w': this.dragPoint = 'w'; break;
+				case 'ne': this.updateDragPoint('se'); break;
+				case 'nw': this.updateDragPoint('sw'); break;
+				case 'se': this.updateDragPoint('ne'); break;
+				case 'sw': this.updateDragPoint('nw'); break;
+				case 'e': this.updateDragPoint('e'); break;
+				case 'w': this.updateDragPoint('w'); break;
 			}
 		}
 	}
