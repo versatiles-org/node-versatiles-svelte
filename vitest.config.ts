@@ -5,8 +5,10 @@ export default defineConfig({
 		environment: 'happy-dom',
 		coverage: {
 			provider: 'v8',
-			include: ['scripts/**/*.ts', 'src/**/*.ts']
-		}
+			reporter: ['lcov', 'text'],
+			include: ['scripts/**/*.ts', 'src/**/*.ts'],
+		},
+		include: ['scripts/**/*.test.ts', 'src/**/*.test.ts', '!.svelte-kit/**'],
 	},
 	esbuild: {
 		supported: {
