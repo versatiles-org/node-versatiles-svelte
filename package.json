@@ -3,9 +3,9 @@
   "version": "0.2.0",
   "license": "MIT",
   "scripts": {
-    "build": "vite build && npm run package",
+    "build": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && vite build && npm run package",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && npm run lint && npm run test",
+    "check": "npm run lint && npm run build && npm run test",
     "dev": "vite dev",
     "format": "prettier --write .",
     "lint": "prettier --check . && eslint --color .",

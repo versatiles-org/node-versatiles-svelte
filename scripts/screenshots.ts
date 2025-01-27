@@ -1,7 +1,7 @@
 import { ChildProcess, spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { firefox } from 'playwright';
+import { chromium } from 'playwright';
 import type { Page } from 'playwright';
 
 const path = resolve(import.meta.dirname, '../screenshots');
@@ -11,9 +11,13 @@ mkdirSync(path, { recursive: true });
 	console.log('start server');
 	const server = await npm_run_preview();
 
-	const names = ['basic-map', 'bbox-map', 'locator-map'];
+	const names = [
+		'basic-map',
+		'bbox-map',
+		'locator-map'
+	];
 
-	const browser = await firefox.launch();
+	const browser = await chromium.launch();
 	const option = {
 		colorScheme: 'light',
 		deviceScaleFactor: 1,
@@ -39,10 +43,12 @@ mkdirSync(path, { recursive: true });
 			const l = page.locator('.wrapper');
 			const clip = await l.boundingBox();
 			if (!clip) throw Error();
+
 			clip.x += 1;
 			clip.y += 1;
 			clip.width -= 2;
 			clip.height -= 2;
+
 			await page.screenshot({
 				path: resolve(path, `${name}-${suffix}.png`),
 				clip,
