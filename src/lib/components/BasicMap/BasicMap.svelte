@@ -10,7 +10,7 @@
 	export let style: string = 'position:absolute; left:0px; top:0px; width:100%; height:100%;';
 	export let container: HTMLDivElement | undefined = undefined;
 	export let map: MaplibreMapType | undefined = undefined;
-	export let styleOptions: StyleBuilderOptions = {};
+	export let styleOptions: Parameters<typeof getMapStyle>[1];
 	export let mapOptions: Partial<MapOptions> = {};
 
 	// Create the event dispatcher

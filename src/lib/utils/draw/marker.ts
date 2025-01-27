@@ -1,44 +1,45 @@
 import type geojson from 'geojson';
-import type { AbstractLayerStyle, SymbolStyle } from './style.js';
 import { AbstractDrawer } from './abstract.js';
-import { getSymbolStyle } from './style.js';
-import type { SymbolLayerSpecification } from 'maplibre-gl';
+import { SymbolStyle } from './style.js';
 
 const maplibregl = await import('maplibre-gl');
 const { LngLatBounds } = maplibregl;
 export type Point = [number, number];
 
 export class MarkerDrawer extends AbstractDrawer<geojson.BBox> {
-	private source?: maplibregl.GeoJSONSource;
+	private source: maplibregl.GeoJSONSource;
+	private layerId: string;
 	private isDragging = false;
 	private dragPoint = false;
 	private map: maplibregl.Map;
 	private canvas: HTMLElement;
 
-	private symbolStyle: AbstractLayerStyle<SymbolLayerSpecification>;
+	public readonly style = new SymbolStyle();
 	private point: Point;
 
-	constructor(map: maplibregl.Map, options?: { point?: Point } & SymbolStyle) {
+	constructor(map: maplibregl.Map, options?: { point?: Point }) {
 		super();
 		const center = map.getCenter();
 		this.point = options?.point ?? [center.lng, center.lat];
-		this.symbolStyle = getSymbolStyle(options);
 		this.map = map;
 
 		const sourceId = 'marker_' + Math.random().toString(36).slice(2);
+		this.layerId = 'layer_' + sourceId;
 
-		if (this.source) throw new Error('BBoxDrawer already added to map');
 		map.addSource(sourceId, { type: 'geojson', data: this.getAsFeatureCollection() });
+		this.source = map.getSource(sourceId)!;
+
 		map.addLayer({
-			id: 'marker_' + Math.random().toString(36).slice(2),
+			id: this.layerId,
 			type: 'symbol',
 			source: sourceId,
 			filter: ['==', '$type', 'Point'],
-			...this.symbolStyle
+			...this.style.getLayerSpecifcation()
 		});
-		this.source = map.getSource(sourceId);
 
 		this.canvas = map.getCanvasContainer();
+
+		this.style.subscribe(() => this.redraw())
 
 		map.on('mousemove', (e) => {
 			if (e.originalEvent.buttons % 2 === 0) return this.checkDragPointAt(e.point);
@@ -92,7 +93,14 @@ export class MarkerDrawer extends AbstractDrawer<geojson.BBox> {
 	}
 
 	private redraw(): void {
-		this.source?.setData(this.getAsFeatureCollection());
+		this.source.setData(this.getAsFeatureCollection());
+		const spec = this.style.getLayerSpecifcation();
+		for (const [key, value] of Object.entries(spec.paint)) {
+			this.map.setPaintProperty(this.layerId, key, value);
+		}
+		for (const [key, value] of Object.entries(spec.layout)) {
+			this.map.setLayoutProperty(this.layerId, key, value);
+		}
 	}
 
 	private getAsPixel(): Point {

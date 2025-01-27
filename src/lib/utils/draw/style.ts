@@ -4,6 +4,7 @@ import type {
 	LineLayerSpecification,
 	SymbolLayerSpecification
 } from 'maplibre-gl';
+import { get, writable, type Readable, type Subscriber } from 'svelte/store';
 
 export type AbstractLayerStyle<
 	T extends FillLayerSpecification | LineLayerSpecification | SymbolLayerSpecification
@@ -49,19 +50,32 @@ export function getLineStyle(style?: LineStyle): AbstractLayerStyle<LineLayerSpe
 	return result;
 }
 
-export interface SymbolStyle {
-	color?: string;
-}
-
-export function getSymbolStyle(style?: SymbolStyle): AbstractLayerStyle<SymbolLayerSpecification> {
-	const result: AbstractLayerStyle<SymbolLayerSpecification> = {
-		layout: {},
-		paint: {}
-	};
-	result.paint['icon-color'] = Color.parse(style?.color ?? '#a00').asString();
-	result.paint['icon-halo-color'] = Color.parse('#fff').asString();
-	result.paint['icon-halo-width'] = 0.5;
-	result.paint['icon-halo-blur'] = 0;
-	result.layout['icon-image'] = 'basics:icon-embassy';
-	return result;
+export class SymbolStyle implements Readable<SymbolStyle> {
+	public color = writable('#AA0000');
+	constructor() {
+	}
+	getLayerSpecifcation(): AbstractLayerStyle<SymbolLayerSpecification> {
+		const result: AbstractLayerStyle<SymbolLayerSpecification> = {
+			layout: {},
+			paint: {}
+		};
+		result.paint['icon-color'] = Color.parse(get(this.color)).asString();
+		result.paint['icon-halo-color'] = Color.parse('#fff').asString();
+		result.paint['icon-halo-width'] = 0.5;
+		result.paint['icon-halo-blur'] = 0;
+		result.paint['icon-opacity'] = 1;
+		result.layout['icon-image'] = 'basics:icon-embassy';
+		return result;
+	}
+	getClone(): SymbolStyle {
+		const result = new SymbolStyle();
+		result.color = this.color;
+		return result;
+	}
+	subscribe(run: Subscriber<SymbolStyle>): () => void {
+		const unsubscribers = [
+			this.color.subscribe(() => run(this))
+		];
+		return () => unsubscribers.forEach((unsubscribe) => unsubscribe());
+	}
 }
