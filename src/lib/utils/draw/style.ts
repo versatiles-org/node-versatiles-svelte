@@ -1,7 +1,6 @@
 import { Color } from '@versatiles/style';
 import type { FillLayerSpecification, LineLayerSpecification } from 'maplibre-gl';
 
-
 export type FillLayerPaint = FillLayerSpecification['paint'];
 export type LineLayerPaint = LineLayerSpecification['paint'];
 
@@ -23,7 +22,7 @@ export function getFillStyle(style?: FillStyle): FillLayerPaint {
 		} else if (style.color) {
 			result['fill-color'] = Color.parse(style.color).fade(0.8).asString();
 		}
-	};
+	}
 	return result;
 }
 
@@ -32,6 +31,6 @@ export function getLineStyle(style?: LineStyle): LineLayerPaint {
 	if (style) {
 		const color = style.lineColor ?? style.color;
 		if (color) result['line-color'] = Color.parse(color).asString();
-	};
+	}
 	return result;
 }

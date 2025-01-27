@@ -1,7 +1,6 @@
 <!-- BBoxMap.svelte -->
 <script lang="ts">
 	import type { CameraOptions, LngLatBounds, Map as MaplibreMapType } from 'maplibre-gl';
-	import { onMount } from 'svelte';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import AutoComplete from '$lib/components/AutoComplete.svelte';
 	import { getCountryName } from '$lib/utils/location.js';
@@ -22,30 +21,16 @@
 		return bbox?.getBounds();
 	}
 
-	onMount(async () => {
-		bboxes = await loadBBoxes();
-		start();
-	});
-
 	function handleMapReady(event: CustomEvent) {
 		map = event.detail.map;
 		map.setPadding({ top: 31 + 5, right: 5, bottom: 5, left: 5 });
 
-		map.on('load', () => {
+		map.on('load', async () => {
 			bbox = new BBoxDrawer(map, {
 				color: isDarkMode(mapContainer) ? '#FFFFFF' : '#000000'
 			});
+			bboxes = await loadBBoxes();
 		});
-
-		start();
-	}
-
-	function start() {
-		console.log('start', bboxes, map, autoComplete);
-		if (!bboxes) return;
-		if (!map) return;
-		if (!autoComplete) return;
-		autoComplete.setInputText(getCountryName() ?? ''); // Initial search text
 	}
 
 	function flyTo(newBBox: BBox) {
@@ -65,6 +50,10 @@
 			}
 		}
 	}
+
+	$: if (autoComplete) {
+		autoComplete?.setInputText(getCountryName() ?? '');
+	}
 </script>
 
 <div class="container">
@@ -75,7 +64,6 @@
 				placeholder="Find country, region or city …"
 				on:change={(e) => flyTo(e.detail)}
 				bind:this={autoComplete}
-				on:mount={() => start()}
 			/>
 		</div>
 	{/if}
