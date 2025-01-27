@@ -15,11 +15,11 @@ describe('scripts/bboxes/geojson2bboxes.ts', () => {
 					type: 'Polygon',
 					coordinates: [
 						[
-							[-10, -10],
-							[-10, 10],
+							[9, 9],
+							[9, 10],
 							[10, 10],
-							[10, -10],
-							[-10, -10]
+							[10, 9],
+							[9, 9]
 						]
 					]
 				},
@@ -31,12 +31,12 @@ describe('scripts/bboxes/geojson2bboxes.ts', () => {
 	const mockGeoJSONResult = JSON.stringify({
 		label: 'Test Feature',
 		population: 500,
-		bbox: [-10, -10, 10, 10]
+		bbox: [9, 9, 10, 10]
 	});
 
 	const mockGeoJSONL = `
-{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-10,-10],[-10,10],[10,10],[10,-10],[-10,-10]]]},"properties":{"name":"A Test Feature","population":500}}
-{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-20,-20],[-20,-10],[-10,-10],[-10,-20],[-20,-20]]]},"properties":{"name":"Different Feature","population":1000}}
+{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[9,9],[9,10],[10,10],[10,9],[9,9]]]},"properties":{"name":"A Test Feature","population":500}}
+{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[11,11],[11,12],[12,12],[12,11],[11,11]]]},"properties":{"name":"Different Feature","population":1000}}
 `;
 
 	const tempDir = mkdtempSync(join(tmpdir(), 'vitest-'));
@@ -68,8 +68,8 @@ describe('scripts/bboxes/geojson2bboxes.ts', () => {
 		await processData(filenameIn, '{name}', 'population');
 		expect(readFileSync(filenameOut, 'utf8')).toStrictEqual(
 			[
-				'{"label":"A Test Feature","population":500,"bbox":[-10,-10,10,10]}',
-				'{"label":"Different Feature","population":1000,"bbox":[-20,-20,-10,-10]}'
+				'{"label":"A Test Feature","population":500,"bbox":[9,9,10,10]}',
+				'{"label":"Different Feature","population":1000,"bbox":[11,11,12,12]}'
 			].join('\n')
 		);
 	});
@@ -90,7 +90,7 @@ describe('scripts/bboxes/geojson2bboxes.ts', () => {
 		const { filenameIn, filenameOut } = saveAsTempFile(mockGeoJSON, 'geojson');
 		await processData(filenameIn, '{name}');
 		expect(readFileSync(filenameOut, 'utf8')).toStrictEqual(
-			'{"label":"Test Feature","population":220698576.62801403,"bbox":[-10,-10,10,10]}'
+			'{"label":"Test Feature","population":2135743.3417579005,"bbox":[9,9,10,10]}'
 		);
 	});
 
