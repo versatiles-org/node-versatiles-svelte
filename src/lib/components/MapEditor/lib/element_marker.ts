@@ -12,6 +12,7 @@ export class MarkerElement extends AbstractElement {
 	private isDragging = false;
 	private dragPoint = false;
 	public color = writable('#ff0000');
+	public size = writable(1);
 
 	constructor(map: maplibregl.Map, name: string, position: Point) {
 		super(map, name);
@@ -27,9 +28,11 @@ export class MarkerElement extends AbstractElement {
 		})
 		layer.setLayout({
 			'icon-image': 'basics:icon-embassy',
+			'icon-size': get(this.size),
 		})
 
 		this.color.subscribe((value) => layer.updatePaint('icon-color', Color.parse(value)));
+		this.size.subscribe((value) => layer.updateLayout('icon-size', value));
 
 		map.on('mousemove', (e) => {
 			if (e.originalEvent.buttons % 2 === 0) return this.checkDragPointAt(e.point);
