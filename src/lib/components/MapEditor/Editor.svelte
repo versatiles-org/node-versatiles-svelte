@@ -3,18 +3,16 @@
 	import type { AbstractElement } from './lib/element_abstract.js';
 	import { MarkerElement } from './lib/element_marker.js';
 
-	let { element = $bindable() }: { element: AbstractElement | null } = $props();
+	const { element = $bindable() }: { element: AbstractElement } = $props();
 
-	let name = $state('');
-
+	let name = $state(element.name);
 	$effect(() => {
-		if (element) {
-			element.name = name;
-		}
+		element.name = name;
 	});
 </script>
 
 {#if element}
+	<!-- <input type="text" bind:value={element.bind()} /> -->
 	<input type="text" bind:value={name} />
 	{#if element instanceof MarkerElement}
 		<EditorMarker {element} />
