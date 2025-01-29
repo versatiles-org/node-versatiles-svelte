@@ -22,9 +22,11 @@
 		map.setPadding({ top: 31 + 5, right: 5, bottom: 5, left: 5 });
 
 		map.on('load', async () => {
-			bbox = new BBoxDrawer(map, {
-				color: isDarkMode(mapContainer) ? '#FFFFFF' : '#000000'
-			});
+			bbox = new BBoxDrawer(
+				map,
+				[-180, -86, 180, 86],
+				isDarkMode(mapContainer) ? '#FFFFFF' : '#000000'
+			);
 			bboxes = await loadBBoxes();
 		});
 	}

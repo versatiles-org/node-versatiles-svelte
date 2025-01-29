@@ -1,13 +1,12 @@
 <script lang="ts">
-	import { MarkerDrawer } from '$lib/utils/draw/marker.js';
 	import { get } from 'svelte/store';
+	import type { MarkerElement } from './lib/element_marker.js';
 
-	let { element = $bindable() }: { element: MarkerDrawer } = $props();
+	let { element = $bindable() }: { element: MarkerElement } = $props();
 
-	let style = element.style;
-	let color = $state(get(style.color));
+	let color = $state(get(element.color));
 
-	$effect(() => style.color.set(color));
+	$effect(() => element.color.set(color));
 </script>
 
 <div class="row">

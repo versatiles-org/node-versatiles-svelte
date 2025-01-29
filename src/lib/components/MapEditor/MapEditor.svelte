@@ -3,9 +3,11 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import BasicMap from '../BasicMap/BasicMap.svelte';
 	//import SpriteLibrary from '$lib/utils/sprite_library.js';
-	import { MarkerDrawer } from '$lib/utils/draw/marker.js';
+	//import { MarkerDrawer } from '$lib/components/MapEditor/lib/marker.js';
 	import { browser } from '$app/environment';
 	import Editor from './Editor.svelte';
+	import { GeometryManager } from './lib/geometry_manager.js';
+	import type { AbstractElement } from './lib/element_abstract.js';
 
 	const inIframe = browser && window.self !== window.top;
 	let showSidebar = !browser || !inIframe;
@@ -13,19 +15,20 @@
 	let mapContainer: HTMLDivElement | undefined = $state();
 	let map: MaplibreMapType | undefined = $state();
 	//let spriteLibrary = new SpriteLibrary();
-	let selectedElement: null | MarkerDrawer = $state(null);
+	let selectedElement: null | AbstractElement = $state(null);
+	let geometryManager:GeometryManager;
 
 	function handleMapReady(event: CustomEvent) {
 		map = event.detail.map as MaplibreMapType;
 		map.on('load', async () => {
+			geometryManager = new GeometryManager(map!);
 			//const list = await spriteLibrary.getSpriteList();
 			//markers.push(new MarkerDrawer(map, { point: [25, 22] }));
 		});
 	}
 
 	function clickNewMarker() {
-		if (!map) return;
-		selectedElement = new MarkerDrawer(map);
+		selectedElement = geometryManager.getNewMarker();
 	}
 </script>
 
