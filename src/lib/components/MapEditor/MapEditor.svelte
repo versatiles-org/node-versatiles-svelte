@@ -16,7 +16,7 @@
 	let map: MaplibreMapType | undefined = $state();
 	//let spriteLibrary = new SpriteLibrary();
 	let selectedElement: null | AbstractElement = $state(null);
-	let geometryManager:GeometryManager;
+	let geometryManager: GeometryManager;
 
 	function handleMapReady(event: CustomEvent) {
 		map = event.detail.map as MaplibreMapType;
@@ -50,9 +50,11 @@
 			<div class="row">
 				<select></select>
 			</div>
-			<div class="editor">
-				<Editor bind:element={selectedElement} />
-			</div>
+			{#if selectedElement}
+				<div class="editor">
+					<Editor bind:element={selectedElement} />
+				</div>
+			{/if}
 		</div>
 		<style lang="scss">
 			.page {
