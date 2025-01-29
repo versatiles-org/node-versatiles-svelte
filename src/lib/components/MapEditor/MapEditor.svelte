@@ -38,7 +38,6 @@
 			{map}
 			bind:container={mapContainer}
 			on:mapReady={handleMapReady}
-			styleOptions={{ transitionDuration: 0 }}
 		></BasicMap>
 	</div>
 	{#if showSidebar}
