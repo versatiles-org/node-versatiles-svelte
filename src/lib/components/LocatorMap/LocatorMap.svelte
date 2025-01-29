@@ -4,7 +4,7 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import BasicMap from '../BasicMap/BasicMap.svelte';
 	//import SpriteLibrary from '$lib/utils/sprite_library.js';
-	import { MarkerDrawer } from '$lib/utils/draw/marker.js';
+	import { MarkerDrawer } from '$lib/components/MapEditor/lib/marker.js';
 
 	let mapContainer: HTMLDivElement;
 	let map: MaplibreMapType;

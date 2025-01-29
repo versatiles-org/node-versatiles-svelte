@@ -1,8 +1,4 @@
 import type geojson from 'geojson';
-import type { FillStyle, AbstractLayerStyle, LineStyle } from './style.js';
-import { AbstractDrawer } from './abstract.js';
-import { getFillStyle, getLineStyle } from './style.js';
-import type { FillLayerSpecification, LineLayerSpecification } from 'maplibre-gl';
 
 const maplibregl = await import('maplibre-gl');
 const { LngLatBounds } = maplibregl;
@@ -24,27 +20,21 @@ export const DragPointMap = new Map<DragPoint, { cursor: string, flipH: DragPoin
 export type BBox = [number, number, number, number];
 const worldBBox: BBox = [-180, -85, 180, 85];
 
-export class BBoxDrawer extends AbstractDrawer<geojson.BBox> {
+export class BBoxDrawer {
 	private source?: maplibregl.GeoJSONSource;
 	private dragPoint: DragPoint = false;
 	private isDragging = false;
 	private map: maplibregl.Map;
 	private canvas: HTMLElement;
 
-	private fillStyle: AbstractLayerStyle<FillLayerSpecification>;
-	private lineStyle: AbstractLayerStyle<LineLayerSpecification>;
 	private inverted: boolean;
 	private bbox: BBox;
 
 	constructor(
-		map: maplibregl.Map,
-		options?: { bbox?: BBox; inverted?: boolean } & LineStyle & FillStyle
+		map: maplibregl.Map, bbox: BBox, color: string, inverted?: boolean
 	) {
-		super();
-		this.bbox = options?.bbox ?? worldBBox;
-		this.fillStyle = getFillStyle(options);
-		this.lineStyle = getLineStyle(options);
-		this.inverted = options?.inverted ?? true;
+		this.bbox = bbox;
+		this.inverted = inverted ?? true;
 		this.map = map;
 
 		const sourceId = 'bbox_' + Math.random().toString(36).slice(2);
@@ -56,14 +46,16 @@ export class BBoxDrawer extends AbstractDrawer<geojson.BBox> {
 			type: 'line',
 			source: sourceId,
 			filter: ['==', '$type', 'LineString'],
-			...this.lineStyle
+			layout: { 'line-cap': 'round', 'line-join': 'round' },
+			paint: { 'line-color': color }
 		});
 		map.addLayer({
 			id: 'bbox-fill_' + Math.random().toString(36).slice(2),
 			type: 'fill',
 			source: sourceId,
 			filter: ['==', '$type', 'Polygon'],
-			...this.fillStyle
+			layout: {},
+			paint: { 'fill-color': color, 'fill-opacity': 0.2 }
 		});
 		this.source = map.getSource(sourceId);
 

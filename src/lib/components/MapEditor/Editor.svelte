@@ -1,12 +1,22 @@
 <script lang="ts">
-	import { MarkerDrawer } from '$lib/utils/draw/marker.js';
-	import type { SymbolStyle } from '$lib/utils/draw/style.js';
 	import EditorMarker from './EditorMarker.svelte';
+	import type { AbstractElement } from './lib/element_abstract.js';
+	import { MarkerElement } from './lib/element_marker.js';
 
-	let { element = $bindable() }: { element: MarkerDrawer | null } = $props();
+	let { element = $bindable() }: { element: AbstractElement | null } = $props();
 
+	let name = $state('');
+
+	$effect(() => {
+		if (element) {
+			element.name = name;
+		}
+	});
 </script>
 
-{#if element instanceof MarkerDrawer}
-	<EditorMarker {element} />
+{#if element}
+	<input type="text" bind:value={name} />
+	{#if element instanceof MarkerElement}
+		<EditorMarker {element} />
+	{/if}
 {/if}
