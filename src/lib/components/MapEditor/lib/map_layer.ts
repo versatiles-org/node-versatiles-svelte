@@ -5,10 +5,10 @@ import { Color } from '@versatiles/style';
 type LayerSpec = LayerFill | LayerLine | LayerSymbol;
 
 export class MapLayer<T extends LayerSpec> {
-	private map: maplibregl.Map;
-	private id: string;
-	private layoutProperties = {} as T['layout'];
-	private paintProperties = {} as T['paint'];
+	public readonly map: maplibregl.Map;
+	public readonly id: string;
+	public readonly layoutProperties = {} as T['layout'];
+	public readonly paintProperties = {} as T['paint'];
 
 	constructor(map: maplibregl.Map, id: string, source: string, type: 'symbol' | 'line' | 'fill') {
 		this.map = map;

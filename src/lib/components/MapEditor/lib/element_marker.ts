@@ -29,58 +29,38 @@ export class MarkerElement extends AbstractElement {
 		layer.setLayout({
 			'icon-image': 'basics:icon-embassy',
 			'icon-size': get(this.size),
+			'icon-overlap': 'always',
 		})
 
 		this.color.subscribe((value) => layer.updatePaint('icon-color', Color.parse(value)));
 		this.size.subscribe((value) => layer.updateLayout('icon-size', value));
 
-		map.on('mousemove', (e) => {
-			if (e.originalEvent.buttons % 2 === 0) return this.checkDragPointAt(e.point);
+		map.on('mousemove', layer.id, (e) => {
 			if (!this.isDragging) return;
-			if (!this.dragPoint) return this.checkDragPointAt(e.point);
-
 
 			this.position = [
 				Math.round(e.lngLat.lng * 1e5) / 1e5,
 				Math.round(e.lngLat.lat * 1e5) / 1e5
 			];
 
-
 			this.source.setData(this.getFeature());
 			e.preventDefault();
 		});
 
-		map.on('mousedown', (e) => {
+		map.on('mousedown', layer.id, (e) => {
 			if (this.isDragging) return;
 			if (e.originalEvent.buttons % 2) {
-				this.checkDragPointAt(e.point);
-				if (this.dragPoint) this.isDragging = true;
-				if (this.isDragging) e.preventDefault();
+				this.isDragging = true;
+				e.preventDefault();
 			}
 		});
 
-		map.on('mouseup', () => {
+		map.on('mouseup', layer.id, () => {
 			this.isDragging = false;
-			this.updateDragPoint(false);
 		});
-	}
 
-	private checkDragPointAt(point: maplibregl.Point): void {
-		const maxDistance = 5;
-
-		const { x, y } = point;
-
-		const p = this.map.project([this.position[0], this.position[1]]);
-
-		const distance = Math.sqrt(Math.pow(x - p.x, 2) + Math.pow(y - p.y, 2));
-
-		this.updateDragPoint(distance < maxDistance);
-	}
-
-	private updateDragPoint(dragPoint: boolean) {
-		if (this.dragPoint === dragPoint) return;
-		this.dragPoint = dragPoint;
-		this.canvas.style.cursor = dragPoint ? 'move' : 'default';
+		map.on('mouseenter', layer.id, () => this.canvas.style.cursor = 'move')
+		map.on('mouseleave', layer.id, () => this.canvas.style.cursor = 'default')
 	}
 
 	getFeature(): GeoJSON.Feature<GeoJSON.Point> {
