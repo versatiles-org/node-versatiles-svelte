@@ -8,6 +8,7 @@
 	import Editor from './Editor.svelte';
 	import { GeometryManager } from './lib/geometry_manager.js';
 	import type { AbstractElement } from './lib/element_abstract.js';
+	import { get } from 'svelte/store';
 
 	const inIframe = browser && window.self !== window.top;
 	let showSidebar = !browser || !inIframe;
@@ -15,43 +16,51 @@
 	let mapContainer: HTMLDivElement | undefined = $state();
 	let map: MaplibreMapType | undefined = $state();
 	//let spriteLibrary = new SpriteLibrary();
-	let selectedElement: null | AbstractElement = $state(null);
-	let geometryManager: GeometryManager;
+	let selectedElement: AbstractElement | undefined = $state(undefined);
+	let geometryManager: GeometryManager | undefined = $state();
+	let elements = $state([]) as AbstractElement[];
 
 	function handleMapReady(event: CustomEvent) {
 		map = event.detail.map as MaplibreMapType;
 		map.on('load', async () => {
 			geometryManager = new GeometryManager(map!);
+			geometryManager.elements.subscribe((value) => (elements = value));
 			//const list = await spriteLibrary.getSpriteList();
 			//markers.push(new MarkerDrawer(map, { point: [25, 22] }));
 		});
 	}
 
 	function clickNewMarker() {
-		selectedElement = geometryManager.getNewMarker();
+		selectedElement = geometryManager?.getNewMarker();
 	}
 </script>
 
 <div class="page">
 	<div class="container">
-		<BasicMap
-			{map}
-			bind:container={mapContainer}
-			on:mapReady={handleMapReady}
-		></BasicMap>
+		<BasicMap {map} bind:container={mapContainer} on:mapReady={handleMapReady}></BasicMap>
 	</div>
-	{#if showSidebar}
+	{#if showSidebar && geometryManager}
 		<div class="sidebar" style="--gap: 10px;">
 			<div class="row">
 				<input type="button" value="new marker" onclick={clickNewMarker} />
 			</div>
 			<hr />
 			<div class="row">
-				<select></select>
+				<select
+					size="5"
+					bind:value={
+						() => elements.indexOf(selectedElement!), (index) => (selectedElement = elements[index])
+					}
+				>
+					{#each elements as element, index}
+						<option value={index}>{element.name}</option>
+					{/each}
+				</select>
 			</div>
-			{#if selectedElement}
+			{#if selectedElement != null}
+				<hr />
 				<div class="editor">
-					<Editor bind:element={selectedElement} />
+					<Editor element={selectedElement} />
 				</div>
 			{/if}
 		</div>
@@ -70,15 +79,7 @@
 					padding: var(--gap);
 				}
 				.row {
-					display: flex;
-					gap: var(--gap);
 					margin-bottom: var(--gap);
-				}
-				select {
-					flex-grow: 1;
-				}
-				input[type='button'] {
-					flex-grow: 0;
 				}
 				.container {
 					width: calc(100% - 300px);
