@@ -158,8 +158,8 @@ export class MarkerElement extends AbstractElement {
 		this.halo.subscribe((value) => layer.updatePaint('icon-halo-width', value * get(this.size)));
 		this.rotate.subscribe((value) => layer.updateLayout('icon-rotate', value));
 		this.size.subscribe((value) => {
-			layer.updateLayout('icon-size', value)
-			layer.updatePaint('icon-halo-width', value * get(this.halo))
+			layer.updateLayout('icon-size', value);
+			layer.updatePaint('icon-halo-width', value * get(this.halo));
 		});
 		this.symbol.subscribe(() => {
 			const symbol = getSymbol();

@@ -13,7 +13,7 @@
     "prepack": "npm run package",
     "prepublishOnly": "npm run package",
     "preview": "vite preview",
-    "screenshots": "npm run build && npx tsx ./scripts/screenshots.ts",
+    "screenshots": "npm run build && npx tsx ./scripts/screenshots.ts && pngquant --nofs --force --ext .png screenshots/*.png && optipng -quiet screenshots/*.png",
     "release": "npm run build && npx vrt release-npm",
     "test:integration": "playwright test",
     "test:unit": "vitest run",
