@@ -2,37 +2,39 @@
 	import type { Map as MaplibreMapType } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import BasicMap from '../BasicMap/BasicMap.svelte';
-	//import SpriteLibrary from '$lib/utils/sprite_library.js';
-	//import { MarkerDrawer } from '$lib/components/MapEditor/lib/marker.js';
-	import { browser } from '$app/environment';
 	import Editor from './Editor.svelte';
 	import { GeometryManager } from './lib/geometry_manager.js';
 	import type { AbstractElement } from './lib/element_abstract.js';
-	import { get } from 'svelte/store';
+	import { onMount } from 'svelte';
 
-	const inIframe = browser && window.self !== window.top;
-	let showSidebar = !browser || !inIframe;
+	let showSidebar = $state(false);
+
+	onMount(() => {
+		const inIframe = window.self !== window.top;
+		if (!inIframe) showSidebar = true;
+	});
 
 	let mapContainer: HTMLDivElement | undefined = $state();
 	let map: MaplibreMapType | undefined = $state();
-	//let spriteLibrary = new SpriteLibrary();
-	let selectedElement: AbstractElement | undefined = $state(undefined);
 	let geometryManager: GeometryManager | undefined = $state();
 	let elements = $state([]) as AbstractElement[];
+
+	let activeElement: AbstractElement | undefined = $state(undefined);
 
 	function handleMapReady(event: CustomEvent) {
 		map = event.detail.map as MaplibreMapType;
 		map.on('load', async () => {
 			geometryManager = new GeometryManager(map!);
 			geometryManager.elements.subscribe((value) => (elements = value));
-			//const list = await spriteLibrary.getSpriteList();
-			//markers.push(new MarkerDrawer(map, { point: [25, 22] }));
+			geometryManager.activeElement.subscribe((value) => (activeElement = value));
 		});
 	}
 
 	function clickNewMarker() {
-		selectedElement = geometryManager?.getNewMarker();
+		activeElement = geometryManager?.getNewMarker();
 	}
+
+	$effect(() => geometryManager?.setActiveElement(activeElement));
 </script>
 
 <div class="page">
@@ -49,7 +51,7 @@
 				<select
 					size="5"
 					bind:value={
-						() => elements.indexOf(selectedElement!), (index) => (selectedElement = elements[index])
+						() => elements.indexOf(activeElement!), (index) => (activeElement = elements[index])
 					}
 				>
 					{#each elements as element, index}
@@ -57,10 +59,10 @@
 					{/each}
 				</select>
 			</div>
-			{#if selectedElement != null}
+			{#if activeElement != null}
 				<hr />
 				<div class="editor">
-					<Editor element={selectedElement} />
+					<Editor element={activeElement} />
 				</div>
 			{/if}
 		</div>

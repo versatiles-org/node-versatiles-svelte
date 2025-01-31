@@ -16,24 +16,36 @@ export class MapLayer<T extends LayerSpec> {
 
 		let filter: string;
 		switch (type) {
-			case 'symbol': filter = 'Point'; break;
-			case 'line': filter = 'LineString'; break;
-			case 'fill': filter = 'Polygon'; break;
-			default: throw new Error('Invalid layer type');
+			case 'symbol':
+				filter = 'Point';
+				break;
+			case 'line':
+				filter = 'LineString';
+				break;
+			case 'fill':
+				filter = 'Polygon';
+				break;
+			default:
+				throw new Error('Invalid layer type');
 		}
-		this.map.addLayer({
-			id,
-			source,
-			type,
-			layout: this.layoutProperties,
-			paint: this.paintProperties,
-			filter: ['==', '$type', filter]
-		} as LayerSpecification);
+		this.map.addLayer(
+			{
+				id,
+				source,
+				type,
+				layout: this.layoutProperties,
+				paint: this.paintProperties,
+				filter: ['==', '$type', filter]
+			} as LayerSpecification,
+			'selection_nodes'
+		);
 	}
 
 	setPaint(paint: T['paint']) {
 		if (paint === undefined) return;
-		const keys = new Set(Object.keys(paint).concat(Object.keys(this.paintProperties)) as (keyof T['paint'])[]);
+		const keys = new Set(
+			Object.keys(paint).concat(Object.keys(this.paintProperties)) as (keyof T['paint'])[]
+		);
 		for (const key of keys.values()) this.updatePaint(key, (paint as T['paint'])[key]);
 	}
 
@@ -47,7 +59,9 @@ export class MapLayer<T extends LayerSpec> {
 
 	setLayout(layout: T['layout']) {
 		if (layout === undefined) return;
-		const keys = new Set(Object.keys(layout).concat(Object.keys(this.layoutProperties)) as (keyof T['layout'])[]);
+		const keys = new Set(
+			Object.keys(layout).concat(Object.keys(this.layoutProperties)) as (keyof T['layout'])[]
+		);
 		for (const key of keys.values()) this.updateLayout(key, (layout as T['layout'])[key]);
 	}
 
