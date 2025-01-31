@@ -37,7 +37,7 @@ jobs:
           npx svelte-check --tsconfig ./tsconfig.json
 
       - name: Lint
-        run: npm run lint
+        run: npx eslint --color .
 
       - name: Test Code
         run: npx vitest run --testTimeout 10000
