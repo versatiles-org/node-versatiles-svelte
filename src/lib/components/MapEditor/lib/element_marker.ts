@@ -124,6 +124,7 @@ export class MarkerElement extends AbstractElement {
 	public readonly rotate = writable(0);
 	public readonly size = writable(1);
 	public readonly symbol = writable('flag');
+	public readonly label = writable('');
 
 	private position: MarkerPoint;
 	private source: GeoJSONSource;
@@ -141,25 +142,39 @@ export class MarkerElement extends AbstractElement {
 
 		layer.setLayout({
 			'icon-image': getSymbol().image,
-			'icon-size': get(this.size),
-			'icon-overlap': 'always',
 			'icon-offset': getSymbol().offset,
-			'icon-rotate': get(this.rotate)
+			'icon-overlap': 'always',
+			'icon-rotate': get(this.rotate),
+			'icon-size': get(this.size),
+			'text-field': get(this.label),
+			'text-font': ['noto_sans_regular'],
+			'text-justify': 'left',
+			'text-anchor': 'right',
+			'text-offset': [-0.4, -0.6],
 		});
 		layer.setPaint({
 			'icon-color': Color.parse(get(this.color)).asString(),
+			'icon-halo-blur': 0,
 			'icon-halo-color': '#FFFFFF',
 			'icon-halo-width': get(this.halo) * get(this.size),
-			'icon-halo-blur': 0,
-			'icon-opacity': 1
+			'icon-opacity': 1,
+			'text-halo-blur': 0,
+			'text-halo-color': '#FFFFFF',
+			'text-halo-width': get(this.halo) * get(this.size),
 		});
 
 		this.color.subscribe((value) => layer.updatePaint('icon-color', Color.parse(value)));
-		this.halo.subscribe((value) => layer.updatePaint('icon-halo-width', value * get(this.size)));
+		this.halo.subscribe((value) => {
+			layer.updatePaint('icon-halo-width', value * get(this.size));
+			layer.updatePaint('text-halo-width', value * get(this.size));
+		});
+		this.label.subscribe((value) => layer.updateLayout('text-field', value));
 		this.rotate.subscribe((value) => layer.updateLayout('icon-rotate', value));
 		this.size.subscribe((value) => {
 			layer.updateLayout('icon-size', value);
 			layer.updatePaint('icon-halo-width', value * get(this.halo));
+			layer.updateLayout('text-size', value * 16);
+			layer.updatePaint('text-halo-width', value * get(this.halo));
 		});
 		this.symbol.subscribe(() => {
 			const symbol = getSymbol();
