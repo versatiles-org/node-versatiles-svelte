@@ -150,7 +150,7 @@ export class MarkerElement extends AbstractElement {
 			'text-font': ['noto_sans_regular'],
 			'text-justify': 'left',
 			'text-anchor': 'right',
-			'text-offset': [-0.4, -0.6],
+			'text-offset': [-0.4, -0.6]
 		});
 		layer.setPaint({
 			'icon-color': Color.parse(get(this.color)).asString(),
@@ -160,7 +160,7 @@ export class MarkerElement extends AbstractElement {
 			'icon-opacity': 1,
 			'text-halo-blur': 0,
 			'text-halo-color': '#FFFFFF',
-			'text-halo-width': get(this.halo) * get(this.size),
+			'text-halo-width': get(this.halo) * get(this.size)
 		});
 
 		this.color.subscribe((value) => layer.updatePaint('icon-color', Color.parse(value)));
