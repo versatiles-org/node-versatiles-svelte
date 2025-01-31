@@ -3,9 +3,7 @@ import { AbstractElement } from './element_abstract.js';
 import { get, writable } from 'svelte/store';
 import type { GeoJSONSource } from 'maplibre-gl';
 import type { GeometryManager } from './geometry_manager.js';
-import type { Feature, Point } from 'geojson';
-
-export type MarkerPoint = [number, number];
+import type { ElementPoint, SelectionNode } from './types.js';
 
 export const symbols = new Map<string, { image: string; offset?: [number, number] }>([
 	['airplane', { image: 'basics:icon-airfield' }],
@@ -126,12 +124,12 @@ export class MarkerElement extends AbstractElement {
 	public readonly symbol = writable('flag');
 	public readonly label = writable('');
 
-	private position: MarkerPoint;
+	private point: ElementPoint;
 	private source: GeoJSONSource;
 
-	constructor(manager: GeometryManager, name: string, position?: MarkerPoint) {
+	constructor(manager: GeometryManager, name: string, point?: ElementPoint) {
 		super(manager, name);
-		this.position = position ?? this.randomPosition(name);
+		this.point = point ?? this.randomPositions(name, 1)[0];
 		this.source = this.addSource(this.getFeature());
 		const layer = this.addLayer('symbol');
 
@@ -189,52 +187,20 @@ export class MarkerElement extends AbstractElement {
 			properties: {},
 			geometry: {
 				type: 'Point',
-				coordinates: this.position
+				coordinates: this.point
 			}
 		};
 	}
 
-	getSelectionNodes(): Feature<Point, { index: number }>[] {
-		return [
-			{
-				type: 'Feature',
-				properties: { index: 0 },
-				geometry: {
-					type: 'Point',
-					coordinates: this.position
-				}
-			}
-		];
+	getSelectionNodes(): SelectionNode[] {
+		return [{ index: 0, coordinates: this.point }];
 	}
 
-	updateSelectionNode(index: number, position: [number, number]): void {
-		this.position = position;
-		this.source.setData(this.getFeature());
-	}
-
-	private randomPosition(name: string): MarkerPoint {
-		let seed = name
-			.split('')
-			.reduce((acc, char) => (acc * 0x101 + char.charCodeAt(0)) % 0x100000000, 0);
-
-		const xr = randomNormalDistribution();
-		const yr = randomNormalDistribution();
-
-		const { lng, lat } = this.map.getCenter();
-		const r = 1e2 * Math.pow(2, -this.map.getZoom());
-		return [lng + r * xr, lat + r * yr];
-
-		function random(): number {
-			for (let i = 0; i < 10; i++) seed = (Math.cos(seed * 3.14 + 0.0159) * 9631) % 1;
-			return seed;
-		}
-
-		function randomNormalDistribution() {
-			let u = 0,
-				v = 0;
-			while (u === 0) u = random();
-			while (v === 0) v = random();
-			return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-		}
+	getSelectionNodeUpdater(): ((lng: number, lat: number) => void) | undefined {
+		return (lng, lat) => {
+			this.point[0] = lng;
+			this.point[1] = lat;
+			this.source.setData(this.getFeature());
+		};
 	}
 }

@@ -3,6 +3,8 @@ import type { AbstractElement } from './element_abstract.js';
 import { MarkerElement } from './element_marker.js';
 import type maplibregl from 'maplibre-gl';
 import type { MapMouseEvent } from 'maplibre-gl';
+import { LineElement } from './element_line.js';
+import type { SelectionNode } from './types.js';
 
 export class GeometryManager {
 	public readonly elements: Writable<AbstractElement[]>;
@@ -28,9 +30,11 @@ export class GeometryManager {
 			layout: {},
 			paint: {
 				'circle-color': '#ffffff',
+				'circle-opacity': ['get', 'opacity'],
 				'circle-radius': 4,
-				'circle-stroke-width': 1.5,
-				'circle-stroke-color': '#000000'
+				'circle-stroke-color': '#000000',
+				'circle-stroke-opacity': ['get', 'opacity'],
+				'circle-stroke-width': 1.5
 			}
 		});
 		map.on('mousedown', 'selection_nodes', (e) => {
@@ -38,19 +42,16 @@ export class GeometryManager {
 			if (element == undefined) return;
 
 			const feature = map.queryRenderedFeatures(e.point, { layers: ['selection_nodes'] })[0];
-			const dragged_index = feature.properties.index;
-			if (dragged_index == undefined) return;
+			const updateSelectionNode = element.getSelectionNodeUpdater(feature.properties);
+			if (updateSelectionNode == undefined) return;
 
 			e.preventDefault();
 
 			const onMove = (e: MapMouseEvent) => {
 				e.preventDefault();
 				this.canvas.style.cursor = 'grabbing';
-				element.updateSelectionNode(dragged_index, [e.lngLat.lng, e.lngLat.lat]);
-				this.selection_nodes.setData({
-					type: 'FeatureCollection',
-					features: element.getSelectionNodes()
-				});
+				updateSelectionNode(e.lngLat.lng, e.lngLat.lat);
+				this.drawSelectionNodes(element.getSelectionNodes());
 			};
 
 			const onUp = () => {
@@ -72,14 +73,22 @@ export class GeometryManager {
 	public setActiveElement(element: AbstractElement | undefined) {
 		if (element) {
 			if (!get(this.elements).includes(element)) throw new Error('Element not in list');
-			this.selection_nodes.setData({
-				type: 'FeatureCollection',
-				features: element.getSelectionNodes()
-			});
+			this.drawSelectionNodes(element.getSelectionNodes());
 		} else {
-			this.selection_nodes.setData({ type: 'FeatureCollection', features: [] });
+			this.drawSelectionNodes([]);
 		}
 		this.activeElement.set(element);
+	}
+
+	private drawSelectionNodes(nodes: SelectionNode[]) {
+		this.selection_nodes.setData({
+			type: 'FeatureCollection',
+			features: nodes.map((n) => ({
+				type: 'Feature',
+				properties: { index: n.index, opacity: n.transparent ? 0.3 : 1 },
+				geometry: { type: 'Point', coordinates: n.coordinates }
+			}))
+		});
 	}
 
 	public getElement(index: number): AbstractElement {
@@ -88,6 +97,12 @@ export class GeometryManager {
 
 	public getNewMarker(): AbstractElement {
 		const element = new MarkerElement(this, this.newName('Marker '));
+		this.addElement(element);
+		return element;
+	}
+
+	public getNewLine(): AbstractElement {
+		const element = new LineElement(this, this.newName('Line '));
 		this.addElement(element);
 		return element;
 	}
@@ -106,7 +121,7 @@ export class GeometryManager {
 			if (!/^[0-9]+/.test(index)) return;
 			set.add(parseInt(index, 10));
 		});
-		for (let i = 0; i <= elements.length; i++) {
+		for (let i = 1; i <= elements.length + 1; i++) {
 			if (!set.has(i)) return prefix + i;
 		}
 		throw new Error('Unreachable');
