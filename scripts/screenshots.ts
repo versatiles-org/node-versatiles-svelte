@@ -8,17 +8,25 @@ const path = resolve(import.meta.dirname, '../screenshots');
 mkdirSync(path, { recursive: true });
 
 (async () => {
+	const width = 1024;
+	const height = 768;
+
 	console.log('start server');
 	const server = await npm_run_preview();
 
-	const names = ['basic-map', 'bbox-map', 'locator-map'];
+	const sites = [
+		{ name: 'basic-map' },
+		{ name: 'bbox-map' },
+		{ name: 'locator-map', hash: '#14.89/13.408956/52.519744' },
+		{ name: 'map-editor' }
+	];
 
 	const browser = await chromium.launch();
 	const option = {
 		colorScheme: 'light',
 		deviceScaleFactor: 1,
 		locale: 'de-DE',
-		viewport: { width: 514, height: 514 },
+		viewport: { width: width + 2, height: height + 2 },
 		timezoneId: 'Europe/Berlin'
 	};
 	const contextLight = await browser.newContext({ ...option, colorScheme: 'light' });
@@ -27,13 +35,13 @@ mkdirSync(path, { recursive: true });
 	const pageLight = await contextLight.newPage();
 	const pageDark = await contextDark.newPage();
 
-	for (const name of names) {
+	for (const { name, hash } of sites) {
 		await screenShot(pageLight, 'light');
 		await screenShot(pageDark, 'dark');
 
 		async function screenShot(page: Page, suffix: string) {
 			console.log('generate screenshot: ' + name + ' - ' + suffix);
-			await page.goto('http://localhost:4173/' + name, { waitUntil: 'networkidle' });
+			await page.goto('http://localhost:4173/' + name + (hash ?? ''), { waitUntil: 'networkidle' });
 			await wait(5);
 
 			const l = page.locator('.wrapper');
@@ -42,8 +50,8 @@ mkdirSync(path, { recursive: true });
 
 			clip.x += 1;
 			clip.y += 1;
-			clip.width -= 2;
-			clip.height -= 2;
+			clip.width = width;
+			clip.height = height;
 
 			await page.screenshot({
 				path: resolve(path, `${name}-${suffix}.png`),

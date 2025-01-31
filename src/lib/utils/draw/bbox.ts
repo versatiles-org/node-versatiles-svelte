@@ -30,9 +30,7 @@ export class BBoxDrawer {
 	private inverted: boolean;
 	private bbox: BBox;
 
-	constructor(
-		map: maplibregl.Map, bbox: BBox, color: string, inverted?: boolean
-	) {
+	constructor(map: maplibregl.Map, bbox: BBox, color: string, inverted?: boolean) {
 		this.bbox = bbox;
 		this.inverted = inverted ?? true;
 		this.map = map;
