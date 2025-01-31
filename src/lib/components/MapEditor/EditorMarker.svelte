@@ -13,11 +13,13 @@
 	let rotate = $state(get(element.rotate));
 	let size = $state(get(element.size));
 	let symbol = $state(get(element.symbol));
+	let label = $state(get(element.label));
 
 	$effect(() => element.color.set(color));
 	$effect(() => element.halo.set(halo));
 	$effect(() => element.rotate.set(rotate));
 	$effect(() => element.size.set(size));
+	$effect(() => element.label.set(label));
 	$effect(() => element.symbol.set(symbol));
 </script>
 
@@ -40,4 +42,7 @@
 
 	<label for="halo-input">Halo</label>
 	<input id="halo-input" type="range" min="0" max="3" step="0.5" bind:value={halo} />
+
+	<label for="label-input">Label</label>
+	<input id="label-input" type="text" bind:value={label} />
 </div>

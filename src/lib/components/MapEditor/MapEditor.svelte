@@ -39,7 +39,12 @@
 
 <div class="page">
 	<div class="container">
-		<BasicMap {map} bind:container={mapContainer} on:mapReady={handleMapReady}></BasicMap>
+		<BasicMap
+			{map}
+			bind:container={mapContainer}
+			on:mapReady={handleMapReady}
+			styleOptions={{ disableDarkMode: true }}
+		></BasicMap>
 	</div>
 	{#if showSidebar && geometryManager}
 		<div class="sidebar" style="--gap: 10px;">

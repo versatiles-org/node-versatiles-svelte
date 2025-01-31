@@ -3,8 +3,9 @@ import { getLanguage } from './location.js';
 
 export function getMapStyle(
 	darkMode: boolean,
-	styleOptions: StyleBuilderOptions & { transitionDuration?: number } = {}
+	styleOptions: StyleBuilderOptions & { transitionDuration?: number, disableDarkMode?: boolean } = {}
 ) {
+	darkMode = darkMode && !styleOptions.disableDarkMode;
 	const style = styles.colorful({
 		baseUrl: 'https://tiles.versatiles.org',
 		language: getLanguage(),
