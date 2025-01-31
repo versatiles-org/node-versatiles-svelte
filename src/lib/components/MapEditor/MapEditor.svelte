@@ -30,10 +30,6 @@
 		});
 	}
 
-	function clickNewMarker() {
-		activeElement = geometryManager?.getNewMarker();
-	}
-
 	$effect(() => geometryManager?.setActiveElement(activeElement));
 </script>
 
@@ -48,8 +44,18 @@
 	</div>
 	{#if showSidebar && geometryManager}
 		<div class="sidebar" style="--gap: 10px;">
-			<div class="row">
-				<input type="button" value="new marker" onclick={clickNewMarker} />
+			<div class="label">Add new:</div>
+			<div class="row" style="display: flex; column-gap: var(--gap);">
+				<input
+					type="button"
+					value="Marker"
+					onclick={() => (activeElement = geometryManager?.getNewMarker())}
+				/>
+				<input
+					type="button"
+					value="Line"
+					onclick={() => (activeElement = geometryManager?.getNewLine())}
+				/>
 			</div>
 			<hr />
 			<div class="row">
