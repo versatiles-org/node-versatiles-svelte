@@ -24,10 +24,12 @@ export function getMapStyle(
 	return style;
 }
 
-export function isDarkMode(element: HTMLElement): boolean {
-	const colorScheme = getComputedStyle(element).getPropertyValue('color-scheme');
-	if (colorScheme.includes('dark')) return true;
-	if (colorScheme.includes('light')) return false;
+export function isDarkMode(element?: HTMLElement): boolean {
+	if (element != null) {
+		const colorScheme = getComputedStyle(element).getPropertyValue('color-scheme');
+		if (colorScheme.includes('dark')) return true;
+		if (colorScheme.includes('light')) return false;
+	}
 
 	return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }

@@ -3,26 +3,34 @@
 	import { isDarkMode } from '$lib/utils/map_style.js';
 	/* eslint svelte/no-at-html-tags: off */
 
-	import { createEventDispatcher, onMount } from 'svelte';
-	const dispatch = createEventDispatcher();
+	let {
+		change,
+		initialInputText,
+		inputText = $bindable(''),
+		items = [],
+		maxItems = 10,
+		minChar = 3,
+		placeholder = ''
+	}: {
+		change: (value: T) => void;
+		initialInputText?: string;
+		inputText?: string;
+		items?: Item[];
+		maxItems?: number;
+		minChar?: number;
+		placeholder?: string;
+	} = $props();
+
+	import { onMount } from 'svelte';
 
 	type Item = { key: string; value: T };
 	type ResultItem = Item & { _label: string };
 
-	// Component properties
-	export let placeholder: string = '';
-	export let minChar: number = 3;
-	export let maxItems: number = 10;
-
-	// Reactive variables
-	export let items: Item[];
-
 	let inputElement: HTMLInputElement; // Reference to DOM element
 	let autocompleteElement: HTMLDivElement; // Reference to DOM element
-	let isOpen = false;
-	let results: ResultItem[] = [];
-	let selectedIndex = 0;
-	let inputText: string = '';
+	let isOpen = $state(false);
+	let results: ResultItem[] = $state([]);
+	let selectedIndex = $state(0);
 
 	// Escape special characters in search string for use in regex
 	const regExpEscape = (s: string) => s.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -32,16 +40,10 @@
 		if (r.length > 0) {
 			const { key, value } = r[0];
 			inputText = key;
-			dispatch('change', JSON.parse(JSON.stringify(value)));
+			change(JSON.parse(JSON.stringify(value)));
 		} else {
 			inputText = '';
 		}
-	}
-
-	export function setInputText(text: string) {
-		inputText = text;
-		results = filterResults();
-		close(0);
 	}
 
 	// Handle input change
@@ -99,7 +101,7 @@
 		if (index >= 0 && results[index]) {
 			const { key, value } = results[index];
 			inputText = key;
-			dispatch('change', JSON.parse(JSON.stringify(value)));
+			change(JSON.parse(JSON.stringify(value)));
 		}
 	}
 
@@ -107,6 +109,11 @@
 		const darkMode = isDarkMode(autocompleteElement);
 		autocompleteElement.style.setProperty('--bg-color', darkMode ? '#000' : '#fff');
 		autocompleteElement.style.setProperty('--fg-color', darkMode ? '#fff' : '#000');
+		if (initialInputText) {
+			inputText = initialInputText;
+			results = filterResults();
+			close(0);
+		}
 	});
 </script>
 
@@ -118,10 +125,10 @@
 		bind:value={inputText}
 		{placeholder}
 		autocomplete="off"
-		on:input={onChange}
-		on:keydown={onKeyDown}
-		on:focusin={onFocus}
-		on:click={(e) => e.stopPropagation()}
+		oninput={onChange}
+		onkeydown={onKeyDown}
+		onfocusin={onFocus}
+		onclick={(e) => e.stopPropagation()}
 		bind:this={inputElement}
 		aria-activedescendant={isOpen ? `result-${selectedIndex}` : undefined}
 		aria-autocomplete="list"
@@ -130,7 +137,7 @@
 	<div class="autocomplete-results" class:hide-results={!isOpen}>
 		{#each results as result, i}
 			<button
-				on:click={() => close(i)}
+				onclick={() => close(i)}
 				class={i === selectedIndex ? ' is-active' : ''}
 				role="option"
 				aria-selected={i === selectedIndex}

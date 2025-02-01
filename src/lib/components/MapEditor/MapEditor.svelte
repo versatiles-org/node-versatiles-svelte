@@ -14,15 +14,14 @@
 		if (!inIframe) showSidebar = true;
 	});
 
-	let mapContainer: HTMLDivElement | undefined = $state();
 	let map: MaplibreMapType | undefined = $state();
 	let geometryManager: GeometryManager | undefined = $state();
 	let elements = $state([]) as AbstractElement[];
 
 	let activeElement: AbstractElement | undefined = $state(undefined);
 
-	function handleMapReady(event: CustomEvent) {
-		map = event.detail.map as MaplibreMapType;
+	function onMapInit(_map: MaplibreMapType) {
+		map = _map;
 		map.on('load', async () => {
 			geometryManager = new GeometryManager(map!);
 			geometryManager.elements.subscribe((value) => (elements = value));
@@ -35,12 +34,7 @@
 
 <div class="page">
 	<div class="container">
-		<BasicMap
-			{map}
-			bind:container={mapContainer}
-			on:mapReady={handleMapReady}
-			styleOptions={{ disableDarkMode: true }}
-		></BasicMap>
+		<BasicMap {onMapInit} styleOptions={{ disableDarkMode: true }}></BasicMap>
 	</div>
 	{#if showSidebar && geometryManager}
 		<div class="sidebar" style="--gap: 10px;">
