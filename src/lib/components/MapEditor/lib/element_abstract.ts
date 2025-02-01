@@ -4,7 +4,9 @@ import { MapLayer } from './map_layer.js';
 import type { ElementPoint, LayerFill, LayerLine, LayerSymbol, SelectionNode } from './types.js';
 import type { GeometryManager } from './geometry_manager.js';
 
-export abstract class AbstractElement<T extends LayerSymbol | LayerFill | LayerLine = LayerSymbol | LayerFill | LayerLine> {
+export abstract class AbstractElement<
+	T extends LayerSymbol | LayerFill | LayerLine = LayerSymbol | LayerFill | LayerLine
+> {
 	public name: string;
 
 	protected canvas: HTMLElement;
@@ -23,7 +25,10 @@ export abstract class AbstractElement<T extends LayerSymbol | LayerFill | LayerL
 		this.canvas = this.map.getCanvasContainer();
 		this.name = name;
 
-		this.map.addSource('source' + this.slug, { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+		this.map.addSource('source' + this.slug, {
+			type: 'geojson',
+			data: { type: 'FeatureCollection', features: [] }
+		});
 		this.source = this.map.getSource('source' + this.slug)!;
 
 		this.layer = new MapLayer(this.map, type + this.slug, 'source' + this.slug, type);
