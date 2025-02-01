@@ -35,7 +35,8 @@
     "!dist/BBoxMap/helpers/*"
   ],
   "peerDependencies": {
-    "svelte": "^5.0.3"
+    "svelte": "^5.0.3",
+    "sass-embedded": "^1.83.4"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",
@@ -60,7 +61,6 @@
     "prettier-plugin-svelte": "^3.3.3",
     "publint": "^0.3.2",
     "sass": "^1.83.4",
-    "sass-embedded": "^1.83.4",
     "svelte": "^5.19.6",
     "svelte-check": "^4.1.4",
     "svelte-preprocess": "^6.0.3",
