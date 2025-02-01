@@ -1,9 +1,8 @@
 import { Color } from '@versatiles/style';
 import { AbstractElement } from './element_abstract.js';
 import { get, writable } from 'svelte/store';
-import type { GeoJSONSource } from 'maplibre-gl';
 import type { GeometryManager } from './geometry_manager.js';
-import type { ElementPoint, SelectionNode } from './types.js';
+import type { ElementPoint, LayerSymbol, SelectionNode } from './types.js';
 
 export const symbols = new Map<string, { image: string; offset?: [number, number] }>([
 	['airplane', { image: 'basics:icon-airfield' }],
@@ -116,7 +115,7 @@ export const symbols = new Map<string, { image: string; offset?: [number, number
 	['zoo', { image: 'basics:icon-zoo' }]
 ]);
 
-export class MarkerElement extends AbstractElement {
+export class MarkerElement extends AbstractElement<LayerSymbol> {
 	public readonly color = writable('#ff0000');
 	public readonly halo = writable(1);
 	public readonly rotate = writable(0);
@@ -124,21 +123,18 @@ export class MarkerElement extends AbstractElement {
 	public readonly symbol = writable('flag');
 	public readonly label = writable('');
 
-	private point: ElementPoint;
-	private source: GeoJSONSource;
+	private point: ElementPoint = [0, 0];
 
 	constructor(manager: GeometryManager, name: string, point?: ElementPoint) {
-		super(manager, name);
+		super(manager, name, 'symbol');
 		this.point = point ?? this.randomPositions(name, 1)[0];
-		this.source = this.addSource(this.getFeature());
-		const layer = this.addLayer('symbol');
 
 		const getSymbol = (): { image: string; offset: [number, number] } => {
 			const entry = symbols.get(get(this.symbol)) ?? symbols.get('flag')!;
 			return { image: entry.image, offset: entry.offset ?? [0, 0] };
 		};
 
-		layer.setLayout({
+		this.layer.setLayout({
 			'icon-image': getSymbol().image,
 			'icon-offset': getSymbol().offset,
 			'icon-overlap': 'always',
@@ -150,7 +146,7 @@ export class MarkerElement extends AbstractElement {
 			'text-anchor': 'right',
 			'text-offset': [-0.4, -0.6]
 		});
-		layer.setPaint({
+		this.layer.setPaint({
 			'icon-color': Color.parse(get(this.color)).asString(),
 			'icon-halo-blur': 0,
 			'icon-halo-color': '#FFFFFF',
@@ -161,24 +157,26 @@ export class MarkerElement extends AbstractElement {
 			'text-halo-width': get(this.halo) * get(this.size)
 		});
 
-		this.color.subscribe((value) => layer.updatePaint('icon-color', Color.parse(value)));
+		this.color.subscribe((value) => this.layer.updatePaint('icon-color', Color.parse(value)));
 		this.halo.subscribe((value) => {
-			layer.updatePaint('icon-halo-width', value * get(this.size));
-			layer.updatePaint('text-halo-width', value * get(this.size));
+			this.layer.updatePaint('icon-halo-width', value * get(this.size));
+			this.layer.updatePaint('text-halo-width', value * get(this.size));
 		});
-		this.label.subscribe((value) => layer.updateLayout('text-field', value));
-		this.rotate.subscribe((value) => layer.updateLayout('icon-rotate', value));
+		this.label.subscribe((value) => this.layer.updateLayout('text-field', value));
+		this.rotate.subscribe((value) => this.layer.updateLayout('icon-rotate', value));
 		this.size.subscribe((value) => {
-			layer.updateLayout('icon-size', value);
-			layer.updatePaint('icon-halo-width', value * get(this.halo));
-			layer.updateLayout('text-size', value * 16);
-			layer.updatePaint('text-halo-width', value * get(this.halo));
+			this.layer.updateLayout('icon-size', value);
+			this.layer.updatePaint('icon-halo-width', value * get(this.halo));
+			this.layer.updateLayout('text-size', value * 16);
+			this.layer.updatePaint('text-halo-width', value * get(this.halo));
 		});
 		this.symbol.subscribe(() => {
 			const symbol = getSymbol();
-			layer.updateLayout('icon-image', symbol.image);
-			layer.updateLayout('icon-offset', symbol.offset);
+			this.layer.updateLayout('icon-image', symbol.image);
+			this.layer.updateLayout('icon-offset', symbol.offset);
 		});
+
+		this.source.setData(this.getFeature());
 	}
 
 	getFeature(): GeoJSON.Feature<GeoJSON.Point> {

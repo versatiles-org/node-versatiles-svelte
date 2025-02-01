@@ -1,9 +1,8 @@
 import { Color } from '@versatiles/style';
 import { AbstractElement } from './element_abstract.js';
 import { get, writable } from 'svelte/store';
-import type { GeoJSONSource } from 'maplibre-gl';
 import type { GeometryManager } from './geometry_manager.js';
-import type { ElementLine, ElementPoint, SelectionNode } from './types.js';
+import type { ElementLine, ElementPoint, LayerLine, SelectionNode } from './types.js';
 import { getMiddlePoint } from './utils.js';
 
 export const dashArrays = new Map<string, number[] | undefined>([
@@ -12,51 +11,41 @@ export const dashArrays = new Map<string, number[] | undefined>([
 	['dotted', [0, 2]]
 ]);
 
-export class LineElement extends AbstractElement {
+export class LineElement extends AbstractElement<LayerLine> {
 	public readonly color = writable('#ff0000');
 	public readonly dashed = writable('solid');
 	public readonly width = writable(2);
 
-	private line: ElementLine;
-	private source: GeoJSONSource;
+	private line: ElementLine = [[0, 0], [0, 0]];
 
 	constructor(manager: GeometryManager, name: string, line?: ElementLine) {
-		super(manager, name);
+		super(manager, name, 'line');
 		this.line = line ?? this.randomPositions(name, 2);
-		this.source = this.addSource(this.getFeature());
-		const layer = this.addLayer('line');
 
-		const getDashArray = (): number[] | undefined => {
-			return dashArrays.get(get(this.dashed));
-		};
+		const getDashArray = (): number[] | undefined => dashArrays.get(get(this.dashed));
 
-		layer.setLayout({
+		this.layer.setLayout({
 			'line-cap': 'round',
 			'line-join': 'round'
 		});
-		layer.setPaint({
+		this.layer.setPaint({
 			'line-color': Color.parse(get(this.color)).asString(),
 			'line-dasharray': getDashArray(),
 			'line-width': get(this.width)
 		});
 
-		this.color.subscribe((value) => layer.updatePaint('line-color', Color.parse(value)));
-		this.width.subscribe((value) => {
-			layer.updatePaint('line-width', value);
-		});
-		this.dashed.subscribe(() => {
-			layer.updatePaint('line-dasharray', getDashArray());
-		});
+		this.color.subscribe((value) => this.layer.updatePaint('line-color', Color.parse(value)));
+		this.width.subscribe((value) => this.layer.updatePaint('line-width', value));
+		this.dashed.subscribe(() => this.layer.updatePaint('line-dasharray', getDashArray()));
+		
+		this.source.setData(this.getFeature());
 	}
 
 	getFeature(): GeoJSON.Feature<GeoJSON.LineString> {
 		return {
 			type: 'Feature',
 			properties: {},
-			geometry: {
-				type: 'LineString',
-				coordinates: this.line
-			}
+			geometry: { type: 'LineString', coordinates: this.line }
 		};
 	}
 
