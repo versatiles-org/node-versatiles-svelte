@@ -16,7 +16,10 @@ export class LineElement extends AbstractElement<LayerLine> {
 	public readonly dashed = writable('solid');
 	public readonly width = writable(2);
 
-	private line: ElementLine = [[0, 0], [0, 0]];
+	private line: ElementLine = [
+		[0, 0],
+		[0, 0]
+	];
 
 	constructor(manager: GeometryManager, name: string, line?: ElementLine) {
 		super(manager, name, 'line');
@@ -37,7 +40,7 @@ export class LineElement extends AbstractElement<LayerLine> {
 		this.color.subscribe((value) => this.layer.updatePaint('line-color', Color.parse(value)));
 		this.width.subscribe((value) => this.layer.updatePaint('line-width', value));
 		this.dashed.subscribe(() => this.layer.updatePaint('line-dasharray', getDashArray()));
-		
+
 		this.source.setData(this.getFeature());
 	}
 
