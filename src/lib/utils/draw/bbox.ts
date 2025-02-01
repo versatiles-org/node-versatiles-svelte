@@ -1,4 +1,5 @@
 import type geojson from 'geojson';
+import { get, writable, type Writable } from 'svelte/store';
 
 const maplibregl = await import('maplibre-gl');
 const { LngLatBounds } = maplibregl;
@@ -28,10 +29,10 @@ export class BBoxDrawer {
 	private canvas: HTMLElement;
 
 	private inverted: boolean;
-	private bbox: BBox;
+	public readonly bbox: Writable<BBox>;
 
 	constructor(map: maplibregl.Map, bbox: BBox, color: string, inverted?: boolean) {
-		this.bbox = bbox;
+		this.bbox = writable(bbox);
 		this.inverted = inverted ?? true;
 		this.map = map;
 
@@ -91,7 +92,7 @@ export class BBoxDrawer {
 	}
 
 	private getAsFeatureCollection(): geojson.FeatureCollection {
-		const ring = getRing(this.bbox);
+		const ring = getRing(get(this.bbox));
 		return {
 			type: 'FeatureCollection',
 			features: [
@@ -119,12 +120,12 @@ export class BBoxDrawer {
 	}
 
 	public setGeometry(bbox: geojson.BBox): void {
-		this.bbox = bbox.slice(0, 4) as BBox;
+		this.bbox.set(bbox.slice(0, 4) as BBox);
 		this.redraw();
 	}
 
 	public getBounds(): maplibregl.LngLatBounds {
-		return new LngLatBounds(this.bbox);
+		return new LngLatBounds(get(this.bbox));
 	}
 
 	private redraw(): void {
@@ -132,8 +133,9 @@ export class BBoxDrawer {
 	}
 
 	private getAsPixel(): BBox {
-		const p0 = this.map.project([this.bbox[0], this.bbox[1]]);
-		const p1 = this.map.project([this.bbox[2], this.bbox[3]]);
+		const bbox = get(this.bbox);
+		const p0 = this.map.project([bbox[0], bbox[1]]);
+		const p1 = this.map.project([bbox[2], bbox[3]]);
 		return [Math.min(p0.x, p1.x), Math.min(p0.y, p1.y), Math.max(p0.x, p1.x), Math.max(p0.y, p1.y)];
 	}
 
@@ -164,32 +166,36 @@ export class BBoxDrawer {
 	}
 
 	private doDrag(lngLat: maplibregl.LngLat): void {
-		const x = Math.round(lngLat.lng * 1e3) / 1e3;
-		const y = Math.round(lngLat.lat * 1e3) / 1e3;
+		this.bbox.update((bbox) => {
+			const x = Math.round(lngLat.lng * 1e3) / 1e3;
+			const y = Math.round(lngLat.lat * 1e3) / 1e3;
 
-		// prettier-ignore
-		switch (this.dragPoint) {
-			case 'n': this.bbox[3] = y; break;
-			case 'ne': this.bbox[2] = x; this.bbox[3] = y; break;
-			case 'e': this.bbox[2] = x; break;
-			case 'se': this.bbox[2] = x; this.bbox[1] = y; break;
-			case 's': this.bbox[1] = y; break;
-			case 'sw': this.bbox[0] = x; this.bbox[1] = y; break;
-			case 'w': this.bbox[0] = x; break;
-			case 'nw': this.bbox[0] = x; this.bbox[3] = y; break;
-			default: return;
-		}
+			// prettier-ignore
+			switch (this.dragPoint) {
+				case 'n': bbox[3] = y; break;
+				case 'ne': bbox[2] = x; bbox[3] = y; break;
+				case 'e': bbox[2] = x; break;
+				case 'se': bbox[2] = x; bbox[1] = y; break;
+				case 's': bbox[1] = y; break;
+				case 'sw': bbox[0] = x; bbox[1] = y; break;
+				case 'w': bbox[0] = x; break;
+				case 'nw': bbox[0] = x; bbox[3] = y; break;
+				default: return bbox;
+			}
 
-		if (this.bbox[2] < this.bbox[0]) {
-			// flip horizontal
-			this.bbox = [this.bbox[2], this.bbox[1], this.bbox[0], this.bbox[3]];
-			this.updateDragPoint(DragPointMap.get(this.dragPoint)?.flipH ?? false);
-		}
+			if (bbox[2] < bbox[0]) {
+				// flip horizontal
+				bbox = [bbox[2], bbox[1], bbox[0], bbox[3]];
+				this.updateDragPoint(DragPointMap.get(this.dragPoint)?.flipH ?? false);
+			}
 
-		if (this.bbox[3] < this.bbox[1]) {
-			// flip vertical
-			this.bbox = [this.bbox[0], this.bbox[3], this.bbox[2], this.bbox[1]];
-			this.updateDragPoint(DragPointMap.get(this.dragPoint)?.flipV ?? false);
-		}
+			if (bbox[3] < bbox[1]) {
+				// flip vertical
+				bbox = [bbox[0], bbox[3], bbox[2], bbox[1]];
+				this.updateDragPoint(DragPointMap.get(this.dragPoint)?.flipV ?? false);
+			}
+
+			return bbox;
+		});
 	}
 }

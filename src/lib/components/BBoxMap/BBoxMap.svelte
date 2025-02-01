@@ -10,45 +10,43 @@
 	import { loadBBoxes } from './BBoxMap.js';
 	import { BBoxDrawer } from '$lib/utils/draw/bbox.js';
 
-	let { selectedBBox = $bindable() } = $props();
+	let { selectedBBox = $bindable() }: { selectedBBox?: BBox } = $props();
 	const startTime = Date.now();
-	let bbox: BBoxDrawer;
+	let bboxDrawer: BBoxDrawer;
 	let map: MaplibreMapType | undefined = $state();
 	let bboxes: { key: string; value: BBox }[] | undefined = $state();
 	let mapContainer: HTMLElement;
 
-	function onMapInit(_map: MaplibreMapType) {
+	async function onMapLoad(_map: MaplibreMapType) {
 		map = _map;
 		mapContainer = map.getContainer();
-
 		map.setPadding({ top: 31 + 5, right: 5, bottom: 5, left: 5 });
-
-		map.on('load', async () => {
-			bbox = new BBoxDrawer(
-				map!,
-				[-180, -86, 180, 86],
-				isDarkMode(mapContainer) ? '#FFFFFF' : '#000000'
-			);
-			bboxes = await loadBBoxes();
+		bboxDrawer = new BBoxDrawer(
+			map!,
+			[-180, -86, 180, 86],
+			isDarkMode(mapContainer) ? '#FFFFFF' : '#000000'
+		);
+		bboxes = await loadBBoxes();
+		bboxDrawer.bbox.subscribe((bbox) => {
+			selectedBBox = bbox;
 		});
 	}
 
-	function setBBox(newBBox: BBox) {
-		selectedBBox = newBBox;
-		if (bbox && map) {
-			bbox.setGeometry(newBBox);
+	function flyToBBox(bbox: BBox) {
+		if (!map || !bbox) return;
 
-			const transform = map.cameraForBounds(bbox.getBounds()) as CameraOptions;
-			if (transform == null) return;
-			transform.zoom = transform.zoom ?? 0 - 0.5;
-			transform.bearing = 0;
-			transform.pitch = 0;
+		bboxDrawer.setGeometry(bbox);
 
-			if (Date.now() - startTime < 1000) {
-				map.jumpTo(transform);
-			} else {
-				map.flyTo({ ...transform, essential: true, speed: 5 });
-			}
+		const transform = map.cameraForBounds(bboxDrawer.getBounds()) as CameraOptions;
+		if (transform == null) return;
+		transform.zoom = transform.zoom ?? 0 - 0.5;
+		transform.bearing = 0;
+		transform.pitch = 0;
+
+		if (Date.now() - startTime < 1000) {
+			map.jumpTo(transform);
+		} else {
+			map.flyTo({ ...transform, essential: true, speed: 5 });
 		}
 	}
 </script>
@@ -59,12 +57,12 @@
 			<AutoComplete
 				items={bboxes}
 				placeholder="Find country, region or city …"
-				change={setBBox}
+				change={(bbox) => flyToBBox(bbox)}
 				initialInputText={getCountryName() ?? ''}
 			/>
 		</div>
 	{/if}
-	<BasicMap {onMapInit}></BasicMap>
+	<BasicMap {onMapLoad}></BasicMap>
 </div>
 
 <style>
