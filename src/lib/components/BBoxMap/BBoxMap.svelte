@@ -10,20 +10,22 @@
 	import { loadBBoxes } from './BBoxMap.js';
 	import { BBoxDrawer } from '$lib/utils/draw/bbox.js';
 
-	let bboxes: { key: string; value: BBox }[] | undefined = undefined;
-	let mapContainer: HTMLDivElement;
-	let autoComplete: AutoComplete<BBox> | undefined = undefined;
+	let { selectedBBox = $bindable() } = $props();
 	const startTime = Date.now();
 	let bbox: BBoxDrawer;
-	let map: MaplibreMapType; // Declare map instance at the top level
+	let map: MaplibreMapType | undefined = $state();
+	let bboxes: { key: string; value: BBox }[] | undefined = $state();
+	let mapContainer: HTMLElement;
 
-	function handleMapReady(event: CustomEvent) {
-		map = event.detail.map;
+	function onMapInit(_map: MaplibreMapType) {
+		map = _map;
+		mapContainer = map.getContainer();
+
 		map.setPadding({ top: 31 + 5, right: 5, bottom: 5, left: 5 });
 
 		map.on('load', async () => {
 			bbox = new BBoxDrawer(
-				map,
+				map!,
 				[-180, -86, 180, 86],
 				isDarkMode(mapContainer) ? '#FFFFFF' : '#000000'
 			);
@@ -31,8 +33,9 @@
 		});
 	}
 
-	function flyTo(newBBox: BBox) {
-		if (bbox) {
+	function setBBox(newBBox: BBox) {
+		selectedBBox = newBBox;
+		if (bbox && map) {
 			bbox.setGeometry(newBBox);
 
 			const transform = map.cameraForBounds(bbox.getBounds()) as CameraOptions;
@@ -48,10 +51,6 @@
 			}
 		}
 	}
-
-	$: if (autoComplete) {
-		autoComplete?.setInputText(getCountryName() ?? '');
-	}
 </script>
 
 <div class="container">
@@ -60,12 +59,12 @@
 			<AutoComplete
 				items={bboxes}
 				placeholder="Find country, region or city …"
-				on:change={(e) => flyTo(e.detail)}
-				bind:this={autoComplete}
+				change={setBBox}
+				initialInputText={getCountryName() ?? ''}
 			/>
 		</div>
 	{/if}
-	<BasicMap {map} bind:container={mapContainer} on:mapReady={handleMapReady}></BasicMap>
+	<BasicMap {onMapInit}></BasicMap>
 </div>
 
 <style>

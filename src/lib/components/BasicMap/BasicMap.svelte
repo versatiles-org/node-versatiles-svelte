@@ -1,23 +1,35 @@
 <!-- BasicMap.svelte -->
 <script lang="ts">
 	import type { Map as MaplibreMapType, MapOptions } from 'maplibre-gl';
-	import { onMount, createEventDispatcher } from 'svelte';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { getMapStyle, isDarkMode } from '$lib/utils/map_style.js';
 
 	// Props
-	export let style: string = 'position:absolute; left:0px; top:0px; width:100%; height:100%;';
-	export let container: HTMLDivElement | undefined = undefined;
-	export let map: MaplibreMapType | undefined = undefined;
-	export let styleOptions: Parameters<typeof getMapStyle>[1] = {
-		transitionDuration: 0
-	};
-	export let mapOptions: Partial<MapOptions> = {};
+	let {
+		style = 'position:absolute; left:0px; top:0px; width:100%; height:100%;',
+		styleOptions = { transitionDuration: 0 },
+		mapOptions = {},
+		map = $bindable(),
+		onMapInit,
+		onMapLoad
+	}: {
+		style?: string;
+		styleOptions?: Parameters<typeof getMapStyle>[1];
+		mapOptions?: Partial<MapOptions>;
+		map?: MaplibreMapType;
+		onMapInit?: (map: MaplibreMapType) => void;
+		onMapLoad?: (map: MaplibreMapType) => void;
+	} = $props();
 
-	// Create the event dispatcher
-	const dispatch = createEventDispatcher();
+	let container: HTMLDivElement;
 
-	onMount(async (): Promise<void> => {
+	$effect(() => {
+		if (container) init();
+	});
+
+	async function init(): Promise<void> {
+		if (map) return;
+
 		let MaplibreMap: typeof MaplibreMapType = (await import('maplibre-gl')).Map;
 
 		if (!container) throw Error();
@@ -36,8 +48,12 @@
 			...mapOptions
 		});
 
-		dispatch('mapReady', { map });
-	});
+		if (onMapInit) onMapInit(map);
+
+		map.on('load', () => {
+			if (onMapLoad) onMapLoad(map!);
+		});
+	}
 </script>
 
 <div class="map" {style} bind:this={container}></div>
