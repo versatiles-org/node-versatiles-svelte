@@ -1,12 +1,12 @@
 <script lang="ts">
 	import {} from './editor.scss';
-	import EditorMarker from './EditorMarker.svelte';
-	import EditorLine from './EditorLine.svelte';
+	import EditorSymbol from './EditorSymbol.svelte';
+	import EditorLine from './EditorStroke.svelte';
 	import type { AbstractElement } from './lib/element/abstract.js';
 	import { LineElement } from './lib/element/line.js';
 	import { MarkerElement } from './lib/element/marker.js';
 	import { PolygonElement } from './lib/element/polygon.js';
-	import EditorPolygon from './EditorPolygon.svelte';
+	import EditorFill from './EditorFill.svelte';
 
 	const { element }: { element: AbstractElement } = $props();
 	let name = $state(element.name);
@@ -20,12 +20,29 @@
 	<label for="input-name">Name</label>
 	<input id="input-name" type="text" bind:value={name} />
 	{#if element instanceof MarkerElement}
-		<EditorMarker style={element.style} />
+		<h2>Symbol</h2>
+		<EditorSymbol style={element.style} />
 	{/if}
 	{#if element instanceof LineElement}
+		<h2>Stroke</h2>
 		<EditorLine style={element.style} />
 	{/if}
 	{#if element instanceof PolygonElement}
-		<EditorPolygon fillStyle={element.fillStyle} strokeStyle={element.strokeStyle} />
+		<h2>Fill</h2>
+		<EditorFill style={element.fillStyle} />
+		<h2>Stroke</h2>
+		<EditorLine style={element.strokeStyle} />
 	{/if}
 {/if}
+
+<style>
+	h2 {
+		font-size: 1em;
+		font-weight: normal;
+		border-top: 0.5px solid rgba(0, 0, 0, 1);
+		opacity: 0.5;
+		padding-top: 0.5em;
+		margin-top: 1em;
+		text-align: center;
+	}
+</style>

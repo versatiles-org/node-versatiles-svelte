@@ -38,9 +38,11 @@
 		container.style.setProperty('--bg-color', darkMode ? '#000' : '#fff');
 		container.style.setProperty('--fg-color', darkMode ? '#fff' : '#000');
 
+		const style = getMapStyle(darkMode, styleOptions);
+		style.transition = { duration: 0, delay: 0 };
 		map = new MaplibreMap({
 			container,
-			style: getMapStyle(darkMode, styleOptions),
+			style,
 			renderWorldCopies: false,
 			dragRotate: false,
 			attributionControl: { compact: false },
