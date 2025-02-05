@@ -1,49 +1,33 @@
 import type { Feature } from 'geojson';
 import type maplibregl from 'maplibre-gl';
-import { MapLayer } from './map_layer.js';
-import type { ElementPoint, LayerFill, LayerLine, LayerSymbol, SelectionNode } from './types.js';
-import type { GeometryManager } from './geometry_manager.js';
+import type { ElementPoint, SelectionNode } from '../types.js';
+import type { GeometryManager } from '../geometry_manager.js';
 
-export abstract class AbstractElement<
-	T extends LayerSymbol | LayerFill | LayerLine = LayerSymbol | LayerFill | LayerLine
-> {
+export abstract class AbstractElement {
 	public name: string;
 
 	protected canvas: HTMLElement;
 	protected manager: GeometryManager;
 	protected map: maplibregl.Map;
-	protected layer: MapLayer<T>;
 	protected source: maplibregl.GeoJSONSource;
 
-	private isActive = true;
+	protected slug = '_' + Math.random().toString(36).slice(2);
 
-	private slug = '_' + Math.random().toString(36).slice(2);
-
-	constructor(manager: GeometryManager, name: string, type: 'symbol' | 'fill' | 'line') {
+	constructor(manager: GeometryManager, name: string) {
 		this.manager = manager;
 		this.map = manager.map;
 		this.canvas = this.map.getCanvasContainer();
 		this.name = name;
 
-		this.map.addSource('source' + this.slug, {
+		this.map.addSource(this.getSourceId(), {
 			type: 'geojson',
 			data: { type: 'FeatureCollection', features: [] }
 		});
-		this.source = this.map.getSource('source' + this.slug)!;
+		this.source = this.map.getSource(this.getSourceId())!;
+	}
 
-		this.layer = new MapLayer(this.map, type + this.slug, 'source' + this.slug, type);
-		this.map.on('mouseenter', this.layer.id, () => {
-			if (this.isActive) this.canvas.style.cursor = 'pointer';
-		});
-		this.map.on('mouseleave', this.layer.id, () => {
-			if (this.isActive) this.canvas.style.cursor = 'default';
-		});
-		this.map.on('click', this.layer.id, (e) => {
-			if (this.isActive) {
-				this.manager.setActiveElement(this);
-				e.preventDefault();
-			}
-		});
+	protected getSourceId(): string {
+		return 'source' + this.slug;
 	}
 
 	protected randomPositions(name: string, length: number): ElementPoint[] {

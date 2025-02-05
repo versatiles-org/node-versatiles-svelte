@@ -2,10 +2,10 @@
 	import {} from './editor.scss';
 	import EditorMarker from './EditorMarker.svelte';
 	import EditorLine from './EditorLine.svelte';
-	import type { AbstractElement } from './lib/element_abstract.js';
-	import { LineElement } from './lib/element_line.js';
-	import { MarkerElement } from './lib/element_marker.js';
-	import { PolygonElement } from './lib/element_polygon.js';
+	import type { AbstractElement } from './lib/element/abstract.js';
+	import { LineElement } from './lib/element/line.js';
+	import { MarkerElement } from './lib/element/marker.js';
+	import { PolygonElement } from './lib/element/polygon.js';
 	import EditorPolygon from './EditorPolygon.svelte';
 
 	const { element }: { element: AbstractElement } = $props();
@@ -20,12 +20,12 @@
 	<label for="input-name">Name</label>
 	<input id="input-name" type="text" bind:value={name} />
 	{#if element instanceof MarkerElement}
-		<EditorMarker {element} />
+		<EditorMarker style={element.style} />
 	{/if}
 	{#if element instanceof LineElement}
-		<EditorLine {element} />
+		<EditorLine style={element.style} />
 	{/if}
 	{#if element instanceof PolygonElement}
-		<EditorPolygon {element} />
+		<EditorPolygon fillStyle={element.fillStyle} strokeStyle={element.strokeStyle} />
 	{/if}
 {/if}

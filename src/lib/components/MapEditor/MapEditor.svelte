@@ -4,7 +4,7 @@
 	import BasicMap from '../BasicMap/BasicMap.svelte';
 	import Editor from './Editor.svelte';
 	import { GeometryManager } from './lib/geometry_manager.js';
-	import type { AbstractElement } from './lib/element_abstract.js';
+	import type { AbstractElement } from './lib/element/abstract.js';
 	import { onMount } from 'svelte';
 
 	let showSidebar = $state(false);

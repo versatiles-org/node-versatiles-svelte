@@ -1,20 +1,19 @@
 <script lang="ts">
 	import {} from './editor.scss';
 	import { get } from 'svelte/store';
-	import type { LineElement } from './lib/element_line.js';
-	import { dashArrays } from './lib/element_line.js';
+	import { dashArrays, MapLayerLine } from './lib/map_layer/line.js';
 
 	const dashedList = Array.from(dashArrays.keys()).sort();
 
-	let { element }: { element: LineElement } = $props();
+	const { style }: { style: MapLayerLine['style'] } = $props();
 
-	let color = $state(get(element.color));
-	let width = $state(get(element.width));
-	let dashed = $state(get(element.dashed));
+	let color = $state(get(style.color));
+	let width = $state(get(style.width));
+	let dashed = $state(get(style.dashed));
 
-	$effect(() => element.color.set(color));
-	$effect(() => element.width.set(width));
-	$effect(() => element.dashed.set(dashed));
+	$effect(() => style.color.set(color));
+	$effect(() => style.width.set(width));
+	$effect(() => style.dashed.set(dashed));
 </script>
 
 <div class="row">
