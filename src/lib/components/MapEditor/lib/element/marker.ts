@@ -13,10 +13,18 @@ export class MarkerElement extends AbstractElement {
 		super(manager, name);
 		this.point = point ?? this.randomPositions(name, 1)[0];
 
-		this.layer = new MapLayerSymbol(this.map, 'symbol' + this.slug, this.getSourceId());
+		this.layer = new MapLayerSymbol(manager, 'symbol' + this.slug, this.sourceId);
 		this.layer.onClick.push(() => this.manager.setActiveElement(this));
 		this.style = this.layer.style;
 		this.source.setData(this.getFeature());
+	}
+
+	public set isActive(value: boolean) {
+		this.layer.isActive = value;
+	}
+
+	public set isSelected(value: boolean) {
+		this.layer.isSelected = value;
 	}
 
 	getFeature(): GeoJSON.Feature<GeoJSON.Point> {

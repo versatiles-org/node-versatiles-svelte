@@ -2,6 +2,7 @@ import { get, writable } from 'svelte/store';
 import type { LayerSymbol } from '../types.js';
 import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
+import type { GeometryManager } from '../geometry_manager.js';
 
 export const symbols = new Map<string, { image: string; offset?: [number, number] }>([
 	['airplane', { image: 'basics:icon-airfield' }],
@@ -124,8 +125,8 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 		label: writable('')
 	};
 
-	constructor(map: maplibregl.Map, id: string, source: string) {
-		super(map, id);
+	constructor(manager: GeometryManager, id: string, source: string) {
+		super(manager, id);
 
 		const getSymbol = (): { image: string; offset: [number, number] } => {
 			const entry = symbols.get(get(this.style.symbol)) ?? symbols.get('flag')!;

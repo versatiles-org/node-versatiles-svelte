@@ -6,12 +6,13 @@ import type { GeometryManager } from '../geometry_manager.js';
 export abstract class AbstractElement {
 	public name: string;
 
-	protected canvas: HTMLElement;
-	protected manager: GeometryManager;
-	protected map: maplibregl.Map;
-	protected source: maplibregl.GeoJSONSource;
+	protected readonly canvas: HTMLElement;
+	protected readonly manager: GeometryManager;
+	protected readonly map: maplibregl.Map;
+	protected readonly source: maplibregl.GeoJSONSource;
 
-	protected slug = '_' + Math.random().toString(36).slice(2);
+	protected readonly slug = '_' + Math.random().toString(36).slice(2);
+	protected readonly sourceId = 'source' + this.slug;
 
 	constructor(manager: GeometryManager, name: string) {
 		this.manager = manager;
@@ -19,16 +20,15 @@ export abstract class AbstractElement {
 		this.canvas = this.map.getCanvasContainer();
 		this.name = name;
 
-		this.map.addSource(this.getSourceId(), {
+		this.map.addSource(this.sourceId, {
 			type: 'geojson',
 			data: { type: 'FeatureCollection', features: [] }
 		});
-		this.source = this.map.getSource(this.getSourceId())!;
+		this.source = this.map.getSource(this.sourceId)!;
 	}
 
-	protected getSourceId(): string {
-		return 'source' + this.slug;
-	}
+	public abstract set isActive(value: boolean);
+	public abstract set isSelected(value: boolean);
 
 	protected randomPositions(name: string, length: number): ElementPoint[] {
 		let seed = name
