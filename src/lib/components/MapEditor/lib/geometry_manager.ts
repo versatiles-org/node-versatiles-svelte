@@ -5,6 +5,7 @@ import type maplibregl from 'maplibre-gl';
 import type { MapMouseEvent } from 'maplibre-gl';
 import { LineElement } from './element_line.js';
 import type { SelectionNode } from './types.js';
+import { PolygonElement } from './element_polygon.js';
 
 export class GeometryManager {
 	public readonly elements: Writable<AbstractElement[]>;
@@ -103,6 +104,12 @@ export class GeometryManager {
 
 	public getNewLine(): AbstractElement {
 		const element = new LineElement(this, this.newName('Line '));
+		this.addElement(element);
+		return element;
+	}
+
+	public getNewPolygon(): AbstractElement {
+		const element = new PolygonElement(this, this.newName('Polygon '));
 		this.addElement(element);
 		return element;
 	}
