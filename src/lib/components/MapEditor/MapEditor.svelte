@@ -50,6 +50,11 @@
 					value="Line"
 					onclick={() => (activeElement = geometryManager?.getNewLine())}
 				/>
+				<input
+					type="button"
+					value="Polygon"
+					onclick={() => (activeElement = geometryManager?.getNewPolygon())}
+				/>
 			</div>
 			<hr />
 			<div class="row">
