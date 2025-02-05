@@ -2,6 +2,7 @@ import { get, writable } from 'svelte/store';
 import type { LayerLine } from '../types.js';
 import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
+import type { GeometryManager } from '../geometry_manager.js';
 
 export const dashArrays = new Map<string, number[] | undefined>([
 	['solid', undefined],
@@ -16,8 +17,8 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 		width: writable(2)
 	};
 
-	constructor(map: maplibregl.Map, id: string, source: string) {
-		super(map, id);
+	constructor(manager: GeometryManager, id: string, source: string) {
+		super(manager, id);
 
 		const getDashArray = (): number[] => dashArrays.get(get(this.style.dashed)) ?? [10];
 

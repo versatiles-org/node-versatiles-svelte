@@ -2,6 +2,7 @@ import { get, writable } from 'svelte/store';
 import type { LayerFill } from '../types.js';
 import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
+import type { GeometryManager } from '../geometry_manager.js';
 
 export class MapLayerFill extends MapLayer<LayerFill> {
 	public readonly style = {
@@ -9,8 +10,8 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 		opacity: writable(1)
 	};
 
-	constructor(map: maplibregl.Map, id: string, source: string) {
-		super(map, id);
+	constructor(manager: GeometryManager, id: string, source: string) {
+		super(manager, id);
 
 		this.addLayer(
 			source,

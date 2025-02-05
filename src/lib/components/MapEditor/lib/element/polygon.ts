@@ -11,25 +11,31 @@ export class PolygonElement extends AbstractElement {
 	public readonly fillStyle: MapLayerFill['style'];
 	public readonly strokeStyle: MapLayerLine['style'];
 
-	private path: ElementPath = [
-		[0, 0],
-		[0, 1],
-		[1, 1]
-	];
+	private path: ElementPath;
 
 	constructor(manager: GeometryManager, name: string, polygon?: ElementPath) {
 		super(manager, name);
 		this.path = polygon ?? this.randomPositions(name, 3);
 
-		this.fillLayer = new MapLayerFill(this.map, 'fill' + this.slug, this.getSourceId());
+		this.fillLayer = new MapLayerFill(manager, 'fill' + this.slug, this.sourceId);
 		this.fillLayer.onClick.push(() => this.manager.setActiveElement(this));
 		this.fillStyle = this.fillLayer.style;
 
-		this.strokeLayer = new MapLayerLine(this.map, 'line' + this.slug, this.getSourceId());
+		this.strokeLayer = new MapLayerLine(manager, 'line' + this.slug, this.sourceId);
 		this.strokeLayer.onClick.push(() => this.manager.setActiveElement(this));
 		this.strokeStyle = this.strokeLayer.style;
 
 		this.source.setData(this.getFeature());
+	}
+
+	public set isActive(value: boolean) {
+		this.fillLayer.isActive = value;
+		this.strokeLayer.isActive = value;
+	}
+
+	public set isSelected(value: boolean) {
+		this.fillLayer.isSelected = value;
+		this.strokeLayer.isSelected = value;
 	}
 
 	getFeature(): GeoJSON.Feature<GeoJSON.Polygon> {

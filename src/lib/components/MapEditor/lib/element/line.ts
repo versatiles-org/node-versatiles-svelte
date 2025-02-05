@@ -16,10 +16,18 @@ export class LineElement extends AbstractElement {
 	constructor(manager: GeometryManager, name: string, line?: ElementPath) {
 		super(manager, name);
 		this.path = line ?? this.randomPositions(name, 2);
-		this.layer = new MapLayerLine(this.map, 'line' + this.slug, this.getSourceId());
+		this.layer = new MapLayerLine(manager, 'line' + this.slug, this.sourceId);
 		this.layer.onClick.push(() => this.manager.setActiveElement(this));
 		this.style = this.layer.style;
 		this.source.setData(this.getFeature());
+	}
+
+	public set isActive(value: boolean) {
+		this.layer.isActive = value;
+	}
+
+	public set isSelected(value: boolean) {
+		this.layer.isSelected = value;
 	}
 
 	getFeature(): GeoJSON.Feature<GeoJSON.LineString> {

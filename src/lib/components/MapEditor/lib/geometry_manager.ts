@@ -6,24 +6,28 @@ import type { MapMouseEvent } from 'maplibre-gl';
 import { LineElement } from './element/line.js';
 import type { SelectionNode } from './types.js';
 import { PolygonElement } from './element/polygon.js';
+import { Cursor } from './cursor.js';
 
 export class GeometryManager {
 	public readonly elements: Writable<AbstractElement[]>;
 	public readonly map: maplibregl.Map;
 	public readonly activeElement: Writable<AbstractElement | undefined> = writable(undefined);
-	private readonly selection_nodes: maplibregl.GeoJSONSource;
 	public readonly canvas: HTMLElement;
+	public readonly cursor: Cursor;
+
+	private readonly selectionNodes: maplibregl.GeoJSONSource;
 
 	constructor(map: maplibregl.Map) {
 		this.elements = writable([]);
 		this.map = map;
 		this.canvas = this.map.getCanvasContainer();
+		this.cursor = new Cursor(this.canvas);
 
 		map.addSource('selection_nodes', {
 			type: 'geojson',
 			data: { type: 'FeatureCollection', features: [] }
 		});
-		this.selection_nodes = map.getSource('selection_nodes')!;
+		this.selectionNodes = map.getSource('selection_nodes')!;
 		map.addLayer({
 			id: 'selection_nodes',
 			source: 'selection_nodes',
@@ -32,10 +36,10 @@ export class GeometryManager {
 			paint: {
 				'circle-color': '#ffffff',
 				'circle-opacity': ['get', 'opacity'],
-				'circle-radius': 4,
+				'circle-radius': 3,
 				'circle-stroke-color': '#000000',
 				'circle-stroke-opacity': ['get', 'opacity'],
-				'circle-stroke-width': 1.5
+				'circle-stroke-width': 1
 			}
 		});
 		map.on('mousedown', 'selection_nodes', (e) => {
@@ -50,21 +54,19 @@ export class GeometryManager {
 
 			const onMove = (e: MapMouseEvent) => {
 				e.preventDefault();
-				this.canvas.style.cursor = 'grabbing';
 				updateSelectionNode(e.lngLat.lng, e.lngLat.lat);
 				this.drawSelectionNodes(element.getSelectionNodes());
 			};
 
 			const onUp = () => {
 				map.off('mousemove', onMove);
-				this.canvas.style.cursor = 'default';
 			};
 
 			map.once('mouseup', onUp);
 			map.on('mousemove', onMove);
 		});
-		map.on('mouseover', 'selection_nodes', () => (this.canvas.style.cursor = 'move'));
-		map.on('mouseout', 'selection_nodes', () => (this.canvas.style.cursor = 'default'));
+		map.on('mouseenter', 'selection_nodes', () => this.cursor.precise(true));
+		map.on('mouseleave', 'selection_nodes', () => this.cursor.precise(false));
 		map.on('click', (e) => {
 			this.setActiveElement(undefined);
 			e.preventDefault();
@@ -75,14 +77,18 @@ export class GeometryManager {
 		if (element) {
 			if (!get(this.elements).includes(element)) throw new Error('Element not in list');
 			this.drawSelectionNodes(element.getSelectionNodes());
+			get(this.elements).forEach((e) => (e.isActive = e.isSelected = e == element));
 		} else {
 			this.drawSelectionNodes([]);
+			get(this.elements).forEach((e) => (e.isActive = true));
+			get(this.elements).forEach((e) => (e.isSelected = false));
 		}
+
 		this.activeElement.set(element);
 	}
 
 	private drawSelectionNodes(nodes: SelectionNode[]) {
-		this.selection_nodes.setData({
+		this.selectionNodes.setData({
 			type: 'FeatureCollection',
 			features: nodes.map((n) => ({
 				type: 'Feature',

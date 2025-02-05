@@ -1,22 +1,25 @@
 import type { LayerSpecification } from 'maplibre-gl';
 import type { LayerFill, LayerLine, LayerSymbol } from '../types.js';
 import { Color } from '@versatiles/style';
+import type { GeometryManager } from '../geometry_manager.js';
 
 type LayerSpec = LayerFill | LayerLine | LayerSymbol;
 
 export class MapLayer<T extends LayerSpec> {
+	private readonly manager: GeometryManager;
 	private readonly map: maplibregl.Map;
 	private readonly id: string;
-	private layoutProperties = {} as T['layout'];
-	private paintProperties = {} as T['paint'];
-	public onClick: (() => void)[] = [];
-	protected canvas: HTMLElement;
-	protected isActive = true;
+	private layout = {} as T['layout'];
+	private paint = {} as T['paint'];
 
-	constructor(map: maplibregl.Map, id: string) {
-		this.map = map;
+	public onClick: (() => void)[] = [];
+	public isActive = true;
+	public isSelected = true;
+
+	constructor(manager: GeometryManager, id: string) {
+		this.manager = manager;
+		this.map = manager.map;
 		this.id = id;
-		this.canvas = map.getCanvas();
 	}
 
 	addLayer(
@@ -25,8 +28,8 @@ export class MapLayer<T extends LayerSpec> {
 		layout: T['layout'],
 		paint: T['paint']
 	) {
-		this.layoutProperties = layout;
-		this.paintProperties = paint;
+		this.layout = layout;
+		this.paint = paint;
 
 		this.map.addLayer(
 			{ id: this.id, source, type, layout, paint } as LayerSpecification,
@@ -38,13 +41,20 @@ export class MapLayer<T extends LayerSpec> {
 
 	addEvents() {
 		this.map.on('mouseenter', this.id, () => {
-			if (this.isActive) this.canvas.style.cursor = 'pointer';
+			if (this.isActive) {
+				if (this.isSelected) this.manager.cursor.grab(true);
+				this.manager.cursor.hover(true);
+			}
 		});
 		this.map.on('mouseleave', this.id, () => {
-			if (this.isActive) this.canvas.style.cursor = 'default';
+			if (this.isActive) {
+				if (this.isSelected) this.manager.cursor.grab(false);
+				this.manager.cursor.hover(false);
+			}
 		});
 		this.map.on('click', this.id, (e) => {
 			if (this.isActive) {
+				this.onClick.forEach((handler) => handler());
 				e.preventDefault();
 			}
 		});
@@ -53,7 +63,7 @@ export class MapLayer<T extends LayerSpec> {
 	setPaint(paint: T['paint']) {
 		if (paint === undefined) return;
 		const keys = new Set(
-			Object.keys(paint).concat(Object.keys(this.paintProperties)) as (keyof T['paint'])[]
+			Object.keys(paint).concat(Object.keys(this.paint)) as (keyof T['paint'])[]
 		);
 		for (const key of keys.values()) this.updatePaint(key, (paint as T['paint'])[key]);
 	}
@@ -61,22 +71,22 @@ export class MapLayer<T extends LayerSpec> {
 	updatePaint<K extends keyof T['paint'], V extends T['paint'][K]>(key: K, value: V) {
 		if (value instanceof Color) value = value.asString() as V;
 
-		if (this.paintProperties[key] == value) return;
+		if (this.paint[key] == value) return;
 		this.map.setPaintProperty(this.id, key as string, value);
-		this.paintProperties[key] = value;
+		this.paint[key] = value;
 	}
 
 	setLayout(layout: T['layout']) {
 		if (layout === undefined) return;
 		const keys = new Set(
-			Object.keys(layout).concat(Object.keys(this.layoutProperties)) as (keyof T['layout'])[]
+			Object.keys(layout).concat(Object.keys(this.layout)) as (keyof T['layout'])[]
 		);
 		for (const key of keys.values()) this.updateLayout(key, (layout as T['layout'])[key]);
 	}
 
 	updateLayout<K extends keyof T['layout'], V extends T['layout'][K]>(key: K, value: V) {
-		if (this.layoutProperties[key] == value) return;
+		if (this.layout[key] == value) return;
 		this.map.setLayoutProperty(this.id, key as string, value);
-		this.layoutProperties[key] = value;
+		this.layout[key] = value;
 	}
 }
