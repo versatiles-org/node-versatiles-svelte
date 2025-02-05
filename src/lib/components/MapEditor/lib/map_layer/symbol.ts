@@ -1,8 +1,7 @@
-import { Color } from '@versatiles/style';
-import { AbstractElement } from './element_abstract.js';
 import { get, writable } from 'svelte/store';
-import type { GeometryManager } from './geometry_manager.js';
-import type { ElementPoint, LayerSymbol, SelectionNode } from './types.js';
+import type { LayerSymbol } from '../types.js';
+import { MapLayer } from './abstract.js';
+import { Color } from '@versatiles/style';
 
 export const symbols = new Map<string, { image: string; offset?: [number, number] }>([
 	['airplane', { image: 'basics:icon-airfield' }],
@@ -115,90 +114,68 @@ export const symbols = new Map<string, { image: string; offset?: [number, number
 	['zoo', { image: 'basics:icon-zoo' }]
 ]);
 
-export class MarkerElement extends AbstractElement<LayerSymbol> {
-	public readonly color = writable('#ff0000');
-	public readonly halo = writable(1);
-	public readonly rotate = writable(0);
-	public readonly size = writable(1);
-	public readonly symbol = writable('flag');
-	public readonly label = writable('');
+export class MapLayerSymbol extends MapLayer<LayerSymbol> {
+	public readonly style = {
+		color: writable('#ff0000'),
+		halo: writable(1),
+		rotate: writable(0),
+		size: writable(1),
+		symbol: writable('flag'),
+		label: writable('')
+	};
 
-	private point: ElementPoint = [0, 0];
-
-	constructor(manager: GeometryManager, name: string, point?: ElementPoint) {
-		super(manager, name, 'symbol');
-		this.point = point ?? this.randomPositions(name, 1)[0];
+	constructor(map: maplibregl.Map, id: string, source: string) {
+		super(map, id);
 
 		const getSymbol = (): { image: string; offset: [number, number] } => {
-			const entry = symbols.get(get(this.symbol)) ?? symbols.get('flag')!;
+			const entry = symbols.get(get(this.style.symbol)) ?? symbols.get('flag')!;
 			return { image: entry.image, offset: entry.offset ?? [0, 0] };
 		};
 
-		this.layer.setLayout({
-			'icon-image': getSymbol().image,
-			'icon-offset': getSymbol().offset,
-			'icon-overlap': 'always',
-			'icon-rotate': get(this.rotate),
-			'icon-size': get(this.size),
-			'text-field': get(this.label),
-			'text-font': ['noto_sans_regular'],
-			'text-justify': 'left',
-			'text-anchor': 'right',
-			'text-offset': [-0.4, -0.6]
-		});
-		this.layer.setPaint({
-			'icon-color': Color.parse(get(this.color)).asString(),
-			'icon-halo-blur': 0,
-			'icon-halo-color': '#FFFFFF',
-			'icon-halo-width': get(this.halo) * get(this.size),
-			'icon-opacity': 1,
-			'text-halo-blur': 0,
-			'text-halo-color': '#FFFFFF',
-			'text-halo-width': get(this.halo) * get(this.size)
-		});
-
-		this.color.subscribe((value) => this.layer.updatePaint('icon-color', Color.parse(value)));
-		this.halo.subscribe((value) => {
-			this.layer.updatePaint('icon-halo-width', value * get(this.size));
-			this.layer.updatePaint('text-halo-width', value * get(this.size));
-		});
-		this.label.subscribe((value) => this.layer.updateLayout('text-field', value));
-		this.rotate.subscribe((value) => this.layer.updateLayout('icon-rotate', value));
-		this.size.subscribe((value) => {
-			this.layer.updateLayout('icon-size', value);
-			this.layer.updatePaint('icon-halo-width', value * get(this.halo));
-			this.layer.updateLayout('text-size', value * 16);
-			this.layer.updatePaint('text-halo-width', value * get(this.halo));
-		});
-		this.symbol.subscribe(() => {
-			const symbol = getSymbol();
-			this.layer.updateLayout('icon-image', symbol.image);
-			this.layer.updateLayout('icon-offset', symbol.offset);
-		});
-
-		this.source.setData(this.getFeature());
-	}
-
-	getFeature(): GeoJSON.Feature<GeoJSON.Point> {
-		return {
-			type: 'Feature',
-			properties: {},
-			geometry: {
-				type: 'Point',
-				coordinates: this.point
+		this.addLayer(
+			source,
+			'symbol',
+			{
+				'icon-image': getSymbol().image,
+				'icon-offset': getSymbol().offset,
+				'icon-overlap': 'always',
+				'icon-rotate': get(this.style.rotate),
+				'icon-size': get(this.style.size),
+				'text-field': get(this.style.label),
+				'text-font': ['noto_sans_regular'],
+				'text-justify': 'left',
+				'text-anchor': 'right',
+				'text-offset': [-0.4, -0.6]
+			},
+			{
+				'icon-color': Color.parse(get(this.style.color)).asString(),
+				'icon-halo-blur': 0,
+				'icon-halo-color': '#FFFFFF',
+				'icon-halo-width': get(this.style.halo) * get(this.style.size),
+				'icon-opacity': 1,
+				'text-halo-blur': 0,
+				'text-halo-color': '#FFFFFF',
+				'text-halo-width': get(this.style.halo) * get(this.style.size)
 			}
-		};
-	}
+		);
 
-	getSelectionNodes(): SelectionNode[] {
-		return [{ index: 0, coordinates: this.point }];
-	}
-
-	getSelectionNodeUpdater(): ((lng: number, lat: number) => void) | undefined {
-		return (lng, lat) => {
-			this.point[0] = lng;
-			this.point[1] = lat;
-			this.source.setData(this.getFeature());
-		};
+		this.style.color.subscribe((value) => this.updatePaint('icon-color', Color.parse(value)));
+		this.style.halo.subscribe((value) => {
+			this.updatePaint('icon-halo-width', value * get(this.style.size));
+			this.updatePaint('text-halo-width', value * get(this.style.size));
+		});
+		this.style.label.subscribe((value) => this.updateLayout('text-field', value));
+		this.style.rotate.subscribe((value) => this.updateLayout('icon-rotate', value));
+		this.style.size.subscribe((value) => {
+			this.updateLayout('icon-size', value);
+			this.updatePaint('icon-halo-width', value * get(this.style.halo));
+			this.updateLayout('text-size', value * 16);
+			this.updatePaint('text-halo-width', value * get(this.style.halo));
+		});
+		this.style.symbol.subscribe(() => {
+			const symbol = getSymbol();
+			this.updateLayout('icon-image', symbol.image);
+			this.updateLayout('icon-offset', symbol.offset);
+		});
 	}
 }

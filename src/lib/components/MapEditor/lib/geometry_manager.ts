@@ -1,18 +1,18 @@
 import { get, writable, type Writable } from 'svelte/store';
-import type { AbstractElement } from './element_abstract.js';
-import { MarkerElement } from './element_marker.js';
+import type { AbstractElement } from './element/abstract.js';
+import { MarkerElement } from './element/marker.js';
 import type maplibregl from 'maplibre-gl';
 import type { MapMouseEvent } from 'maplibre-gl';
-import { LineElement } from './element_line.js';
+import { LineElement } from './element/line.js';
 import type { SelectionNode } from './types.js';
-import { PolygonElement } from './element_polygon.js';
+import { PolygonElement } from './element/polygon.js';
 
 export class GeometryManager {
 	public readonly elements: Writable<AbstractElement[]>;
 	public readonly map: maplibregl.Map;
 	public readonly activeElement: Writable<AbstractElement | undefined> = writable(undefined);
 	private readonly selection_nodes: maplibregl.GeoJSONSource;
-	private readonly canvas: HTMLElement;
+	public readonly canvas: HTMLElement;
 
 	constructor(map: maplibregl.Map) {
 		this.elements = writable([]);

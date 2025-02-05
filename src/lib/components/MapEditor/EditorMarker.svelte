@@ -1,26 +1,25 @@
 <script lang="ts">
 	import {} from './editor.scss';
 	import { get } from 'svelte/store';
-	import type { MarkerElement } from './lib/element_marker.js';
-	import { symbols } from './lib/element_marker.js';
+	import { MapLayerSymbol, symbols } from './lib/map_layer/symbol.js';
 
 	const symbolList = Array.from(symbols.keys()).sort();
 
-	let { element }: { element: MarkerElement } = $props();
+	const { style }: { style: MapLayerSymbol['style'] } = $props();
 
-	let color = $state(get(element.color));
-	let halo = $state(get(element.halo));
-	let rotate = $state(get(element.rotate));
-	let size = $state(get(element.size));
-	let symbol = $state(get(element.symbol));
-	let label = $state(get(element.label));
+	let color = $state(get(style.color));
+	let halo = $state(get(style.halo));
+	let rotate = $state(get(style.rotate));
+	let size = $state(get(style.size));
+	let symbol = $state(get(style.symbol));
+	let label = $state(get(style.label));
 
-	$effect(() => element.color.set(color));
-	$effect(() => element.halo.set(halo));
-	$effect(() => element.rotate.set(rotate));
-	$effect(() => element.size.set(size));
-	$effect(() => element.label.set(label));
-	$effect(() => element.symbol.set(symbol));
+	$effect(() => style.color.set(color));
+	$effect(() => style.halo.set(halo));
+	$effect(() => style.rotate.set(rotate));
+	$effect(() => style.size.set(size));
+	$effect(() => style.label.set(label));
+	$effect(() => style.symbol.set(symbol));
 </script>
 
 <div class="row">

@@ -142,7 +142,7 @@ export interface LayerSymbol {
 }
 
 export type ElementPoint = [number, number];
-export type ElementLine = ElementPoint[];
+export type ElementPath = ElementPoint[];
 
 export interface SelectionNode {
 	coordinates: ElementPoint;

@@ -1,44 +1,53 @@
 import type { LayerSpecification } from 'maplibre-gl';
-import type { LayerFill, LayerLine, LayerSymbol } from './types.js';
+import type { LayerFill, LayerLine, LayerSymbol } from '../types.js';
 import { Color } from '@versatiles/style';
 
 type LayerSpec = LayerFill | LayerLine | LayerSymbol;
 
 export class MapLayer<T extends LayerSpec> {
-	public readonly map: maplibregl.Map;
-	public readonly id: string;
-	public readonly layoutProperties = {} as T['layout'];
-	public readonly paintProperties = {} as T['paint'];
+	private readonly map: maplibregl.Map;
+	private readonly id: string;
+	private layoutProperties = {} as T['layout'];
+	private paintProperties = {} as T['paint'];
+	public onClick: (() => void)[] = [];
+	protected canvas: HTMLElement;
+	protected isActive = true;
 
-	constructor(map: maplibregl.Map, id: string, source: string, type: 'symbol' | 'line' | 'fill') {
+	constructor(map: maplibregl.Map, id: string) {
 		this.map = map;
 		this.id = id;
+		this.canvas = map.getCanvas();
+	}
 
-		let filter: string;
-		switch (type) {
-			case 'symbol':
-				filter = 'Point';
-				break;
-			case 'line':
-				filter = 'LineString';
-				break;
-			case 'fill':
-				filter = 'Polygon';
-				break;
-			default:
-				throw new Error('Invalid layer type');
-		}
+	addLayer(
+		source: string,
+		type: 'symbol' | 'line' | 'fill',
+		layout: T['layout'],
+		paint: T['paint']
+	) {
+		this.layoutProperties = layout;
+		this.paintProperties = paint;
+
 		this.map.addLayer(
-			{
-				id,
-				source,
-				type,
-				layout: this.layoutProperties,
-				paint: this.paintProperties,
-				filter: ['==', '$type', filter]
-			} as LayerSpecification,
+			{ id: this.id, source, type, layout, paint } as LayerSpecification,
 			'selection_nodes'
 		);
+
+		this.addEvents();
+	}
+
+	addEvents() {
+		this.map.on('mouseenter', this.id, () => {
+			if (this.isActive) this.canvas.style.cursor = 'pointer';
+		});
+		this.map.on('mouseleave', this.id, () => {
+			if (this.isActive) this.canvas.style.cursor = 'default';
+		});
+		this.map.on('click', this.id, (e) => {
+			if (this.isActive) {
+				e.preventDefault();
+			}
+		});
 	}
 
 	setPaint(paint: T['paint']) {
