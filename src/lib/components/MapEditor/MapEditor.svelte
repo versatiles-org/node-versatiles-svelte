@@ -38,63 +38,91 @@
 	</div>
 	{#if showSidebar && geometryManager}
 		<div class="sidebar" style="--gap: 10px;">
-			<div class="label">Add new:</div>
-			<div class="row" style="display: flex; column-gap: var(--gap);">
-				<input
-					type="button"
-					value="Marker"
-					onclick={() => (activeElement = geometryManager?.getNewMarker())}
-				/>
-				<input
-					type="button"
-					value="Line"
-					onclick={() => (activeElement = geometryManager?.getNewLine())}
-				/>
-				<input
-					type="button"
-					value="Polygon"
-					onclick={() => (activeElement = geometryManager?.getNewPolygon())}
-				/>
-			</div>
-			<hr />
-			<div class="row">
-				<select
-					size="5"
-					bind:value={
-						() => elements.indexOf(activeElement!), (index) => (activeElement = elements[index])
-					}
-				>
-					{#each elements as element, index}
-						<option value={index}>{element.name}</option>
-					{/each}
-				</select>
-			</div>
-			{#if activeElement != null}
-				<hr />
-				<div class="editor">
-					<Editor element={activeElement} />
+			<div style="min-height: calc(100vh - 1.5em);">
+				<div class="label">Add new:</div>
+				<div class="row flex">
+					<input
+						type="button"
+						value="Marker"
+						onclick={() => (activeElement = geometryManager?.getNewMarker())}
+					/>
+					<input
+						type="button"
+						value="Line"
+						onclick={() => (activeElement = geometryManager?.getNewLine())}
+					/>
+					<input
+						type="button"
+						value="Polygon"
+						onclick={() => (activeElement = geometryManager?.getNewPolygon())}
+					/>
 				</div>
-			{/if}
+				<hr />
+				<div class="row">
+					<select
+						size="5"
+						style="width: 100%;"
+						bind:value={
+							() => elements.indexOf(activeElement!), (index) => (activeElement = elements[index])
+						}
+					>
+						{#each elements as element, index}
+							<option value={index}>{element.name}</option>
+						{/each}
+					</select>
+				</div>
+				{#if activeElement != null}
+					<hr />
+					<Editor element={activeElement} />
+				{/if}
+			</div>
+			<div class="footer">
+				<a href="https://github.com/versatiles-org/node-versatiles-svelte" target="_blank"
+					>Improve on GitHub</a
+				>
+			</div>
 		</div>
 		<style lang="scss">
 			.page {
 				.sidebar {
-					width: 300px;
+					width: 200px;
 					height: 100%;
 					position: absolute;
 					top: 0;
 					right: 0;
-					min-height: 6em;
 					background-color: #eee;
 					overflow-y: scroll;
 					box-sizing: border-box;
-					padding: var(--gap);
-				}
-				.row {
-					margin-bottom: var(--gap);
+					padding: 0 var(--gap);
+					border-left: 0.5px solid rgba(0, 0, 0, 0.5);
+
+					.row {
+						margin-bottom: var(--gap);
+					}
+
+					.flex {
+						display: flex;
+						justify-content: space-between;
+						input {
+							flex-grow: 0;
+						}
+					}
+
+					.footer {
+						text-align: right;
+						font-size: 0.8em;
+						a {
+							color: #000;
+							text-decoration: none;
+							opacity: 0.3;
+							&:hover {
+								opacity: 1;
+							}
+						}
+					}
 				}
 				.container {
-					width: calc(100% - 300px);
+					width: calc(100% - 200px);
 					height: 100%;
 					position: absolute;
 					top: 0;

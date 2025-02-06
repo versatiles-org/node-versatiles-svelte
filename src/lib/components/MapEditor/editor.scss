@@ -1,16 +1,29 @@
-input {
-	width: 100%;
+.editor {
+	input,
+	select,
+	.input {
+		width: 65%;
+		vertical-align: bottom;
+	}
+
+	label,
+	.label {
+		width: 30%;
+	}
+}
+
+input,
+select,
+.input {
+	box-sizing: border-box;
+	display: inline-block;
 }
 
 label,
-div.label {
+.label {
 	opacity: 0.7;
 	font-size: 0.8em;
-	display: block;
-	margin-top: 1.5em;
+	display: inline-block;
+	margin-top: 1em;
 	margin-bottom: 0.2em;
-}
-
-select {
-	width: 100%;
 }
