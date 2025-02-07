@@ -28,6 +28,7 @@ export class GeometryManager {
 			data: { type: 'FeatureCollection', features: [] }
 		});
 		this.selectionNodes = map.getSource('selection_nodes')!;
+
 		map.addLayer({
 			id: 'selection_nodes',
 			source: 'selection_nodes',
@@ -42,6 +43,7 @@ export class GeometryManager {
 				'circle-stroke-width': 1
 			}
 		});
+
 		map.on('mousedown', 'selection_nodes', (e) => {
 			const element = get(this.activeElement)!;
 			if (element == undefined) return;
@@ -52,21 +54,26 @@ export class GeometryManager {
 
 			e.preventDefault();
 
-			if (e.originalEvent.shiftKey) return selectedNode.delete();
+			if (e.originalEvent.shiftKey) {
+				selectedNode.delete();
+				this.drawSelectionNodes();
+			} else {
+				const onMove = (e: MapMouseEvent) => {
+					e.preventDefault();
+					selectedNode.update(e.lngLat.lng, e.lngLat.lat);
+					this.drawSelectionNodes();
+				};
 
-			const onMove = (e: MapMouseEvent) => {
-				e.preventDefault();
-				selectedNode.update(e.lngLat.lng, e.lngLat.lat);
-				this.drawSelectionNodes(element.getSelectionNodes());
-			};
-
-			map.on('mousemove', onMove);
-			map.once('mouseup', () => map.off('mousemove', onMove));
+				map.on('mousemove', onMove);
+				map.once('mouseup', () => map.off('mousemove', onMove));
+			}
 		});
+
 		map.on('mouseenter', 'selection_nodes', () => this.cursor.precise(true));
 		map.on('mouseleave', 'selection_nodes', () => this.cursor.precise(false));
+
 		map.on('click', (e) => {
-			this.setActiveElement(undefined);
+			if (!e.originalEvent.shiftKey) this.setActiveElement(undefined);
 			e.preventDefault();
 		});
 	}
@@ -74,10 +81,8 @@ export class GeometryManager {
 	public setActiveElement(element: AbstractElement | undefined) {
 		const elements = get(this.elements);
 		if (element && elements.includes(element)) {
-			this.drawSelectionNodes(element.getSelectionNodes());
 			elements.forEach((e) => (e.isActive = e.isSelected = e == element));
 		} else {
-			this.drawSelectionNodes([]);
 			elements.forEach((e) => {
 				e.isActive = true;
 				e.isSelected = false;
@@ -85,9 +90,11 @@ export class GeometryManager {
 		}
 
 		this.activeElement.set(element);
+		this.drawSelectionNodes();
 	}
 
-	private drawSelectionNodes(nodes: SelectionNode[]) {
+	private drawSelectionNodes() {
+		const nodes: SelectionNode[] = get(this.activeElement)?.getSelectionNodes() ?? [];
 		this.selectionNodes.setData({
 			type: 'FeatureCollection',
 			features: nodes.map((n) => ({
