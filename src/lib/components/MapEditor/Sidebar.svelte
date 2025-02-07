@@ -1,5 +1,4 @@
 <script lang="ts">
-	import {} from './editor.scss';
 	import EditorSymbol from './EditorSymbol.svelte';
 	import EditorLine from './EditorStroke.svelte';
 	import type { AbstractElement } from './lib/element/abstract.js';
@@ -21,9 +20,9 @@
 
 <div class="sidebar" style="--gap: 10px;width: {width}px;">
 	<div style="min-height: calc(100vh - 1.5em);">
-		<h2>Actions</h2>
+		<hr />
 		<div class="label">Add new:</div>
-		<div class="row flex">
+		<div class="row-flex">
 			<input
 				type="button"
 				value="Marker"
@@ -58,7 +57,7 @@
 			<hr />
 
 			{#if activeElement}
-				<label for="input-name">Name</label>
+				<label for="input-name">Name:</label>
 				<input
 					id="input-name"
 					type="text"
@@ -114,16 +113,64 @@
 		padding: 0 var(--gap);
 		border-left: 0.5px solid rgba(0, 0, 0, 0.5);
 
-		.row {
-			margin-bottom: var(--gap);
+		hr {
+			border: none;
+			border-top: 0.5px solid rgba(0, 0, 0, 1);
+			margin: var(--gap) 0 var(--gap);
 		}
 
-		.flex {
+		h2 {
+			font-size: 0.9em;
+			font-weight: normal;
+			opacity: 0.5;
+			padding-top: var(--gap);
+			border-top: 0.5px solid rgba(0, 0, 0, 1);
+			margin: var(--gap) 0 var(--gap);
+			text-align: center;
+		}
+
+		:global(.row-flex) {
+			margin-bottom: var(--gap);
 			display: flex;
 			justify-content: space-between;
-			input {
+			column-gap: var(--gap);
+			:global(input) {
 				flex-grow: 0;
 			}
+		}
+
+		:global(.row-input) {
+			margin: var(--gap) 0 var(--gap);
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			:global(label) {
+				flex-grow: 0;
+			}
+			:global(input),
+			:global(select) {
+				width: 60%;
+				flex-grow: 0;
+			}
+		}
+
+		:global(label),
+		:global(.label) {
+			opacity: 0.7;
+			font-size: 0.8em;
+		}
+
+		:global(input),
+		:global(select) {
+			width: 100%;
+			box-sizing: border-box;
+			margin: 0;
+		}
+
+		p {
+			font-size: 0.8em;
+			opacity: 0.5;
+			margin: 0.5em 0 1em;
 		}
 
 		.footer {
@@ -137,21 +184,6 @@
 					opacity: 1;
 				}
 			}
-		}
-
-		h2 {
-			font-size: 0.9em;
-			font-weight: normal;
-			border-top: 0.5px solid rgba(0, 0, 0, 1);
-			opacity: 0.5;
-			padding-top: 0.5em;
-			margin: 1em 0 0;
-			text-align: center;
-		}
-		p {
-			font-size: 0.8em;
-			opacity: 0.5;
-			margin: 0.5em 0 1em;
 		}
 	}
 </style>
