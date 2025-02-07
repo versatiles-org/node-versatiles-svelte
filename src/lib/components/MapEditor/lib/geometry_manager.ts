@@ -4,7 +4,7 @@ import { MarkerElement } from './element/marker.js';
 import type maplibregl from 'maplibre-gl';
 import type { MapMouseEvent } from 'maplibre-gl';
 import { LineElement } from './element/line.js';
-import type { SelectionNode } from './types.js';
+import type { SelectionNode } from './element/types.js';
 import { PolygonElement } from './element/polygon.js';
 import { Cursor } from './cursor.js';
 
@@ -47,23 +47,21 @@ export class GeometryManager {
 			if (element == undefined) return;
 
 			const feature = map.queryRenderedFeatures(e.point, { layers: ['selection_nodes'] })[0];
-			const updateSelectionNode = element.getSelectionNodeUpdater(feature.properties);
-			if (updateSelectionNode == undefined) return;
+			const selectedNode = element.getSelectionNodeUpdater(feature.properties);
+			if (selectedNode == undefined) return;
 
 			e.preventDefault();
 
+			if (e.originalEvent.shiftKey) return selectedNode.delete();
+
 			const onMove = (e: MapMouseEvent) => {
 				e.preventDefault();
-				updateSelectionNode(e.lngLat.lng, e.lngLat.lat);
+				selectedNode.update(e.lngLat.lng, e.lngLat.lat);
 				this.drawSelectionNodes(element.getSelectionNodes());
 			};
 
-			const onUp = () => {
-				map.off('mousemove', onMove);
-			};
-
-			map.once('mouseup', onUp);
 			map.on('mousemove', onMove);
+			map.once('mouseup', () => map.off('mousemove', onMove));
 		});
 		map.on('mouseenter', 'selection_nodes', () => this.cursor.precise(true));
 		map.on('mouseleave', 'selection_nodes', () => this.cursor.precise(false));
@@ -74,14 +72,16 @@ export class GeometryManager {
 	}
 
 	public setActiveElement(element: AbstractElement | undefined) {
-		if (element) {
-			if (!get(this.elements).includes(element)) throw new Error('Element not in list');
+		const elements = get(this.elements);
+		if (element && elements.includes(element)) {
 			this.drawSelectionNodes(element.getSelectionNodes());
-			get(this.elements).forEach((e) => (e.isActive = e.isSelected = e == element));
+			elements.forEach((e) => (e.isActive = e.isSelected = e == element));
 		} else {
 			this.drawSelectionNodes([]);
-			get(this.elements).forEach((e) => (e.isActive = true));
-			get(this.elements).forEach((e) => (e.isSelected = false));
+			elements.forEach((e) => {
+				e.isActive = true;
+				e.isSelected = false;
+			});
 		}
 
 		this.activeElement.set(element);
@@ -122,6 +122,11 @@ export class GeometryManager {
 
 	private addElement(element: AbstractElement) {
 		this.elements.update((elements) => [...elements, element]);
+	}
+
+	public deleteElement(element: AbstractElement) {
+		this.elements.update((elements) => elements.filter((e) => e !== element));
+		if (get(this.activeElement) === element) this.setActiveElement(undefined);
 	}
 
 	private newName(prefix: string): string {

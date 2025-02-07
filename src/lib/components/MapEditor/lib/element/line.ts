@@ -1,5 +1,5 @@
 import type { GeometryManager } from '../geometry_manager.js';
-import type { ElementPath } from '../types.js';
+import type { ElementPath } from './types.js';
 import { MapLayerLine } from '../map_layer/line.js';
 import { AbstractPathElement } from './abstract_path.js';
 
@@ -30,5 +30,10 @@ export class LineElement extends AbstractPathElement {
 			properties: {},
 			geometry: { type: 'LineString', coordinates: this.path }
 		};
+	}
+
+	destroy(): void {
+		this.layer.destroy();
+		this.map.removeSource(this.sourceId);
 	}
 }

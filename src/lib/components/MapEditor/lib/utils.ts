@@ -1,4 +1,4 @@
-import type { ElementPoint } from './types.js';
+import type { ElementPoint } from './element/types.js';
 
 export function getMiddlePoint(p0: ElementPoint, p1: ElementPoint): ElementPoint {
 	const y0 = lat2mercator(p0[1]);

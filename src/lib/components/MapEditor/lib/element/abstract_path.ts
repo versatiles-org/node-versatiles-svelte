@@ -1,6 +1,6 @@
 import { AbstractElement } from './abstract.js';
 import type { GeometryManager } from '../geometry_manager.js';
-import type { ElementPath, ElementPoint, SelectionNode } from '../types.js';
+import type { ElementPath, ElementPoint, SelectionNode, SelectionNodeUpdater } from './types.js';
 import { getMiddlePoint } from '../utils.js';
 
 export abstract class AbstractPathElement extends AbstractElement {
@@ -27,9 +27,7 @@ export abstract class AbstractPathElement extends AbstractElement {
 		return points;
 	}
 
-	getSelectionNodeUpdater(
-		properties?: Record<string, unknown>
-	): ((lng: number, lat: number) => void) | undefined {
+	getSelectionNodeUpdater(properties?: Record<string, unknown>): SelectionNodeUpdater | undefined {
 		if (properties == undefined) return;
 		const index = properties.index as number;
 		let point: ElementPoint;
@@ -42,10 +40,13 @@ export abstract class AbstractPathElement extends AbstractElement {
 			this.path.splice(j, 0, point);
 		}
 
-		return (lng: number, lat: number) => {
-			point[0] = lng;
-			point[1] = lat;
-			this.source.setData(this.getFeature());
+		return {
+			update: (lng: number, lat: number) => {
+				point[0] = lng;
+				point[1] = lat;
+				this.source.setData(this.getFeature());
+			},
+			delete: () => this.delete()
 		};
 	}
 }

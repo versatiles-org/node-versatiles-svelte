@@ -140,12 +140,3 @@ export interface LayerSymbol {
 		'text-translate-anchor'?: 'map' | 'viewport';
 	};
 }
-
-export type ElementPoint = [number, number];
-export type ElementPath = ElementPoint[];
-
-export interface SelectionNode {
-	coordinates: ElementPoint;
-	index: number;
-	transparent?: boolean;
-}
