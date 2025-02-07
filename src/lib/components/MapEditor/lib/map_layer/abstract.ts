@@ -6,11 +6,12 @@ import type { GeometryManager } from '../geometry_manager.js';
 type LayerSpec = LayerFill | LayerLine | LayerSymbol;
 
 export abstract class MapLayer<T extends LayerSpec> {
-	private readonly manager: GeometryManager;
-	private readonly map: maplibregl.Map;
-	private readonly id: string;
 	private layout = {} as T['layout'];
 	private paint = {} as T['paint'];
+
+	protected readonly id: string;
+	protected readonly manager: GeometryManager;
+	protected readonly map: maplibregl.Map;
 
 	public onClick: (() => void)[] = [];
 	public isActive = true;
