@@ -46,7 +46,16 @@ export abstract class AbstractPathElement extends AbstractElement {
 				point[1] = lat;
 				this.source.setData(this.getFeature());
 			},
-			delete: () => this.delete()
+			delete: () => {
+				if (this.isLine) {
+					if (this.path.length <= 2) return this.delete();
+				} else {
+					if (this.path.length <= 3) return this.delete();
+				}
+
+				this.path.splice(index, 1);
+				this.source.setData(this.getFeature());
+			}
 		};
 	}
 }
