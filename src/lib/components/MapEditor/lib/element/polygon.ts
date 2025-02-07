@@ -5,10 +5,8 @@ import { MapLayerLine } from '../map_layer/line.js';
 import { AbstractPathElement } from './abstract_path.js';
 
 export class PolygonElement extends AbstractPathElement {
-	private readonly fillLayer: MapLayerFill;
-	private readonly strokeLayer: MapLayerLine;
-	public readonly fillStyle: MapLayerFill['style'];
-	public readonly strokeStyle: MapLayerLine['style'];
+	public readonly fillLayer: MapLayerFill;
+	public readonly strokeLayer: MapLayerLine;
 
 	constructor(manager: GeometryManager, name: string, polygon?: ElementPath) {
 		super(manager, name, false);
@@ -16,11 +14,9 @@ export class PolygonElement extends AbstractPathElement {
 
 		this.fillLayer = new MapLayerFill(manager, 'fill' + this.slug, this.sourceId);
 		this.fillLayer.onClick.push(() => this.manager.setActiveElement(this));
-		this.fillStyle = this.fillLayer.style;
 
 		this.strokeLayer = new MapLayerLine(manager, 'line' + this.slug, this.sourceId);
 		this.strokeLayer.onClick.push(() => this.manager.setActiveElement(this));
-		this.strokeStyle = this.strokeLayer.style;
 
 		this.source.setData(this.getFeature());
 	}

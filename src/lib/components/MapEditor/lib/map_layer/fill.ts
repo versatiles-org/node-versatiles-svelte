@@ -19,11 +19,9 @@ export const fillPatterns = new Map<string, Pattern | undefined>([
 ]);
 
 export class MapLayerFill extends MapLayer<LayerFill> {
-	public readonly style = {
-		color: writable('#ff0000'),
-		opacity: writable(1),
-		pattern: writable('solid')
-	};
+	color = writable('#ff0000');
+	opacity = writable(1);
+	pattern = writable('solid');
 
 	constructor(manager: GeometryManager, id: string, source: string) {
 		super(manager, id);
@@ -33,14 +31,14 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 			'fill',
 			{},
 			{
-				'fill-color': Color.parse(get(this.style.color)).asHex(),
-				'fill-opacity': get(this.style.opacity)
+				'fill-color': Color.parse(get(this.color)).asHex(),
+				'fill-opacity': get(this.opacity)
 			}
 		);
 
 		const updatePattern = () => {
-			const pattern = fillPatterns.get(get(this.style.pattern)) ?? undefined;
-			const color = Color.parse(get(this.style.color));
+			const pattern = fillPatterns.get(get(this.pattern)) ?? undefined;
+			const color = Color.parse(get(this.color));
 
 			if (pattern == null) {
 				this.updatePaint('fill-color', color);
@@ -72,8 +70,8 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 			this.updatePaint('fill-pattern', name);
 		};
 
-		this.style.color.subscribe(() => updatePattern());
-		this.style.pattern.subscribe(() => updatePattern());
-		this.style.opacity.subscribe((value) => this.updatePaint('fill-opacity', value));
+		this.color.subscribe(() => updatePattern());
+		this.pattern.subscribe(() => updatePattern());
+		this.opacity.subscribe((value) => this.updatePaint('fill-opacity', value));
 	}
 }

@@ -70,17 +70,17 @@
 				/>
 				{#if activeElement instanceof MarkerElement}
 					<h2>Symbol</h2>
-					<EditorSymbol style={activeElement.style} />
+					<EditorSymbol layer={activeElement.layer} />
 				{/if}
 				{#if activeElement instanceof LineElement}
 					<h2>Stroke</h2>
-					<EditorLine style={activeElement.style} />
+					<EditorLine layer={activeElement.layer} />
 				{/if}
 				{#if activeElement instanceof PolygonElement}
 					<h2>Fill</h2>
-					<EditorFill style={activeElement.fillStyle} />
+					<EditorFill layer={activeElement.fillLayer} />
 					<h2>Stroke</h2>
-					<EditorLine style={activeElement.strokeStyle} />
+					<EditorLine layer={activeElement.strokeLayer} />
 				{/if}
 				{#if activeElement instanceof PolygonElement || activeElement instanceof LineElement}
 					<h2>Shape</h2>
