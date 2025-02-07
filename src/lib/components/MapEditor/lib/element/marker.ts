@@ -4,8 +4,7 @@ import type { ElementPoint, SelectionNode, SelectionNodeUpdater } from './types.
 import { MapLayerSymbol } from '../map_layer/symbol.js';
 
 export class MarkerElement extends AbstractElement {
-	public readonly style: MapLayerSymbol['style'];
-	protected layer: MapLayerSymbol;
+	public readonly layer: MapLayerSymbol;
 
 	private point: ElementPoint = [0, 0];
 
@@ -15,7 +14,6 @@ export class MarkerElement extends AbstractElement {
 
 		this.layer = new MapLayerSymbol(manager, 'symbol' + this.slug, this.sourceId);
 		this.layer.onClick.push(() => this.manager.setActiveElement(this));
-		this.style = this.layer.style;
 		this.source.setData(this.getFeature());
 	}
 

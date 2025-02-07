@@ -1,4 +1,4 @@
-import { get, writable } from 'svelte/store';
+import { derived, get, writable } from 'svelte/store';
 import type { LayerLine } from './types.js';
 import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
@@ -11,16 +11,14 @@ export const dashArrays = new Map<string, number[] | undefined>([
 ]);
 
 export class MapLayerLine extends MapLayer<LayerLine> {
-	public readonly style = {
-		color: writable('#ff0000'),
-		dashed: writable('solid'),
-		width: writable(2)
-	};
+	color = writable('#ff0000');
+	dashed = writable('solid');
+	width = writable(2);
+
+	dashArray = derived(this.dashed, (dashed) => dashArrays.get(dashed) ?? [10]);
 
 	constructor(manager: GeometryManager, id: string, source: string) {
 		super(manager, id);
-
-		const getDashArray = (): number[] => dashArrays.get(get(this.style.dashed)) ?? [10];
 
 		this.addLayer(
 			source,
@@ -30,14 +28,14 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 				'line-join': 'round'
 			},
 			{
-				'line-color': Color.parse(get(this.style.color)).asHex(),
-				'line-dasharray': getDashArray(),
-				'line-width': get(this.style.width)
+				'line-color': Color.parse(get(this.color)).asHex(),
+				'line-dasharray': get(this.dashArray),
+				'line-width': get(this.width)
 			}
 		);
 
-		this.style.color.subscribe((value) => this.updatePaint('line-color', Color.parse(value)));
-		this.style.width.subscribe((value) => this.updatePaint('line-width', value));
-		this.style.dashed.subscribe(() => this.updatePaint('line-dasharray', getDashArray()));
+		this.color.subscribe((v) => this.updatePaint('line-color', Color.parse(v)));
+		this.width.subscribe((v) => this.updatePaint('line-width', v));
+		this.dashArray.subscribe((v) => this.updatePaint('line-dasharray', v));
 	}
 }

@@ -1,4 +1,4 @@
-import { get, writable } from 'svelte/store';
+import { derived, get, writable } from 'svelte/store';
 import type { LayerSymbol } from './types.js';
 import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
@@ -116,67 +116,63 @@ export const symbols = new Map<string, { image: string; offset?: [number, number
 ]);
 
 export class MapLayerSymbol extends MapLayer<LayerSymbol> {
-	public readonly style = {
-		color: writable('#ff0000'),
-		halo: writable(1),
-		rotate: writable(0),
-		size: writable(1),
-		symbol: writable('flag'),
-		label: writable('')
-	};
+	color = writable('#ff0000');
+	halo = writable(1);
+	rotate = writable(0);
+	size = writable(1);
+	symbolName = writable('flag');
+	label = writable('');
+
+	haloWidth = derived([this.halo, this.size], ([halo, size]) => halo * size);
+	symbol = derived(this.symbolName, (name) => {
+		const entry = symbols.get(name) ?? symbols.get('flag')!;
+		return { image: entry.image, offset: entry.offset ?? [0, 0] };
+	});
 
 	constructor(manager: GeometryManager, id: string, source: string) {
 		super(manager, id);
-
-		const getSymbol = (): { image: string; offset: [number, number] } => {
-			const entry = symbols.get(get(this.style.symbol)) ?? symbols.get('flag')!;
-			return { image: entry.image, offset: entry.offset ?? [0, 0] };
-		};
 
 		this.addLayer(
 			source,
 			'symbol',
 			{
-				'icon-image': getSymbol().image,
-				'icon-offset': getSymbol().offset,
+				'icon-image': get(this.symbol).image,
+				'icon-offset': get(this.symbol).offset,
 				'icon-overlap': 'always',
-				'icon-rotate': get(this.style.rotate),
-				'icon-size': get(this.style.size),
-				'text-field': get(this.style.label),
+				'icon-rotate': get(this.rotate),
+				'icon-size': get(this.size),
+				'text-field': get(this.label),
 				'text-font': ['noto_sans_regular'],
 				'text-justify': 'left',
 				'text-anchor': 'right',
 				'text-offset': [-0.4, -0.6]
 			},
 			{
-				'icon-color': Color.parse(get(this.style.color)).asString(),
+				'icon-color': Color.parse(get(this.color)).asString(),
 				'icon-halo-blur': 0,
 				'icon-halo-color': '#FFFFFF',
-				'icon-halo-width': get(this.style.halo) * get(this.style.size),
+				'icon-halo-width': get(this.haloWidth),
 				'icon-opacity': 1,
 				'text-halo-blur': 0,
 				'text-halo-color': '#FFFFFF',
-				'text-halo-width': get(this.style.halo) * get(this.style.size)
+				'text-halo-width': get(this.haloWidth)
 			}
 		);
 
-		this.style.color.subscribe((value) => this.updatePaint('icon-color', Color.parse(value)));
-		this.style.halo.subscribe((value) => {
-			this.updatePaint('icon-halo-width', value * get(this.style.size));
-			this.updatePaint('text-halo-width', value * get(this.style.size));
+		this.color.subscribe((v) => this.updatePaint('icon-color', Color.parse(v)));
+		this.haloWidth.subscribe((v) => {
+			this.updatePaint('icon-halo-width', v);
+			this.updatePaint('text-halo-width', v);
 		});
-		this.style.label.subscribe((value) => this.updateLayout('text-field', value));
-		this.style.rotate.subscribe((value) => this.updateLayout('icon-rotate', value));
-		this.style.size.subscribe((value) => {
-			this.updateLayout('icon-size', value);
-			this.updatePaint('icon-halo-width', value * get(this.style.halo));
-			this.updateLayout('text-size', value * 16);
-			this.updatePaint('text-halo-width', value * get(this.style.halo));
+		this.label.subscribe((v) => this.updateLayout('text-field', v));
+		this.rotate.subscribe((v) => this.updateLayout('icon-rotate', v));
+		this.size.subscribe((v) => {
+			this.updateLayout('icon-size', v);
+			this.updateLayout('text-size', v * 16);
 		});
-		this.style.symbol.subscribe(() => {
-			const symbol = getSymbol();
-			this.updateLayout('icon-image', symbol.image);
-			this.updateLayout('icon-offset', symbol.offset);
+		this.symbol.subscribe((v) => {
+			this.updateLayout('icon-image', v.image);
+			this.updateLayout('icon-offset', v.offset);
 		});
 	}
 }
