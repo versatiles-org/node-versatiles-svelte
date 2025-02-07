@@ -11,10 +11,12 @@
 	$effect(() => style.opacity.set(opacity));
 </script>
 
-<div class="row">
-	<label for="color-input">Color:</label>
-	<input id="color-input" type="color" bind:value={color} />
+<div class="row-input">
+	<label for="color">Color:</label>
+	<input id="color" type="color" bind:value={color} />
+</div>
 
-	<label for="opacity-input">Opacity:</label>
-	<input id="opacity-input" type="range" min="0" max="1" step="0.02" bind:value={opacity} />
+<div class="row-input">
+	<label for="opacity">Opacity:</label>
+	<input id="opacity" type="range" min="0" max="1" step="0.02" bind:value={opacity} />
 </div>
