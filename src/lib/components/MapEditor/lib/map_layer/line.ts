@@ -30,7 +30,7 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 				'line-join': 'round'
 			},
 			{
-				'line-color': Color.parse(get(this.style.color)).asString(),
+				'line-color': Color.parse(get(this.style.color)).asHex(),
 				'line-dasharray': getDashArray(),
 				'line-width': get(this.style.width)
 			}

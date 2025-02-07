@@ -18,7 +18,7 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 			'fill',
 			{},
 			{
-				'fill-color': Color.parse(get(this.style.color)).asString(),
+				'fill-color': Color.parse(get(this.style.color)).asHex(),
 				'fill-opacity': get(this.style.opacity)
 			}
 		);
