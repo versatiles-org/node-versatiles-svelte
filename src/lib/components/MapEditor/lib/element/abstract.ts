@@ -1,6 +1,6 @@
 import type { Feature } from 'geojson';
 import type maplibregl from 'maplibre-gl';
-import type { ElementPoint, SelectionNode } from '../types.js';
+import type { ElementPoint, SelectionNode, SelectionNodeUpdater } from './types.js';
 import type { GeometryManager } from '../geometry_manager.js';
 import { Random } from '../random.js';
 
@@ -49,9 +49,15 @@ export abstract class AbstractElement {
 		return points;
 	}
 
+	public delete() {
+		this.destroy();
+		this.manager.deleteElement(this);
+	}
+
+	abstract destroy(): void;
 	abstract getFeature(): Feature;
 	abstract getSelectionNodes(): SelectionNode[];
 	abstract getSelectionNodeUpdater(
 		properties?: Record<string, unknown>
-	): ((lng: number, lat: number) => void) | undefined;
+	): SelectionNodeUpdater | undefined;
 }

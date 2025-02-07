@@ -1,11 +1,11 @@
 import type { LayerSpecification } from 'maplibre-gl';
-import type { LayerFill, LayerLine, LayerSymbol } from '../types.js';
+import type { LayerFill, LayerLine, LayerSymbol } from './types.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
 
 type LayerSpec = LayerFill | LayerLine | LayerSymbol;
 
-export class MapLayer<T extends LayerSpec> {
+export abstract class MapLayer<T extends LayerSpec> {
 	private readonly manager: GeometryManager;
 	private readonly map: maplibregl.Map;
 	private readonly id: string;
@@ -88,5 +88,9 @@ export class MapLayer<T extends LayerSpec> {
 		if (this.layout[key] == value) return;
 		this.map.setLayoutProperty(this.id, key as string, value);
 		this.layout[key] = value;
+	}
+
+	destroy(): void {
+		this.map.removeLayer(this.id);
 	}
 }

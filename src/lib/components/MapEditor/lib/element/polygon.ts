@@ -1,5 +1,5 @@
 import type { GeometryManager } from '../geometry_manager.js';
-import type { ElementPath } from '../types.js';
+import type { ElementPath } from './types.js';
 import { MapLayerFill } from '../map_layer/fill.js';
 import { MapLayerLine } from '../map_layer/line.js';
 import { AbstractPathElement } from './abstract_path.js';
@@ -41,5 +41,11 @@ export class PolygonElement extends AbstractPathElement {
 			properties: {},
 			geometry: { type: 'Polygon', coordinates: [[...this.path, this.path[0]]] }
 		};
+	}
+
+	destroy(): void {
+		this.fillLayer.destroy();
+		this.strokeLayer.destroy();
+		this.map.removeSource(this.sourceId);
 	}
 }

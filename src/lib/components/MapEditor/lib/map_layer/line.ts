@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store';
-import type { LayerLine } from '../types.js';
+import type { LayerLine } from './types.js';
 import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';

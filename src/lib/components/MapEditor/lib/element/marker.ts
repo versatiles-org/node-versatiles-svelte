@@ -1,6 +1,6 @@
 import { AbstractElement } from './abstract.js';
 import type { GeometryManager } from '../geometry_manager.js';
-import type { ElementPoint, SelectionNode } from '../types.js';
+import type { ElementPoint, SelectionNode, SelectionNodeUpdater } from './types.js';
 import { MapLayerSymbol } from '../map_layer/symbol.js';
 
 export class MarkerElement extends AbstractElement {
@@ -42,11 +42,19 @@ export class MarkerElement extends AbstractElement {
 		return [{ index: 0, coordinates: this.point }];
 	}
 
-	getSelectionNodeUpdater(): ((lng: number, lat: number) => void) | undefined {
-		return (lng, lat) => {
-			this.point[0] = lng;
-			this.point[1] = lat;
-			this.source.setData(this.getFeature());
+	getSelectionNodeUpdater(): SelectionNodeUpdater | undefined {
+		return {
+			update: (lng, lat) => {
+				this.point[0] = lng;
+				this.point[1] = lat;
+				this.source.setData(this.getFeature());
+			},
+			delete: () => this.delete()
 		};
+	}
+
+	destroy(): void {
+		this.layer.destroy();
+		this.map.removeSource(this.sourceId);
 	}
 }
