@@ -61,6 +61,9 @@
 <div class="map" {style} bind:this={container}></div>
 
 <style>
+	.map :global(canvas) {
+		outline: none !important;
+	}
 	.map :global(.maplibregl-ctrl-attrib) {
 		background-color: color-mix(in srgb, var(--bg-color) 50%, transparent) !important;
 		color: var(--fg-color) !important;

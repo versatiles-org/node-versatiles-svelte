@@ -2,6 +2,7 @@ import type { Feature } from 'geojson';
 import type maplibregl from 'maplibre-gl';
 import type { ElementPoint, SelectionNode } from '../types.js';
 import type { GeometryManager } from '../geometry_manager.js';
+import { Random } from '../random.js';
 
 export abstract class AbstractElement {
 	public name: string;
@@ -31,14 +32,12 @@ export abstract class AbstractElement {
 	public abstract set isSelected(value: boolean);
 
 	protected randomPositions(name: string, length: number): ElementPoint[] {
-		let seed = name
-			.split('')
-			.reduce((acc, char) => (acc * 0x101 + char.charCodeAt(0)) % 0x100000000, 0);
+		const r = new Random(name);
 
 		const points: ElementPoint[] = [];
 		for (let i = 0; i < length; i++) {
-			const xr = random() * 0.5 + 0.25;
-			const yr = random() * 0.5 + 0.25;
+			const xr = r.random() * 0.5 + 0.25;
+			const yr = r.random() * 0.5 + 0.25;
 
 			const bounds = this.map.getBounds();
 			points.push([
@@ -48,11 +47,6 @@ export abstract class AbstractElement {
 		}
 
 		return points;
-
-		function random(): number {
-			for (let i = 0; i < 10; i++) seed = ((Math.cos(seed * 3.14 + 0.0159) + 1.1) * 9631) % 1;
-			return seed;
-		}
 	}
 
 	abstract getFeature(): Feature;

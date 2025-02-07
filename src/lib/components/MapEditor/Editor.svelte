@@ -34,6 +34,12 @@
 			<h2>Stroke</h2>
 			<EditorLine style={element.strokeStyle} />
 		{/if}
+		{#if element instanceof PolygonElement || element instanceof LineElement}
+			<h2>Shape</h2>
+			<p>
+				Drag points to move.<br />Drag a midpoint to add.<br />Shift-click to delete a point.
+			</p>
+		{/if}
 	{/if}
 </div>
 
@@ -46,5 +52,10 @@
 		padding-top: 0.5em;
 		margin: 1em 0 0;
 		text-align: center;
+	}
+	p {
+		font-size: 0.8em;
+		opacity: 0.5;
+		margin: 0.5em 0 1em;
 	}
 </style>
