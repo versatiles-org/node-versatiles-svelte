@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { get } from 'svelte/store';
 	import { dashArrays, MapLayerLine } from './lib/map_layer/line.js';
 
 	const dashedList = Array.from(dashArrays.keys()).sort();

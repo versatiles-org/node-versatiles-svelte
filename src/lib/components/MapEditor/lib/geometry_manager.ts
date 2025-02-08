@@ -105,6 +105,10 @@ export class GeometryManager {
 		});
 	}
 
+	public getState(): string {
+		return '';
+	}
+
 	public getElement(index: number): AbstractElement {
 		return get(this.elements)[index];
 	}
