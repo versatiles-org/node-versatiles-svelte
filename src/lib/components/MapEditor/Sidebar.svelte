@@ -100,7 +100,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.sidebar {
 		width: 200px;
 		height: 100%;
