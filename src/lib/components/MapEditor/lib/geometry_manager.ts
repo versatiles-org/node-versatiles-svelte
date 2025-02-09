@@ -14,7 +14,7 @@ import { StateReader } from './state/reader.js';
 export class GeometryManager {
 	public readonly elements: Writable<AbstractElement[]>;
 	public readonly map: maplibregl.Map;
-	public readonly activeElement: Writable<AbstractElement | undefined> = writable(undefined);
+	public readonly selectedElement: Writable<AbstractElement | undefined> = writable(undefined);
 	public readonly canvas: HTMLElement;
 	public readonly cursor: Cursor;
 
@@ -48,7 +48,7 @@ export class GeometryManager {
 		});
 
 		map.on('mousedown', 'selection_nodes', (e) => {
-			const element = get(this.activeElement)!;
+			const element = get(this.selectedElement)!;
 			if (element == undefined) return;
 
 			const feature = map.queryRenderedFeatures(e.point, { layers: ['selection_nodes'] })[0];
@@ -80,7 +80,7 @@ export class GeometryManager {
 		map.on('mouseleave', 'selection_nodes', () => this.cursor.precise(false));
 
 		map.on('click', (e) => {
-			if (!e.originalEvent.shiftKey) this.setActiveElement(undefined);
+			if (!e.originalEvent.shiftKey) this.selectElement(undefined);
 			e.preventDefault();
 		});
 
@@ -90,22 +90,15 @@ export class GeometryManager {
 		if (hash) this.loadState(hash);
 	}
 
-	public setActiveElement(element: AbstractElement | undefined) {
+	public selectElement(element: AbstractElement | undefined) {
 		const elements = get(this.elements);
-		if (element && elements.includes(element)) {
-			elements.forEach((e) => (e.isSelected = e == element));
-		} else {
-			elements.forEach((e) => {
-				e.isSelected = false;
-			});
-		}
-
-		this.activeElement.set(element);
+		elements.forEach((e) => e.select(e == element));
+		this.selectedElement.set(element);
 		this.drawSelectionNodes();
 	}
 
-	private drawSelectionNodes() {
-		const nodes: SelectionNode[] = get(this.activeElement)?.getSelectionNodes() ?? [];
+	public drawSelectionNodes() {
+		const nodes: SelectionNode[] = get(this.selectedElement)?.getSelectionNodes() ?? [];
 		this.selectionNodes.setData({
 			type: 'FeatureCollection',
 			features: nodes.map((n) => ({
@@ -195,7 +188,7 @@ export class GeometryManager {
 
 	public deleteElement(element: AbstractElement) {
 		this.elements.update((elements) => elements.filter((e) => e !== element));
-		if (get(this.activeElement) === element) this.setActiveElement(undefined);
+		if (get(this.selectedElement) === element) this.selectElement(undefined);
 		this.saveState();
 	}
 }

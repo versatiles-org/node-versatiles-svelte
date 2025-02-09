@@ -9,8 +9,8 @@ export abstract class AbstractElement {
 	protected readonly manager: GeometryManager;
 	protected readonly map: maplibregl.Map;
 	protected readonly source: maplibregl.GeoJSONSource;
-
 	protected readonly slug = '_' + Math.random().toString(36).slice(2);
+	protected isSelected = false;
 	public readonly sourceId = 'source' + this.slug;
 
 	constructor(manager: GeometryManager) {
@@ -25,7 +25,9 @@ export abstract class AbstractElement {
 		this.source = this.map.getSource(this.sourceId)!;
 	}
 
-	public abstract set isSelected(value: boolean);
+	public select(value: boolean) {
+		this.isSelected = value;
+	}
 
 	protected randomPositions(length: number): ElementPoint[] {
 		const points: ElementPoint[] = [];

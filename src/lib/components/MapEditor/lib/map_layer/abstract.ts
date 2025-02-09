@@ -1,10 +1,12 @@
-import type { LayerSpecification } from 'maplibre-gl';
+import type { LayerSpecification, MapMouseEvent } from 'maplibre-gl';
 import type { LayerFill, LayerLine, LayerSymbol } from './types.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { StateObject } from '../state/types.js';
 
 type LayerSpec = LayerFill | LayerLine | LayerSymbol;
+type Events = 'click' | 'mousedown' | 'mousemove' | 'mouseup';
+type MouseEventHandler = (event: MapMouseEvent) => void;
 
 export abstract class MapLayer<T extends LayerSpec> {
 	private layout = {} as T['layout'];
@@ -14,7 +16,7 @@ export abstract class MapLayer<T extends LayerSpec> {
 	protected readonly manager: GeometryManager;
 	protected readonly map: maplibregl.Map;
 
-	public onClick: (() => void)[] = [];
+	public eventHandlers = new Map<Events, MouseEventHandler[]>();
 	public isSelected = false;
 
 	constructor(manager: GeometryManager, id: string) {
@@ -40,7 +42,26 @@ export abstract class MapLayer<T extends LayerSpec> {
 		this.addEvents();
 	}
 
-	addEvents() {
+	on(event: Events, handler: MouseEventHandler) {
+		if (!this.eventHandlers.has(event)) this.eventHandlers.set(event, []);
+		this.eventHandlers.get(event)!.push(handler);
+	}
+
+	off(event: Events, handler: MouseEventHandler) {
+		if (!this.eventHandlers.has(event)) return;
+		const handlers = this.eventHandlers.get(event)!;
+		this.eventHandlers.set(
+			event,
+			handlers.filter((h) => h !== handler)
+		);
+	}
+
+	private dispatchEvent(event: Events, e: MapMouseEvent) {
+		const handlers = this.eventHandlers.get(event);
+		if (handlers) handlers.forEach((handler) => handler(e));
+	}
+
+	private addEvents() {
 		this.map.on('mouseenter', this.id, () => {
 			if (this.isSelected) this.manager.cursor.grab(true);
 			this.manager.cursor.hover(true);
@@ -50,11 +71,14 @@ export abstract class MapLayer<T extends LayerSpec> {
 			this.manager.cursor.hover(false);
 		});
 		this.map.on('click', this.id, (e) => {
-			this.onClick.forEach((handler) => handler());
+			this.dispatchEvent('click', e);
 			if (this.isSelected) this.manager.cursor.grab(true);
 			this.manager.cursor.hover(true);
 			e.preventDefault();
 		});
+		this.map.on('mousedown', this.id, (e) => this.dispatchEvent('mousedown', e));
+		this.map.on('mouseup', this.id, (e) => this.dispatchEvent('mouseup', e));
+		this.map.on('mousemove', this.id, (e) => this.dispatchEvent('mousemove', e));
 	}
 
 	setPaint(paint: T['paint']) {

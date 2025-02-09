@@ -32,7 +32,7 @@ describe('PolygonElement', () => {
 	});
 
 	it('should set isSelected correctly', () => {
-		element.isSelected = true;
+		element.select(true);
 		expect(element.fillLayer.isSelected).toBe(true);
 		expect(element.strokeLayer.isSelected).toBe(true);
 	});

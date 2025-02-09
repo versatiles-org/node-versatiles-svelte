@@ -11,12 +11,19 @@ export class LineElement extends AbstractPathElement {
 	constructor(manager: GeometryManager, line?: ElementPath) {
 		super(manager, true);
 		this.path = line ?? this.randomPositions(2);
+
 		this.layer = new MapLayerLine(manager, 'line' + this.slug, this.sourceId);
-		this.layer.onClick.push(() => this.manager.setActiveElement(this));
+		this.layer.on('click', () => this.manager.selectElement(this));
+		this.layer.on('mousedown', (e) => {
+			if (!this.isSelected) return;
+			this.handleDrag(e);
+		});
+
 		this.source.setData(this.getFeature());
 	}
 
-	public set isSelected(value: boolean) {
+	public select(value: boolean) {
+		super.select(value);
 		this.layer.isSelected = value;
 	}
 

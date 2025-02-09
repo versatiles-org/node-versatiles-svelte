@@ -1,7 +1,8 @@
 import { AbstractElement } from './abstract.js';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { ElementPath, ElementPoint, SelectionNode, SelectionNodeUpdater } from './types.js';
-import { getMiddlePoint } from '../utils.js';
+import { getMiddlePoint, lat2mercator, mercator2lat } from '../utils.js';
+import type { MapMouseEvent } from 'maplibre-gl';
 
 export abstract class AbstractPathElement extends AbstractElement {
 	public path: ElementPath = [];
@@ -10,6 +11,27 @@ export abstract class AbstractPathElement extends AbstractElement {
 	constructor(manager: GeometryManager, isLine: boolean) {
 		super(manager);
 		this.isLine = isLine;
+	}
+
+	protected handleDrag(e: MapMouseEvent) {
+		const { lng, lat } = e.lngLat;
+		let x0 = lng;
+		let y0 = lat2mercator(lat);
+		const moveHandler = (e: MapMouseEvent) => {
+			const { lng, lat } = e.lngLat;
+			const y = lat2mercator(lat);
+			const dx = lng - x0;
+			const dy = y - y0;
+			y0 = y;
+			x0 = lng;
+			this.path = this.path.map(([x, y]) => [x + dx, mercator2lat(lat2mercator(y) + dy)]);
+			this.source.setData(this.getFeature());
+			this.manager.drawSelectionNodes();
+			e.preventDefault();
+		};
+		this.manager.map.on('mousemove', moveHandler);
+		this.manager.map.once('mouseup', () => this.manager.map.off('mousemove', moveHandler));
+		e.preventDefault();
 	}
 
 	getSelectionNodes(): SelectionNode[] {

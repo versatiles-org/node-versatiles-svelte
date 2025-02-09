@@ -43,10 +43,10 @@ describe('GeometryManager', () => {
 
 	it('should delete an element', () => {
 		const element = manager.addNewMarker();
-		manager.setActiveElement(element);
-		vi.spyOn(manager, 'setActiveElement');
+		manager.selectElement(element);
+		vi.spyOn(manager, 'selectElement');
 		manager.deleteElement(element);
-		expect(manager.setActiveElement).toHaveBeenCalledWith(undefined);
+		expect(manager.selectElement).toHaveBeenCalledWith(undefined);
 	});
 
 	it('should return correct state', () => {

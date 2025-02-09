@@ -26,7 +26,7 @@ describe('MarkerElement', () => {
 	});
 
 	it('should set isSelected correctly', () => {
-		element.isSelected = true;
+		element.select(true);
 		expect(element.layer.isSelected).toBe(true);
 	});
 
