@@ -198,4 +198,13 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 			}
 		);
 	}
+
+	setState(state: StateObject) {
+		if (state.color) this.color.set(state.color);
+		if (state.rotate) this.rotate.set(state.rotate);
+		if (state.size) this.size.set(state.size / 10);
+		if (state.halo) this.halo.set(state.halo / 10);
+		if (state.pattern) this.symbolIndex.set(state.pattern);
+		if (state.label) this.label.set(state.label);
+	}
 }

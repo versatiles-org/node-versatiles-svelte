@@ -72,9 +72,18 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 			this.updatePaint('fill-pattern', name);
 		};
 
-		this.color.subscribe(() => updatePattern());
-		this.pattern.subscribe(() => updatePattern());
-		this.opacity.subscribe((value) => this.updatePaint('fill-opacity', value));
+		this.color.subscribe(() => {
+			updatePattern();
+			this.manager.saveState();
+		});
+		this.pattern.subscribe(() => {
+			updatePattern();
+			this.manager.saveState();
+		});
+		this.opacity.subscribe((value) => {
+			this.updatePaint('fill-opacity', value);
+			this.manager.saveState();
+		});
 	}
 
 	getState(): StateObject | undefined {
@@ -90,5 +99,11 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 				pattern: 0
 			}
 		);
+	}
+
+	setState(state: StateObject) {
+		if (state.color) this.color.set(state.color);
+		if (state.opacity) this.opacity.set(state.opacity / 100);
+		if (state.pattern) this.pattern.set(state.pattern);
 	}
 }

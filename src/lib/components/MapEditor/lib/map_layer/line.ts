@@ -36,9 +36,18 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 			}
 		);
 
-		this.color.subscribe((v) => this.updatePaint('line-color', Color.parse(v)));
-		this.width.subscribe((v) => this.updatePaint('line-width', v));
-		this.dashArray.subscribe((v) => this.updatePaint('line-dasharray', v));
+		this.color.subscribe((v) => {
+			this.updatePaint('line-color', Color.parse(v));
+			this.manager.saveState();
+		});
+		this.width.subscribe((v) => {
+			this.updatePaint('line-width', v);
+			this.manager.saveState();
+		});
+		this.dashArray.subscribe((v) => {
+			this.updatePaint('line-dasharray', v);
+			this.manager.saveState();
+		});
 	}
 
 	getState(): StateObject | undefined {
@@ -54,5 +63,11 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 				width: 200
 			}
 		);
+	}
+	
+	setState(state: StateObject) {
+		if (state.color) this.color.set(state.color);
+		if (state.pattern) this.dashed.set(state.pattern);
+		if (state.width) this.width.set(state.width / 100);
 	}
 }
