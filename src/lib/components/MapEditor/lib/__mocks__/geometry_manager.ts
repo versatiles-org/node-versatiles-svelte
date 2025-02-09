@@ -1,6 +1,6 @@
 import { writable, type Writable } from 'svelte/store';
-import type { AbstractElement } from './element/abstract.js';
-import type { StateObject } from './state/types.js';
+import type { AbstractElement } from '../element/abstract.js';
+import type { StateObject } from '../state/types.js';
 import { vi } from 'vitest';
 
 export class MockGeometryManager {
@@ -9,6 +9,7 @@ export class MockGeometryManager {
 	public readonly map = {
 		getCanvasContainer: vi.fn(() => ({})),
 		addSource: vi.fn(),
+		removeSource: vi.fn(),
 		getSource: vi.fn(() => ({ setData: vi.fn() })),
 		addLayer: vi.fn(),
 		on: vi.fn(),
@@ -22,7 +23,13 @@ export class MockGeometryManager {
 		removeLayer: vi.fn(),
 		hasImage: vi.fn(),
 		removeImage: vi.fn(),
-		addImage: vi.fn()
+		addImage: vi.fn(),
+		getBounds: vi.fn(() => ({
+			getWest: () => -180,
+			getEast: () => 180,
+			getSouth: () => -90,
+			getNorth: () => 90
+		}))
 	};
 	public readonly cursor = {
 		grab: vi.fn(),
