@@ -1,3 +1,4 @@
+import { Color } from '@versatiles/style';
 import { base64ToUint8Array, decompress } from '../utils.js';
 import type { StateObject } from './types.js';
 
@@ -112,10 +113,10 @@ export class StateReader {
 					state.label = this.readString();
 					break;
 				case 70:
-					state.halo = this.readUnsignedInteger();
+					state.halo = this.readUnsignedInteger() / 10;
 					break;
 				case 71:
-					state.opacity = this.readUnsignedInteger();
+					state.opacity = this.readUnsignedInteger() / 100;
 					break;
 				case 72:
 					state.pattern = this.readUnsignedInteger();
@@ -124,13 +125,13 @@ export class StateReader {
 					state.rotate = this.readUnsignedInteger();
 					break;
 				case 74:
-					state.size = this.readUnsignedInteger();
+					state.size = this.readUnsignedInteger() / 10;
 					break;
 				case 75:
-					state.width = this.readUnsignedInteger();
+					state.width = this.readUnsignedInteger() / 10;
 					break;
 				case 76:
-					state.zoom = this.readUnsignedInteger();
+					state.zoom = this.readUnsignedInteger() / 20;
 					break;
 				case 90:
 					state.visible = this.readBoolean();
@@ -155,10 +156,7 @@ export class StateReader {
 	}
 
 	readColor(): string {
-		const r = this.readByte();
-		const g = this.readByte();
-		const b = this.readByte();
-		return `rgb(${r},${g},${b})`;
+		return new Color.RGB(this.readByte(), this.readByte(), this.readByte()).asHex();
 	}
 
 	readType(): string {

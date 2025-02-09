@@ -59,7 +59,7 @@ describe('StateReader', () => {
 			point: [12.34567, -98.76543],
 			label: 'Test Label',
 			elements: [{ type: 'marker' }],
-			color: 'rgb(255,0,0)'
+			color: '#123456'
 		};
 
 		const writer = new StateWriter();
@@ -85,7 +85,7 @@ describe('StateReader', () => {
 
 	it('should handle nested objects', () => {
 		const originalState: StateObject = {
-			map: { zoom: 5, style: { color: 'rgb(0,255,0)' } },
+			map: { zoom: 5, style: { color: '#336699' } },
 			type: 'line'
 		};
 
@@ -102,7 +102,7 @@ describe('StateReader', () => {
 	it('should read color correctly', () => {
 		const reader = new StateReader(new Uint8Array([40, 255, 100, 50, 0]));
 		const state = reader.readObject();
-		expect(state.color).toStrictEqual('rgb(255,100,50)');
+		expect(state.color).toStrictEqual('#FF6432');
 	});
 
 	it('should throw error on invalid key', () => {

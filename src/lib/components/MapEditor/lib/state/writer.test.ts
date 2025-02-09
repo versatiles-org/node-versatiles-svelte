@@ -70,7 +70,7 @@ describe('StateWriter', () => {
 			const writer = new StateWriter();
 			writer.writeObject({ map: { zoom: 3 }, style: {}, strokeStyle: { color: '#123' } });
 			expect(writer.getBuffer()).toStrictEqual(
-				new Uint8Array([10, 76, 3, 0, 11, 0, 12, 40, 17, 34, 51, 0, 0])
+				new Uint8Array([10, 76, 60, 0, 11, 0, 12, 40, 17, 34, 51, 0, 0])
 			);
 		});
 
@@ -137,7 +137,9 @@ describe('StateWriter', () => {
 		it('should handle numeric fields (halo, opacity, etc.)', () => {
 			const writer = new StateWriter();
 			writer.writeObject({ halo: 5, opacity: 123, rotate: 360 });
-			expect(writer.getBuffer()).toStrictEqual(new Uint8Array([70, 5, 71, 123, 73, 232, 2, 0]));
+			expect(writer.getBuffer()).toStrictEqual(
+				new Uint8Array([70, 50, 71, 140, 96, 73, 232, 2, 0])
+			);
 		});
 
 		it('should throw error if numeric fields are negative', () => {

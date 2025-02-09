@@ -121,7 +121,7 @@ export class GeometryManager {
 		return {
 			map: {
 				point: [center.lng, center.lat],
-				zoom: this.map.getZoom() * 100
+				zoom: this.map.getZoom()
 			},
 			elements: get(this.elements).map((element) => element.getState())
 		};
@@ -141,7 +141,7 @@ export class GeometryManager {
 			const state = reader.readObject();
 			if (!state) return;
 
-			if (state.map?.zoom) this.map.setZoom(state.map.zoom / 100);
+			if (state.map?.zoom) this.map.setZoom(state.map.zoom);
 			if (state.map?.point) {
 				this.map.setCenter({ lng: state.map.point[0], lat: state.map.point[1] });
 			}
