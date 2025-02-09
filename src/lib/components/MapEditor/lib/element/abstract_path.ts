@@ -4,7 +4,7 @@ import type { ElementPath, ElementPoint, SelectionNode, SelectionNodeUpdater } f
 import { getMiddlePoint } from '../utils.js';
 
 export abstract class AbstractPathElement extends AbstractElement {
-	protected path: ElementPath = [];
+	public path: ElementPath = [];
 	protected readonly isLine: boolean;
 
 	constructor(manager: GeometryManager, isLine: boolean) {

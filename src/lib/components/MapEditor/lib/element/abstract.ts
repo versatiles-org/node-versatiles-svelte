@@ -11,7 +11,7 @@ export abstract class AbstractElement {
 	protected readonly source: maplibregl.GeoJSONSource;
 
 	protected readonly slug = '_' + Math.random().toString(36).slice(2);
-	protected readonly sourceId = 'source' + this.slug;
+	public readonly sourceId = 'source' + this.slug;
 
 	constructor(manager: GeometryManager) {
 		this.manager = manager;
