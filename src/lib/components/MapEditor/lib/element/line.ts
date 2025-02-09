@@ -44,4 +44,10 @@ export class LineElement extends AbstractPathElement {
 			style: this.layer.getState()
 		};
 	}
+
+	static fromState(manager: GeometryManager, state: StateObject) {
+		const element = new LineElement(manager, state.points);
+		if (state.style) element.layer.setState(state.style);
+		return element;
+	}
 }

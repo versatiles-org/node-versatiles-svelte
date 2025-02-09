@@ -17,7 +17,7 @@
 </script>
 
 <div class="sidebar" style="--gap: 10px;width: {width}px;">
-	<div style="min-height: calc(100vh - 1.5em);">
+	<div style="min-height: calc(100vh - 2em);">
 		<hr />
 		<div class="label">Add new:</div>
 		<div class="row-flex">
@@ -67,8 +67,8 @@
 		{/if}
 	</div>
 	<div class="footer">
-		<a href="https://github.com/versatiles-org/node-versatiles-svelte" target="_blank"
-			>Improve on GitHub</a
+		<a href="https://github.com/versatiles-org/node-versatiles-svelte/issues" target="_blank">
+			Add a GitHub issue.</a
 		>
 	</div>
 </div>

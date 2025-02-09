@@ -9,6 +9,7 @@ import { PolygonElement } from './element/polygon.js';
 import { Cursor } from './cursor.js';
 import type { StateObject } from './state/types.js';
 import { StateWriter } from './state/writer.js';
+import { StateReader } from './state/reader.js';
 
 export class GeometryManager {
 	public readonly elements: Writable<AbstractElement[]>;
@@ -82,6 +83,10 @@ export class GeometryManager {
 			if (!e.originalEvent.shiftKey) this.setActiveElement(undefined);
 			e.preventDefault();
 		});
+
+		map.on('moveend', () => this.saveState());
+
+		this.loadState();
 	}
 
 	public setActiveElement(element: AbstractElement | undefined) {
@@ -111,13 +116,6 @@ export class GeometryManager {
 		});
 	}
 
-	public async saveState() {
-		const state = this.getState();
-		console.log(state);
-		const writer = new StateWriter();
-		writer.writeObject(state);
-	}
-
 	public getState(): StateObject {
 		const center = this.map.getCenter();
 		return {
@@ -127,6 +125,46 @@ export class GeometryManager {
 			},
 			elements: get(this.elements).map((element) => element.getState())
 		};
+	}
+
+	public async saveState() {
+		const writer = new StateWriter();
+		writer.writeObject(this.getState());
+		location.hash = await writer.getBase64compressed();
+	}
+
+	public async loadState() {
+		try {
+			const hash = location.hash.slice(1);
+			if (!hash) return;
+			const reader = await StateReader.fromBase64compressed(hash);
+			const state = reader.readObject();
+			if (!state) return;
+
+			if (state.map?.zoom) this.map.setZoom(state.map.zoom / 100);
+			if (state.map?.point) {
+				this.map.setCenter({ lng: state.map.point[0], lat: state.map.point[1] });
+			}
+
+			if (state.elements) {
+				this.elements.set(
+					state.elements.map((element) => {
+						switch (element.type) {
+							case 'marker':
+								return MarkerElement.fromState(this, element);
+							case 'line':
+								return LineElement.fromState(this, element);
+							case 'polygon':
+								return PolygonElement.fromState(this, element);
+							default:
+								throw new Error('Unknown element type');
+						}
+					})
+				);
+			}
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 	public getElement(index: number): AbstractElement {

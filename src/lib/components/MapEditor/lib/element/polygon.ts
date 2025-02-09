@@ -54,4 +54,11 @@ export class PolygonElement extends AbstractPathElement {
 			strokeStyle: this.strokeLayer.getState()
 		};
 	}
+
+	static fromState(manager: GeometryManager, state: StateObject) {
+		const element = new PolygonElement(manager, state.points);
+		if (state.style) element.fillLayer.setState(state.style);
+		if (state.strokeStyle) element.strokeLayer.setState(state.strokeStyle);
+		return element;
+	}
 }

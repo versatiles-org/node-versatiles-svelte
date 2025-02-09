@@ -93,7 +93,9 @@ export class StateReader {
 				case 31:
 					{
 						const count = this.readUnsignedInteger();
-						state.points = this.readDifferential(count);
+						const x = this.readDifferential(count);
+						const y = this.readDifferential(count);
+						state.points = Array.from({ length: count }, (_, i) => [x[i] / 1e5, y[i] / 1e5]);
 					}
 					break;
 				case 40:
@@ -133,21 +135,16 @@ export class StateReader {
 		return state;
 	}
 
-	readDifferential(count: number): [number, number][] {
-		const points: [number, number][] = [];
-		if (count === 0) return points;
-		const firstX = this.readSignedInteger() / 1e5;
-		const firstY = this.readSignedInteger() / 1e5;
-		points.push([firstX, firstY]);
-
+	readDifferential(count: number): number[] {
+		const values: number[] = [];
+		if (count === 0) return values;
+		let value = this.readSignedInteger();
+		values.push(value);
 		for (let i = 1; i < count; i++) {
-			const prev = points[i - 1];
-			points.push([
-				prev[0] + this.readSignedInteger() / 1e5,
-				prev[1] + this.readSignedInteger() / 1e5
-			]);
+			value += + this.readSignedInteger();
+			values.push(value);
 		}
-		return points;
+		return values;
 	}
 
 	readColor(): string {
