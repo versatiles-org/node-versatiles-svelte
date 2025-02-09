@@ -1,4 +1,6 @@
+import { Color } from '@versatiles/style';
 import { compress, uint8ArrayToBase64 } from '../utils.js';
+import type { StateObject } from './types.js';
 
 const chunkSize = 65536;
 
@@ -51,5 +53,133 @@ export class StateWriter {
 
 	getBuffer(): Uint8Array {
 		return this.buffer.slice(0, this.offset);
+	}
+
+	writeObject(state: StateObject) {
+		// eslint-disable-next-line @typescript-eslint/no-this-alias
+		const me = this;
+
+		Object.entries(state).forEach(([key, value]: [string, unknown]) => {
+			if (value == null) return;
+			switch (key) {
+				case 'map':
+					writeObject(10, value);
+					break;
+				case 'style':
+					writeObject(11, value);
+					break;
+				case 'strokeStyle':
+					writeObject(12, value);
+					break;
+
+				case 'elements':
+					if (!Array.isArray(value)) throw new Error(`Invalid elements: ${value}`);
+					this.writeByte(20);
+					this.writeUnsignedInteger(value.length);
+					value.forEach((element: StateObject) => this.writeObject(element));
+					break;
+
+				case 'point':
+					if (!Array.isArray(value) || value.length !== 2)
+						throw new Error(`Invalid point: ${value}`);
+					this.writeByte(30);
+					me.writeSignedInteger(Math.round(value[0] * 1e5));
+					me.writeSignedInteger(Math.round(value[1] * 1e5));
+					break;
+
+				case 'points':
+					if (!Array.isArray(value)) throw new Error(`Invalid points: ${value}`);
+					this.writeByte(31);
+					this.writeUnsignedInteger(value.length);
+					writeDifferential(value, 0);
+					writeDifferential(value, 1);
+					break;
+
+				case 'color':
+					this.writeByte(40);
+					writeColor(value);
+					break;
+
+				case 'type':
+					this.writeByte(50);
+					switch (value) {
+						case 'marker':
+							this.writeByte(0);
+							break;
+						case 'line':
+							this.writeByte(1);
+							break;
+						case 'polygon':
+							this.writeByte(2);
+							break;
+						default:
+							throw new Error(`Invalid type: ${value}`);
+					}
+					break;
+
+				case 'label':
+					if (typeof value !== 'string') throw new Error(`Invalid string: ${value}`);
+					this.writeByte(60);
+					this.writeString(value);
+					break;
+
+				case 'halo':
+					writeInteger(70, value);
+					break;
+				case 'opacity':
+					writeInteger(71, value);
+					break;
+				case 'pattern':
+					writeInteger(72, value);
+					break;
+				case 'rotate':
+					writeInteger(73, value);
+					break;
+				case 'size':
+					writeInteger(74, value);
+					break;
+				case 'width':
+					writeInteger(75, value);
+					break;
+				case 'zoom':
+					writeInteger(76, value);
+					break;
+
+				default:
+					throw new Error(`Invalid state key: ${key}`);
+			}
+		});
+		this.writeByte(0);
+
+		function writeObject(id: number, obj: unknown) {
+			if (typeof obj !== 'object' || obj == null) throw new Error(`Invalid object: ${obj}`);
+			me.writeByte(id);
+			me.writeObject(obj as StateObject);
+		}
+
+		function writeInteger(id: number, obj: unknown) {
+			if (typeof obj !== 'number') throw new Error(`Invalid number: ${obj}`);
+			const value = Math.round(obj);
+			if (value < 0) throw new Error(`Negative Number: ${obj}`);
+			me.writeByte(id);
+			me.writeUnsignedInteger(value as number);
+		}
+
+		function writeColor(color: unknown) {
+			if (typeof color !== 'string') throw new Error(`Invalid color: ${color}`);
+			const c = Color.parse(color).asRGB().round().asArray();
+			me.writeByte(c[0]);
+			me.writeByte(c[1]);
+			me.writeByte(c[2]);
+		}
+
+		function writeDifferential(points: [number, number][], index: 0 | 1) {
+			if (points.length === 0) return;
+			const values = points.map((p) => Math.round(p[index] * 1e5));
+			me.writeSignedInteger(values[0]);
+			for (let i = 1; i < values.length; i++) {
+				me.writeSignedInteger(values[i] - values[i - 1]);
+			}
+		}
 	}
 }

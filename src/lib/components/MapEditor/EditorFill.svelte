@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { fillPatterns, type MapLayerFill } from './lib/map_layer/fill.js';
 
-	const patternIds = Array.from(fillPatterns.keys());
-
 	const { layer }: { layer: MapLayerFill } = $props();
 
 	let color = $state(layer.color);
@@ -18,8 +16,8 @@
 <div class="row-input">
 	<label for="pattern">Pattern:</label>
 	<select id="pattern" bind:value={$pattern}>
-		{#each patternIds as d}
-			<option value={d}>{d}</option>
+		{#each fillPatterns as [index, fill]}
+			<option value={index}>{fill.name}</option>
 		{/each}
 	</select>
 </div>

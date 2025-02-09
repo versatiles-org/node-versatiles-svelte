@@ -7,8 +7,8 @@ export abstract class AbstractPathElement extends AbstractElement {
 	protected path: ElementPath = [];
 	protected readonly isLine: boolean;
 
-	constructor(manager: GeometryManager, name: string, isLine: boolean) {
-		super(manager, name);
+	constructor(manager: GeometryManager, isLine: boolean) {
+		super(manager);
 		this.isLine = isLine;
 	}
 

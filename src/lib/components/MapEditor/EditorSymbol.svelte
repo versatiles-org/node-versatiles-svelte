@@ -1,11 +1,9 @@
 <script lang="ts">
 	import { MapLayerSymbol, symbols } from './lib/map_layer/symbol.js';
 
-	const symbolList = Array.from(symbols.keys()).sort();
-
 	const { layer }: { layer: MapLayerSymbol } = $props();
 
-	let symbolName = $state(layer.symbolName);
+	let symbolIndex = $state(layer.symbolIndex);
 	let color = $state(layer.color);
 	let rotate = $state(layer.rotate);
 	let halo = $state(layer.halo);
@@ -15,9 +13,9 @@
 
 <div class="row-input">
 	<label for="symbol-input">Symbol:</label>
-	<select id="symbol-input" bind:value={$symbolName} class="input">
-		{#each symbolList as s}
-			<option value={s}>{s}</option>
+	<select id="symbol-input" bind:value={$symbolIndex} class="input">
+		{#each symbols as [index, symbol]}
+			<option value={index}>{symbol.name}</option>
 		{/each}
 	</select>
 </div>

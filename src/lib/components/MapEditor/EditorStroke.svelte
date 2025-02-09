@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { dashArrays, MapLayerLine } from './lib/map_layer/line.js';
 
-	const dashedList = Array.from(dashArrays.keys()).sort();
-
 	const { layer }: { layer: MapLayerLine } = $props();
 
 	let color = $state(layer.color);
@@ -13,8 +11,8 @@
 <div class="row-input">
 	<label for="dashed">Dashed:</label>
 	<select id="dashed" bind:value={$dashed}>
-		{#each dashedList as d}
-			<option value={d}>{d}</option>
+		{#each dashArrays as [index, dash]}
+			<option value={index}>{dash.name}</option>
 		{/each}
 	</select>
 </div>

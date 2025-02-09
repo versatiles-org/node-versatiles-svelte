@@ -3,25 +3,27 @@ import type { LayerFill } from './types.js';
 import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
+import type { StateObject } from '../state/types.js';
+import { defaultState } from '../state/index.js';
 
 const size = 32;
 
-interface Pattern {
+interface Fill {
 	xf: number;
 	yf: number;
 	pattern: string;
 }
 
-export const fillPatterns = new Map<string, Pattern | undefined>([
-	['solid', undefined],
-	['diagonal', { xf: 1, yf: 1, pattern: '00002552' }],
-	['diagonal-thin', { xf: 1, yf: 1, pattern: '0252' }]
+export const fillPatterns = new Map<number, { name: string; fill: Fill | undefined }>([
+	[0, { name: 'solid', fill: undefined }],
+	[1, { name: 'diagonal', fill: { xf: 1, yf: 1, pattern: '00002552' } }],
+	[2, { name: 'diagonal-thin', fill: { xf: 1, yf: 1, pattern: '0252' } }]
 ]);
 
 export class MapLayerFill extends MapLayer<LayerFill> {
 	color = writable('#ff0000');
 	opacity = writable(1);
-	pattern = writable('solid');
+	pattern = writable(0);
 
 	constructor(manager: GeometryManager, id: string, source: string) {
 		super(manager, id);
@@ -37,16 +39,16 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 		);
 
 		const updatePattern = () => {
-			const pattern = fillPatterns.get(get(this.pattern)) ?? undefined;
+			const fill = fillPatterns.get(get(this.pattern))?.fill ?? undefined;
 			const color = Color.parse(get(this.color));
 
-			if (pattern == null) {
+			if (fill == null) {
 				this.updatePaint('fill-color', color);
 				this.updatePaint('fill-pattern', undefined);
 				return;
 			}
 
-			const { xf, yf, pattern: p } = pattern;
+			const { xf, yf, pattern: p } = fill;
 			const alpha = p.split('').map((c) => parseInt(c, 10) * 51);
 			const length = alpha.length;
 
@@ -73,5 +75,20 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 		this.color.subscribe(() => updatePattern());
 		this.pattern.subscribe(() => updatePattern());
 		this.opacity.subscribe((value) => this.updatePaint('fill-opacity', value));
+	}
+
+	getState(): StateObject | undefined {
+		return defaultState(
+			{
+				color: get(this.color),
+				opacity: get(this.opacity) * 100,
+				pattern: get(this.pattern)
+			},
+			{
+				color: '#ff0000',
+				opacity: 100,
+				pattern: 0
+			}
+		);
 	}
 }
