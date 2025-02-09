@@ -6,9 +6,9 @@
 	const { geometryManager, width }: { geometryManager: GeometryManager; width: number } = $props();
 
 	let activeElement: AbstractElement | undefined = $state(undefined);
-	$effect(() => geometryManager.setActiveElement(activeElement));
+	$effect(() => geometryManager.selectElement(activeElement));
 
-	geometryManager.activeElement.subscribe((value) => (activeElement = value));
+	geometryManager.selectedElement.subscribe((value) => (activeElement = value));
 </script>
 
 <div class="sidebar" style="--gap: 10px;width: {width}px;">

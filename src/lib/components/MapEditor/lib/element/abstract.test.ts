@@ -5,15 +5,8 @@ import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
 import type { GeometryManager } from '../geometry_manager.js';
 
 class TestElement extends AbstractElement {
-	private _isActive = false;
-	private _isSelected = false;
-
 	constructor(manager: GeometryManager) {
 		super(manager);
-	}
-
-	set isSelected(value: boolean) {
-		this._isSelected = value;
 	}
 
 	destroy(): void {
