@@ -22,11 +22,6 @@ export class PolygonElement extends AbstractPathElement {
 		this.source.setData(this.getFeature());
 	}
 
-	public set isActive(value: boolean) {
-		this.fillLayer.isActive = value;
-		this.strokeLayer.isActive = value;
-	}
-
 	public set isSelected(value: boolean) {
 		this.fillLayer.isSelected = value;
 		this.strokeLayer.isSelected = value;

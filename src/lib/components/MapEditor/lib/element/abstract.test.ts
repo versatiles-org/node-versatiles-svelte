@@ -12,10 +12,6 @@ class TestElement extends AbstractElement {
 		super(manager);
 	}
 
-	set isActive(value: boolean) {
-		this._isActive = value;
-	}
-
 	set isSelected(value: boolean) {
 		this._isSelected = value;
 	}

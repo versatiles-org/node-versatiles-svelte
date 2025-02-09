@@ -25,11 +25,6 @@ describe('MarkerElement', () => {
 		expect(element['point']).toEqual(customPoint);
 	});
 
-	it('should set isActive correctly', () => {
-		element.isActive = true;
-		expect(element.layer.isActive).toBe(true);
-	});
-
 	it('should set isSelected correctly', () => {
 		element.isSelected = true;
 		expect(element.layer.isSelected).toBe(true);

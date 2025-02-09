@@ -18,10 +18,6 @@ export class MarkerElement extends AbstractElement {
 		this.source.setData(this.getFeature());
 	}
 
-	public set isActive(value: boolean) {
-		this.layer.isActive = value;
-	}
-
 	public set isSelected(value: boolean) {
 		this.layer.isSelected = value;
 	}
