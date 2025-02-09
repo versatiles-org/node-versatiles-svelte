@@ -91,13 +91,13 @@ export class StateWriter {
 					if (!Array.isArray(value)) throw new Error(`Invalid points: ${value}`);
 					this.writeByte(31);
 					this.writeUnsignedInteger(value.length);
-					writeDifferential(value, 0);
-					writeDifferential(value, 1);
+					this.writeDifferential(value.map((p) => Math.round(p[0] * 1e5)));
+					this.writeDifferential(value.map((p) => Math.round(p[1] * 1e5)));
 					break;
 
 				case 'color':
 					this.writeByte(40);
-					writeColor(value);
+					this.writeColor(value);
 					break;
 
 				case 'type':
@@ -164,22 +164,21 @@ export class StateWriter {
 			me.writeByte(id);
 			me.writeUnsignedInteger(value as number);
 		}
+	}
 
-		function writeColor(color: unknown) {
-			if (typeof color !== 'string') throw new Error(`Invalid color: ${color}`);
-			const c = Color.parse(color).asRGB().round().asArray();
-			me.writeByte(c[0]);
-			me.writeByte(c[1]);
-			me.writeByte(c[2]);
-		}
+	writeColor(color: unknown) {
+		if (typeof color !== 'string') throw new Error(`Invalid color: ${color}`);
+		const c = Color.parse(color).asRGB().round().asArray();
+		this.writeByte(c[0]);
+		this.writeByte(c[1]);
+		this.writeByte(c[2]);
+	}
 
-		function writeDifferential(points: [number, number][], index: 0 | 1) {
-			if (points.length === 0) return;
-			const values = points.map((p) => Math.round(p[index] * 1e5));
-			me.writeSignedInteger(values[0]);
-			for (let i = 1; i < values.length; i++) {
-				me.writeSignedInteger(values[i] - values[i - 1]);
-			}
+	writeDifferential(values: number[]) {
+		if (values.length === 0) return;
+		this.writeSignedInteger(values[0]);
+		for (let i = 1; i < values.length; i++) {
+			this.writeSignedInteger(values[i] - values[i - 1]);
 		}
 	}
 }
