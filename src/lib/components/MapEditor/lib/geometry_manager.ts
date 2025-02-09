@@ -7,6 +7,8 @@ import { LineElement } from './element/line.js';
 import type { SelectionNode } from './element/types.js';
 import { PolygonElement } from './element/polygon.js';
 import { Cursor } from './cursor.js';
+import type { StateObject } from './state/types.js';
+import { StateWriter } from './state/writer.js';
 
 export class GeometryManager {
 	public readonly elements: Writable<AbstractElement[]>;
@@ -57,6 +59,7 @@ export class GeometryManager {
 			if (e.originalEvent.shiftKey) {
 				selectedNode.delete();
 				this.drawSelectionNodes();
+				this.saveState();
 			} else {
 				const onMove = (e: MapMouseEvent) => {
 					e.preventDefault();
@@ -65,7 +68,10 @@ export class GeometryManager {
 				};
 
 				map.on('mousemove', onMove);
-				map.once('mouseup', () => map.off('mousemove', onMove));
+				map.once('mouseup', () => {
+					this.saveState();
+					map.off('mousemove', onMove);
+				});
 			}
 		});
 
@@ -105,54 +111,54 @@ export class GeometryManager {
 		});
 	}
 
-	public getState(): string {
-		return '';
+	public async saveState() {
+		const state = this.getState();
+		console.log(state);
+		const writer = new StateWriter();
+		writer.writeObject(state);
+	}
+
+	public getState(): StateObject {
+		const center = this.map.getCenter();
+		return {
+			map: {
+				point: [center.lng, center.lat],
+				zoom: this.map.getZoom() * 100
+			},
+			elements: get(this.elements).map((element) => element.getState())
+		};
 	}
 
 	public getElement(index: number): AbstractElement {
 		return get(this.elements)[index];
 	}
 
-	public getNewMarker(): AbstractElement {
-		const element = new MarkerElement(this, this.newName('Marker '));
+	public addNewMarker(): AbstractElement {
+		const element = new MarkerElement(this);
 		this.addElement(element);
 		return element;
 	}
 
-	public getNewLine(): AbstractElement {
-		const element = new LineElement(this, this.newName('Line '));
+	public addNewLine(): AbstractElement {
+		const element = new LineElement(this);
 		this.addElement(element);
 		return element;
 	}
 
-	public getNewPolygon(): AbstractElement {
-		const element = new PolygonElement(this, this.newName('Polygon '));
+	public addNewPolygon(): AbstractElement {
+		const element = new PolygonElement(this);
 		this.addElement(element);
 		return element;
 	}
 
 	private addElement(element: AbstractElement) {
 		this.elements.update((elements) => [...elements, element]);
+		this.saveState();
 	}
 
 	public deleteElement(element: AbstractElement) {
 		this.elements.update((elements) => elements.filter((e) => e !== element));
 		if (get(this.activeElement) === element) this.setActiveElement(undefined);
-	}
-
-	private newName(prefix: string): string {
-		const set = new Set<number>();
-		const elements = get(this.elements);
-		elements.forEach((e) => {
-			const name = e.name;
-			if (!name.startsWith(prefix)) return;
-			const index = name.substring(prefix.length);
-			if (!/^[0-9]+/.test(index)) return;
-			set.add(parseInt(index, 10));
-		});
-		for (let i = 1; i <= elements.length + 1; i++) {
-			if (!set.has(i)) return prefix + i;
-		}
-		throw new Error('Unreachable');
+		this.saveState();
 	}
 }

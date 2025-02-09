@@ -2,11 +2,9 @@ import type { Feature } from 'geojson';
 import type maplibregl from 'maplibre-gl';
 import type { ElementPoint, SelectionNode, SelectionNodeUpdater } from './types.js';
 import type { GeometryManager } from '../geometry_manager.js';
-import { Random } from '../random.js';
+import type { StateObject } from '../state/types.js';
 
 export abstract class AbstractElement {
-	public name: string;
-
 	protected readonly canvas: HTMLElement;
 	protected readonly manager: GeometryManager;
 	protected readonly map: maplibregl.Map;
@@ -15,11 +13,10 @@ export abstract class AbstractElement {
 	protected readonly slug = '_' + Math.random().toString(36).slice(2);
 	protected readonly sourceId = 'source' + this.slug;
 
-	constructor(manager: GeometryManager, name: string) {
+	constructor(manager: GeometryManager) {
 		this.manager = manager;
 		this.map = manager.map;
 		this.canvas = this.map.getCanvasContainer();
-		this.name = name;
 
 		this.map.addSource(this.sourceId, {
 			type: 'geojson',
@@ -31,13 +28,11 @@ export abstract class AbstractElement {
 	public abstract set isActive(value: boolean);
 	public abstract set isSelected(value: boolean);
 
-	protected randomPositions(name: string, length: number): ElementPoint[] {
-		const r = new Random(name);
-
+	protected randomPositions(length: number): ElementPoint[] {
 		const points: ElementPoint[] = [];
 		for (let i = 0; i < length; i++) {
-			const xr = r.random() * 0.5 + 0.25;
-			const yr = r.random() * 0.5 + 0.25;
+			const xr = Math.random() * 0.5 + 0.25;
+			const yr = Math.random() * 0.5 + 0.25;
 
 			const bounds = this.map.getBounds();
 			points.push([
@@ -60,4 +55,5 @@ export abstract class AbstractElement {
 	abstract getSelectionNodeUpdater(
 		properties?: Record<string, unknown>
 	): SelectionNodeUpdater | undefined;
+	abstract getState(): StateObject;
 }

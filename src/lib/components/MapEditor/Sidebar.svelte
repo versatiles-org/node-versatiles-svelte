@@ -9,12 +9,10 @@
 	import type { GeometryManager } from './lib/geometry_manager.js';
 
 	const { geometryManager, width }: { geometryManager: GeometryManager; width: number } = $props();
-	let elements = $state([]) as AbstractElement[];
 
 	let activeElement: AbstractElement | undefined = $state(undefined);
 	$effect(() => geometryManager.setActiveElement(activeElement));
 
-	geometryManager.elements.subscribe((value) => (elements = value));
 	geometryManager.activeElement.subscribe((value) => (activeElement = value));
 </script>
 
@@ -26,48 +24,23 @@
 			<input
 				type="button"
 				value="Marker"
-				onclick={() => (activeElement = geometryManager.getNewMarker())}
+				onclick={() => (activeElement = geometryManager.addNewMarker())}
 			/>
 			<input
 				type="button"
 				value="Line"
-				onclick={() => (activeElement = geometryManager.getNewLine())}
+				onclick={() => (activeElement = geometryManager.addNewLine())}
 			/>
 			<input
 				type="button"
 				value="Polygon"
-				onclick={() => (activeElement = geometryManager.getNewPolygon())}
+				onclick={() => (activeElement = geometryManager.addNewPolygon())}
 			/>
-		</div>
-		<hr />
-		<div class="row">
-			<select
-				size="5"
-				style="width: 100%;"
-				bind:value={
-					() => elements.indexOf(activeElement!), (index) => (activeElement = elements[index])
-				}
-			>
-				{#each elements as element, index}
-					<option value={index}>{element.name}</option>
-				{/each}
-			</select>
 		</div>
 		{#if activeElement != null}
 			<hr />
 
 			{#if activeElement}
-				<label for="input-name">Name:</label>
-				<input
-					id="input-name"
-					type="text"
-					bind:value={
-						() => activeElement?.name,
-						(value) => {
-							if (activeElement) activeElement.name = value || '';
-						}
-					}
-				/>
 				{#if activeElement instanceof MarkerElement}
 					<h2>Symbol</h2>
 					<EditorSymbol layer={activeElement.layer} />

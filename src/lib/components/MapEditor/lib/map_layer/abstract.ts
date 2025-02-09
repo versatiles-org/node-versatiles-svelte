@@ -2,6 +2,7 @@ import type { LayerSpecification } from 'maplibre-gl';
 import type { LayerFill, LayerLine, LayerSymbol } from './types.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
+import type { StateObject } from '../state/types.js';
 
 type LayerSpec = LayerFill | LayerLine | LayerSymbol;
 
@@ -94,4 +95,6 @@ export abstract class MapLayer<T extends LayerSpec> {
 	destroy(): void {
 		this.map.removeLayer(this.id);
 	}
+
+	abstract getState(): StateObject | undefined;
 }

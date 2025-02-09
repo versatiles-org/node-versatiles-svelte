@@ -2,13 +2,15 @@ import type { GeometryManager } from '../geometry_manager.js';
 import type { ElementPath } from './types.js';
 import { MapLayerLine } from '../map_layer/line.js';
 import { AbstractPathElement } from './abstract_path.js';
+import type { StateObject } from '../state/types.js';
 
 export class LineElement extends AbstractPathElement {
 	public readonly layer: MapLayerLine;
+	public readonly path: ElementPath;
 
-	constructor(manager: GeometryManager, name: string, line?: ElementPath) {
-		super(manager, name, true);
-		this.path = line ?? this.randomPositions(name, 2);
+	constructor(manager: GeometryManager, line?: ElementPath) {
+		super(manager, true);
+		this.path = line ?? this.randomPositions(2);
 		this.layer = new MapLayerLine(manager, 'line' + this.slug, this.sourceId);
 		this.layer.onClick.push(() => this.manager.setActiveElement(this));
 		this.source.setData(this.getFeature());
@@ -33,5 +35,13 @@ export class LineElement extends AbstractPathElement {
 	destroy(): void {
 		this.layer.destroy();
 		this.map.removeSource(this.sourceId);
+	}
+
+	getState(): StateObject {
+		return {
+			type: 'line',
+			points: this.path,
+			style: this.layer.getState()
+		};
 	}
 }

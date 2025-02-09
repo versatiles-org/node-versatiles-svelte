@@ -2,15 +2,16 @@ import { AbstractElement } from './abstract.js';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { ElementPoint, SelectionNode, SelectionNodeUpdater } from './types.js';
 import { MapLayerSymbol } from '../map_layer/symbol.js';
+import type { StateObject } from '../state/types.js';
 
 export class MarkerElement extends AbstractElement {
 	public readonly layer: MapLayerSymbol;
 
 	private point: ElementPoint = [0, 0];
 
-	constructor(manager: GeometryManager, name: string, point?: ElementPoint) {
-		super(manager, name);
-		this.point = point ?? this.randomPositions(name, 1)[0];
+	constructor(manager: GeometryManager, point?: ElementPoint) {
+		super(manager);
+		this.point = point ?? this.randomPositions(1)[0];
 
 		this.layer = new MapLayerSymbol(manager, 'symbol' + this.slug, this.sourceId);
 		this.layer.onClick.push(() => this.manager.setActiveElement(this));
@@ -54,5 +55,13 @@ export class MarkerElement extends AbstractElement {
 	destroy(): void {
 		this.layer.destroy();
 		this.map.removeSource(this.sourceId);
+	}
+
+	getState(): StateObject {
+		return {
+			type: 'marker',
+			point: this.point,
+			style: this.layer.getState()
+		};
 	}
 }

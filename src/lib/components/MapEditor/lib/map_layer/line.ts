@@ -3,19 +3,21 @@ import type { LayerLine } from './types.js';
 import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
+import type { StateObject } from '../state/types.js';
+import { defaultState } from '../state/index.js';
 
-export const dashArrays = new Map<string, number[] | undefined>([
-	['solid', undefined],
-	['dashed', [2, 4]],
-	['dotted', [0, 2]]
+export const dashArrays = new Map<number, { name: string; array: number[] | undefined }>([
+	[0, { name: 'solid', array: [100] }],
+	[1, { name: 'dashed', array: [2, 4] }],
+	[2, { name: 'dotted', array: [0, 2] }]
 ]);
 
 export class MapLayerLine extends MapLayer<LayerLine> {
 	color = writable('#ff0000');
-	dashed = writable('solid');
+	dashed = writable(0);
 	width = writable(2);
 
-	dashArray = derived(this.dashed, (dashed) => dashArrays.get(dashed) ?? [10]);
+	dashArray = derived(this.dashed, (dashed) => dashArrays.get(dashed)?.array ?? [100]);
 
 	constructor(manager: GeometryManager, id: string, source: string) {
 		super(manager, id);
@@ -37,5 +39,20 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 		this.color.subscribe((v) => this.updatePaint('line-color', Color.parse(v)));
 		this.width.subscribe((v) => this.updatePaint('line-width', v));
 		this.dashArray.subscribe((v) => this.updatePaint('line-dasharray', v));
+	}
+
+	getState(): StateObject | undefined {
+		return defaultState(
+			{
+				color: get(this.color),
+				pattern: get(this.dashed),
+				width: get(this.width) * 100
+			},
+			{
+				color: '#ff0000',
+				pattern: 0,
+				width: 200
+			}
+		);
 	}
 }
