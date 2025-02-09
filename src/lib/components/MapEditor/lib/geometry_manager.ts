@@ -86,7 +86,8 @@ export class GeometryManager {
 
 		map.on('moveend', () => this.saveState());
 
-		this.loadState();
+		const hash = location.hash.slice(1);
+		if (hash) this.loadState(hash);
 	}
 
 	public setActiveElement(element: AbstractElement | undefined) {
@@ -133,10 +134,9 @@ export class GeometryManager {
 		location.hash = await writer.getBase64compressed();
 	}
 
-	public async loadState() {
+	public async loadState(hash: string) {
+		if (!hash) return;
 		try {
-			const hash = location.hash.slice(1);
-			if (!hash) return;
 			const reader = await StateReader.fromBase64compressed(hash);
 			const state = reader.readObject();
 			if (!state) return;

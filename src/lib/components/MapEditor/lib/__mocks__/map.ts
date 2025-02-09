@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 
 export class MockMap {
-	getCanvasContainer = vi.fn(() => ({}));
+	getCanvasContainer = vi.fn(() => ({ style: { cursor: 'default' } }));
 	addSource = vi.fn();
 	removeSource = vi.fn();
 	getSource = vi.fn(() => ({ setData: vi.fn() }));
@@ -23,5 +23,5 @@ export class MockMap {
 		getEast: () => 180,
 		getSouth: () => -90,
 		getNorth: () => 90
-	}))
+	}));
 }
