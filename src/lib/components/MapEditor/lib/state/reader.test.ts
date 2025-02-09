@@ -59,7 +59,19 @@ describe('StateReader', () => {
 			point: [12.34567, -98.76543],
 			label: 'Test Label',
 			elements: [{ type: 'marker' }],
-			color: '#123456'
+			color: '#123456',
+			style: {
+				halo: 1,
+				opacity: 1,
+				pattern: 1,
+				rotate: 1,
+			},
+			strokeStyle: {
+				size: 1,
+				width: 1,
+				zoom: 1,
+				visible: true
+			}
 		};
 
 		const writer = new StateWriter();
@@ -96,6 +108,22 @@ describe('StateReader', () => {
 		const reader = new StateReader(buffer);
 		const parsedState = reader.readObject();
 
+		expect(parsedState).toStrictEqual(originalState);
+	});
+
+	it('should handle points correctly', () => {
+		const points: [number, number][] = new Array(10)
+			.fill(0)
+			.map(() => [
+				Math.round((Math.random() - 0.5) * 36e6) / 1e5,
+				Math.round((Math.random() - 0.5) * 18e6) / 1e5
+			]);
+		const originalState: StateObject = { points };
+		const writer = new StateWriter();
+		writer.writeObject(originalState);
+		const buffer = writer.getBuffer();
+		const reader = new StateReader(buffer);
+		const parsedState = reader.readObject();
 		expect(parsedState).toStrictEqual(originalState);
 	});
 
