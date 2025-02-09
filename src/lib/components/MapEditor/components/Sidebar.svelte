@@ -1,11 +1,6 @@
 <script lang="ts">
-	import EditorSymbol from './EditorSymbol.svelte';
-	import EditorLine from './EditorStroke.svelte';
 	import type { AbstractElement } from '../lib/element/abstract.js';
-	import { LineElement } from '../lib/element/line.js';
-	import { MarkerElement } from '../lib/element/marker.js';
-	import { PolygonElement } from '../lib/element/polygon.js';
-	import EditorFill from './EditorFill.svelte';
+	import Editor from './Editor.svelte';
 	import type { GeometryManager } from '../lib/geometry_manager.js';
 
 	const { geometryManager, width }: { geometryManager: GeometryManager; width: number } = $props();
@@ -39,31 +34,7 @@
 		</div>
 		{#if activeElement != null}
 			<hr />
-
-			{#if activeElement}
-				{#if activeElement instanceof MarkerElement}
-					<h2>Symbol</h2>
-					<EditorSymbol layer={activeElement.layer} />
-				{/if}
-				{#if activeElement instanceof LineElement}
-					<h2>Stroke</h2>
-					<EditorLine layer={activeElement.layer} />
-				{/if}
-				{#if activeElement instanceof PolygonElement}
-					<h2>Fill</h2>
-					<EditorFill layer={activeElement.fillLayer} />
-					<h2>Stroke</h2>
-					<EditorLine layer={activeElement.strokeLayer} />
-				{/if}
-				{#if activeElement instanceof PolygonElement || activeElement instanceof LineElement}
-					<h2>Shape</h2>
-					<p>
-						Drag points to move.<br />Drag a midpoint to add.<br />Shift-click to delete a point.
-					</p>
-				{/if}
-				<h2>Actions</h2>
-				<input type="button" value="Delete" onclick={() => activeElement!.delete()} />
-			{/if}
+			<Editor element={activeElement} />
 		{/if}
 	</div>
 	<div class="footer">
@@ -92,7 +63,7 @@
 			margin: var(--gap) 0 var(--gap);
 		}
 
-		h2 {
+		:global(h2) {
 			font-size: 0.9em;
 			font-weight: normal;
 			opacity: 0.5;
@@ -125,6 +96,9 @@
 				width: 60%;
 				flex-grow: 0;
 			}
+			:global(input[type='checkbox']) {
+				width: auto;
+			}
 		}
 
 		:global(label),
@@ -140,7 +114,7 @@
 			margin: 0;
 		}
 
-		p {
+		:global(p) {
 			font-size: 0.8em;
 			opacity: 0.5;
 			margin: 0.5em 0 1em;

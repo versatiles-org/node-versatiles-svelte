@@ -57,6 +57,10 @@ export class StateReader {
 		return str;
 	}
 
+	readBoolean(): boolean {
+		return this.readByte() !== 0;
+	}
+
 	static async fromBase64compressed(base64: string): Promise<StateReader> {
 		return new StateReader(await decompress(base64ToUint8Array(base64)));
 	}
@@ -127,6 +131,9 @@ export class StateReader {
 					break;
 				case 76:
 					state.zoom = this.readUnsignedInteger();
+					break;
+				case 90:
+					state.visible = this.readBoolean();
 					break;
 				default:
 					throw new Error(`Invalid state key: ${key}`);

@@ -43,6 +43,10 @@ export class StateWriter {
 		for (let i = 0; i < length; i++) this.writeUnsignedInteger(str.charCodeAt(i));
 	}
 
+	writeBoolean(b: boolean) {
+		this.writeByte(b ? 1 : 0);
+	}
+
 	getBase64(): string {
 		return uint8ArrayToBase64(this.getBuffer());
 	}
@@ -143,6 +147,12 @@ export class StateWriter {
 					break;
 				case 'zoom':
 					writeInteger(76, value);
+					break;
+
+				case 'visible':
+					if (typeof value !== 'boolean') throw new Error(`Invalid boolean: ${value}`);
+					this.writeByte(90);
+					this.writeBoolean(value);
 					break;
 
 				default:

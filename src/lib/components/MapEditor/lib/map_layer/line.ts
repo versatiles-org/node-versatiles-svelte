@@ -15,6 +15,7 @@ export const dashArrays = new Map<number, { name: string; array: number[] | unde
 export class MapLayerLine extends MapLayer<LayerLine> {
 	color = writable('#ff0000');
 	dashed = writable(0);
+	visible = writable(true);
 	width = writable(2);
 
 	dashArray = derived(this.dashed, (dashed) => dashArrays.get(dashed)?.array ?? [100]);
@@ -27,7 +28,8 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 			'line',
 			{
 				'line-cap': 'round',
-				'line-join': 'round'
+				'line-join': 'round',
+				visibility: get(this.visible) ? 'visible' : 'none'
 			},
 			{
 				'line-color': Color.parse(get(this.color)).asHex(),
@@ -40,12 +42,16 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 			this.updatePaint('line-color', Color.parse(v));
 			this.manager.saveState();
 		});
-		this.width.subscribe((v) => {
-			this.updatePaint('line-width', v);
-			this.manager.saveState();
-		});
 		this.dashArray.subscribe((v) => {
 			this.updatePaint('line-dasharray', v);
+			this.manager.saveState();
+		});
+		this.visible.subscribe((v) => {
+			this.updateLayout('visibility', v ? 'visible' : 'none');
+			this.manager.saveState();
+		});
+		this.width.subscribe((v) => {
+			this.updatePaint('line-width', v);
 			this.manager.saveState();
 		});
 	}
@@ -55,11 +61,13 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 			{
 				color: get(this.color),
 				pattern: get(this.dashed),
+				visible: get(this.visible),
 				width: get(this.width) * 100
 			},
 			{
 				color: '#ff0000',
 				pattern: 0,
+				visible: true,
 				width: 200
 			}
 		);
@@ -68,6 +76,7 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 	setState(state: StateObject) {
 		if (state.color) this.color.set(state.color);
 		if (state.pattern) this.dashed.set(state.pattern);
+		if (state.visible) this.visible.set(state.visible);
 		if (state.width) this.width.set(state.width / 100);
 	}
 }
