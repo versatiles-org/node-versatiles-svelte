@@ -141,7 +141,7 @@ export class StateReader {
 		let value = this.readSignedInteger();
 		values.push(value);
 		for (let i = 1; i < count; i++) {
-			value += + this.readSignedInteger();
+			value += +this.readSignedInteger();
 			values.push(value);
 		}
 		return values;
