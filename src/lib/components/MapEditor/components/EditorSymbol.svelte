@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MapLayerSymbol, symbols } from './lib/map_layer/symbol.js';
+	import { MapLayerSymbol, symbols } from '../lib/map_layer/symbol.js';
 
 	const { layer }: { layer: MapLayerSymbol } = $props();
 

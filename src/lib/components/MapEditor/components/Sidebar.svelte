@@ -1,12 +1,12 @@
 <script lang="ts">
 	import EditorSymbol from './EditorSymbol.svelte';
 	import EditorLine from './EditorStroke.svelte';
-	import type { AbstractElement } from './lib/element/abstract.js';
-	import { LineElement } from './lib/element/line.js';
-	import { MarkerElement } from './lib/element/marker.js';
-	import { PolygonElement } from './lib/element/polygon.js';
+	import type { AbstractElement } from '../lib/element/abstract.js';
+	import { LineElement } from '../lib/element/line.js';
+	import { MarkerElement } from '../lib/element/marker.js';
+	import { PolygonElement } from '../lib/element/polygon.js';
 	import EditorFill from './EditorFill.svelte';
-	import type { GeometryManager } from './lib/geometry_manager.js';
+	import type { GeometryManager } from '../lib/geometry_manager.js';
 
 	const { geometryManager, width }: { geometryManager: GeometryManager; width: number } = $props();
 
