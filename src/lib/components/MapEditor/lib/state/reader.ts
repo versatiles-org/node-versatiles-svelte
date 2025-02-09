@@ -1,4 +1,5 @@
 import { base64ToUint8Array, decompress } from '../utils.js';
+import type { StateObject } from './types.js';
 
 export class StateReader {
 	private buffer: Uint8Array;
@@ -62,5 +63,111 @@ export class StateReader {
 
 	static async fromBase64(base64: string): Promise<StateReader> {
 		return new StateReader(base64ToUint8Array(base64));
+	}
+
+	readObject(): StateObject {
+		const state: StateObject = {};
+		while (true) {
+			const key = this.readByte();
+			if (key === 0) break;
+
+			switch (key) {
+				case 10:
+					state.map = this.readObject();
+					break;
+				case 11:
+					state.style = this.readObject();
+					break;
+				case 12:
+					state.strokeStyle = this.readObject();
+					break;
+				case 20:
+					{
+						const length = this.readUnsignedInteger();
+						state.elements = Array.from({ length }, () => this.readObject());
+					}
+					break;
+				case 30:
+					state.point = [this.readSignedInteger() / 1e5, this.readSignedInteger() / 1e5];
+					break;
+				case 31:
+					{
+						const count = this.readUnsignedInteger();
+						state.points = this.readDifferential(count);
+					}
+					break;
+				case 40:
+					state.color = this.readColor();
+					break;
+				case 50:
+					state.type = this.readType();
+					break;
+				case 60:
+					state.label = this.readString();
+					break;
+				case 70:
+					state.halo = this.readUnsignedInteger();
+					break;
+				case 71:
+					state.opacity = this.readUnsignedInteger();
+					break;
+				case 72:
+					state.pattern = this.readUnsignedInteger();
+					break;
+				case 73:
+					state.rotate = this.readUnsignedInteger();
+					break;
+				case 74:
+					state.size = this.readUnsignedInteger();
+					break;
+				case 75:
+					state.width = this.readUnsignedInteger();
+					break;
+				case 76:
+					state.zoom = this.readUnsignedInteger();
+					break;
+				default:
+					throw new Error(`Invalid state key: ${key}`);
+			}
+		}
+		return state;
+	}
+
+	readDifferential(count: number): [number, number][] {
+		const points: [number, number][] = [];
+		if (count === 0) return points;
+		const firstX = this.readSignedInteger() / 1e5;
+		const firstY = this.readSignedInteger() / 1e5;
+		points.push([firstX, firstY]);
+
+		for (let i = 1; i < count; i++) {
+			const prev = points[i - 1];
+			points.push([
+				prev[0] + this.readSignedInteger() / 1e5,
+				prev[1] + this.readSignedInteger() / 1e5
+			]);
+		}
+		return points;
+	}
+
+	readColor(): string {
+		const r = this.readByte();
+		const g = this.readByte();
+		const b = this.readByte();
+		return `rgb(${r},${g},${b})`;
+	}
+
+	readType(): string {
+		const type = this.readByte();
+		switch (type) {
+			case 0:
+				return 'marker';
+			case 1:
+				return 'line';
+			case 2:
+				return 'polygon';
+			default:
+				throw new Error(`Invalid type: ${type}`);
+		}
 	}
 }

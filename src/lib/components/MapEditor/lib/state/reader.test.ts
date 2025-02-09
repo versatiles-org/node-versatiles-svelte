@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { StateReader } from './reader.js';
+import type { StateObject } from './types.js';
+import { StateWriter } from './writer.js';
 
 describe('StateReader', () => {
 	it('should read bytes correctly', () => {
@@ -48,5 +50,63 @@ describe('StateReader', () => {
 		reader.readByte();
 		reader.readByte();
 		expect(() => reader.readByte()).toThrow(RangeError);
+	});
+
+	it('should read an object correctly', () => {
+		const originalState: StateObject = {
+			map: { zoom: 5 },
+			type: 'polygon',
+			point: [12.34567, -98.76543],
+			label: 'Test Label',
+			elements: [{ type: 'marker' }],
+			color: 'rgb(255,0,0)'
+		};
+
+		const writer = new StateWriter();
+		writer.writeObject(originalState);
+		const buffer = writer.getBuffer();
+
+		const reader = new StateReader(buffer);
+		const parsedState = reader.readObject();
+
+		expect(parsedState).toStrictEqual(originalState);
+	});
+
+	it('should handle empty object', () => {
+		const writer = new StateWriter();
+		writer.writeObject({});
+		const buffer = writer.getBuffer();
+
+		const reader = new StateReader(buffer);
+		const parsedState = reader.readObject();
+
+		expect(parsedState).toStrictEqual({});
+	});
+
+	it('should handle nested objects', () => {
+		const originalState: StateObject = {
+			map: { zoom: 5, style: { color: 'rgb(0,255,0)' } },
+			type: 'line'
+		};
+
+		const writer = new StateWriter();
+		writer.writeObject(originalState);
+		const buffer = writer.getBuffer();
+
+		const reader = new StateReader(buffer);
+		const parsedState = reader.readObject();
+
+		expect(parsedState).toStrictEqual(originalState);
+	});
+
+	it('should read color correctly', () => {
+		const reader = new StateReader(new Uint8Array([40, 255, 100, 50, 0]));
+		const state = reader.readObject();
+		expect(state.color).toStrictEqual('rgb(255,100,50)');
+	});
+
+	it('should throw error on invalid key', () => {
+		const reader = new StateReader(new Uint8Array([99, 0]));
+		expect(() => reader.readObject()).toThrow('Invalid state key: 99');
 	});
 });
