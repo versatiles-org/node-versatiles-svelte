@@ -62,13 +62,13 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 				color: get(this.color),
 				pattern: get(this.dashed),
 				visible: get(this.visible),
-				width: get(this.width) * 100
+				width: get(this.width)
 			},
 			{
 				color: '#ff0000',
 				pattern: 0,
 				visible: true,
-				width: 200
+				width: 2
 			}
 		);
 	}
@@ -77,6 +77,6 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 		if (state.color) this.color.set(state.color);
 		if (state.pattern) this.dashed.set(state.pattern);
 		if (state.visible) this.visible.set(state.visible);
-		if (state.width) this.width.set(state.width / 100);
+		if (state.width) this.width.set(state.width);
 	}
 }

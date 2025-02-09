@@ -128,10 +128,10 @@ export class StateWriter {
 					break;
 
 				case 'halo':
-					writeInteger(70, value);
+					writeInteger(70, value, 10);
 					break;
 				case 'opacity':
-					writeInteger(71, value);
+					writeInteger(71, value, 100);
 					break;
 				case 'pattern':
 					writeInteger(72, value);
@@ -140,13 +140,13 @@ export class StateWriter {
 					writeInteger(73, value);
 					break;
 				case 'size':
-					writeInteger(74, value);
+					writeInteger(74, value, 10);
 					break;
 				case 'width':
-					writeInteger(75, value);
+					writeInteger(75, value, 10);
 					break;
 				case 'zoom':
-					writeInteger(76, value);
+					writeInteger(76, value, 20);
 					break;
 
 				case 'visible':
@@ -167,12 +167,12 @@ export class StateWriter {
 			me.writeObject(obj as StateObject);
 		}
 
-		function writeInteger(id: number, obj: unknown) {
+		function writeInteger(id: number, obj: unknown, factor = 1) {
 			if (typeof obj !== 'number') throw new Error(`Invalid number: ${obj}`);
 			const value = Math.round(obj);
 			if (value < 0) throw new Error(`Negative Number: ${obj}`);
 			me.writeByte(id);
-			me.writeUnsignedInteger(value as number);
+			me.writeUnsignedInteger(value * factor);
 		}
 	}
 

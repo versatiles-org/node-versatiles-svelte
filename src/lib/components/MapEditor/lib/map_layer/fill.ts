@@ -90,12 +90,12 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 		return defaultState(
 			{
 				color: get(this.color),
-				opacity: get(this.opacity) * 100,
+				opacity: get(this.opacity),
 				pattern: get(this.pattern)
 			},
 			{
 				color: '#ff0000',
-				opacity: 100,
+				opacity: 1,
 				pattern: 0
 			}
 		);
@@ -103,7 +103,7 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 
 	setState(state: StateObject) {
 		if (state.color) this.color.set(state.color);
-		if (state.opacity) this.opacity.set(state.opacity / 100);
+		if (state.opacity) this.opacity.set(state.opacity);
 		if (state.pattern) this.pattern.set(state.pattern);
 	}
 }

@@ -92,44 +92,30 @@ export const symbols = new Map<number, { name: string; image: string; offset?: [
 	[82, { name: 'shoes', image: 'basics:icon-shoes', offset: [-5, 0] }],
 	[83, { name: 'shop', image: 'basics:icon-shop' }],
 	[84, { name: 'shop', image: 'basics:icon-shop' }],
-	[85, { name: 'shrine', image: 'basics:icon-shrine' }],
-	[86, { name: 'sports', image: 'basics:icon-sports' }],
-	[87, { name: 'stadium', image: 'basics:icon-stadium' }],
-	[88, { name: 'stationery', image: 'basics:icon-stationery' }],
-	[89, { name: 'surveillance', image: 'basics:icon-surveillance' }],
-	[90, { name: 'swimming', image: 'basics:icon-swimming' }],
-	[91, { name: 'telephone', image: 'basics:icon-telephone' }],
-	[92, { name: 'theatre', image: 'basics:icon-theatre' }],
-	[93, { name: 'toilet', image: 'basics:icon-toilet' }],
-	[94, { name: 'tooth', image: 'basics:icon-dentist' }],
-	[95, { name: 'town hall', image: 'basics:icon-town_hall' }],
-	[96, { name: 'toys', image: 'basics:icon-toys' }],
-	[97, { name: 'tram', image: 'basics:transport-tram' }],
-	[98, { name: 'travel agent', image: 'basics:icon-travel_agent' }],
-	[99, { name: 'vendingmachine', image: 'basics:icon-vendingmachine' }],
-	[100, { name: 'veterinary', image: 'basics:icon-veterinary' }],
-	[101, { name: 'video', image: 'basics:icon-video' }],
-	[102, { name: 'viewpoint', image: 'basics:icon-viewpoint', offset: [0, -6] }],
-	[103, { name: 'waste basket', image: 'basics:icon-waste_basket' }],
-	[104, { name: 'watermill', image: 'basics:icon-watermill' }],
-	[105, { name: 'waterpark', image: 'basics:icon-waterpark' }],
-	[106, { name: 'windmill', image: 'basics:icon-windmill' }],
-	[107, { name: 'zoo', image: 'basics:icon-zoo' }]
-]);
+const defaultStyle = {
+	color: '#ff0000',
+	rotate: 0,
+	size: 1,
+	halo: 1,
+	pattern: 38,
+	label: ''
+};
+
+function getSymbol(index: number): { name: string; image?: string; offset: [number, number] } {
+	const symbol = symbols.get(index) ?? symbols.get(defaultStyle.pattern)!;
+	return { ...symbol, offset: symbol.offset ?? [0, 0] };
+}
 
 export class MapLayerSymbol extends MapLayer<LayerSymbol> {
-	color = writable('#ff0000');
-	halo = writable(1);
-	rotate = writable(0);
-	size = writable(1);
-	symbolIndex = writable(37);
-	label = writable('');
+	color = writable(defaultStyle.color);
+	halo = writable(defaultStyle.halo);
+	rotate = writable(defaultStyle.rotate);
+	size = writable(defaultStyle.size);
+	symbolIndex = writable(defaultStyle.pattern);
+	label = writable(defaultStyle.label);
 
 	haloWidth = derived([this.halo, this.size], ([halo, size]) => halo * size);
-	symbol = derived(this.symbolIndex, (index) => {
-		const entry = symbols.get(index) ?? symbols.get(37)!;
-		return { image: entry.image, offset: entry.offset ?? [0, 0] };
-	});
+	symbol = derived(this.symbolIndex, (index) => getSymbol(index));
 
 	constructor(manager: GeometryManager, id: string, source: string) {
 		super(manager, id);
@@ -141,23 +127,24 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 				'icon-image': get(this.symbol).image,
 				'icon-offset': get(this.symbol).offset,
 				'icon-overlap': 'always',
-				'icon-rotate': get(this.rotate),
-				'icon-size': get(this.size),
-				'text-field': get(this.label),
+				'icon-rotate': defaultStyle.rotate,
+				'icon-size': defaultStyle.size,
+
+				'text-field': defaultStyle.label,
 				'text-font': ['noto_sans_regular'],
 				'text-justify': 'left',
 				'text-anchor': 'right',
 				'text-offset': [-0.4, -0.6]
 			},
 			{
-				'icon-color': Color.parse(get(this.color)).asString(),
+				'icon-color': defaultStyle.color,
 				'icon-halo-blur': 0,
 				'icon-halo-color': '#FFFFFF',
-				'icon-halo-width': get(this.haloWidth),
+				'icon-halo-width': defaultStyle.halo,
 				'icon-opacity': 1,
 				'text-halo-blur': 0,
 				'text-halo-color': '#FFFFFF',
-				'text-halo-width': get(this.haloWidth)
+				'text-halo-width': defaultStyle.halo
 			}
 		);
 
@@ -183,27 +170,20 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 			{
 				color: get(this.color),
 				rotate: get(this.rotate),
-				size: get(this.size) * 10,
-				halo: get(this.halo) * 10,
+				size: get(this.size),
+				halo: get(this.halo),
 				pattern: get(this.symbolIndex),
 				label: get(this.label)
 			},
-			{
-				color: '#ff0000',
-				rotate: 0,
-				size: 10,
-				halo: 10,
-				pattern: 37,
-				label: ''
-			}
+			defaultStyle
 		);
 	}
 
 	setState(state: StateObject) {
 		if (state.color) this.color.set(state.color);
 		if (state.rotate) this.rotate.set(state.rotate);
-		if (state.size) this.size.set(state.size / 10);
-		if (state.halo) this.halo.set(state.halo / 10);
+		if (state.size) this.size.set(state.size);
+		if (state.halo) this.halo.set(state.halo);
 		if (state.pattern) this.symbolIndex.set(state.pattern);
 		if (state.label) this.label.set(state.label);
 	}
