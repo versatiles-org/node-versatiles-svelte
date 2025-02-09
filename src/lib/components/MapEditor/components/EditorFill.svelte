@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { fillPatterns, type MapLayerFill } from './lib/map_layer/fill.js';
+	import { fillPatterns, type MapLayerFill } from '../lib/map_layer/fill.js';
 
 	const { layer }: { layer: MapLayerFill } = $props();
 

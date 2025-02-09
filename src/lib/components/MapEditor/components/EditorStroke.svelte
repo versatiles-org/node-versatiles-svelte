@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { dashArrays, MapLayerLine } from './lib/map_layer/line.js';
+	import { dashArrays, MapLayerLine } from '../lib/map_layer/line.js';
 
 	const { layer }: { layer: MapLayerLine } = $props();
 
