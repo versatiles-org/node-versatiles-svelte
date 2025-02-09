@@ -6,6 +6,7 @@ export interface StateObject {
 		| [number, number][]
 		| string
 		| number
+		| boolean
 		| undefined;
 
 	/*10*/ map?: StateObject;
@@ -35,4 +36,7 @@ export interface StateObject {
 	/*74*/ size?: number;
 	/*75*/ width?: number;
 	/*76*/ zoom?: number;
+
+	//### BOOLEANS
+	/*90*/ visible?: boolean;
 }
