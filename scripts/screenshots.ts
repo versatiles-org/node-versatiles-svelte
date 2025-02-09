@@ -20,7 +20,7 @@ mkdirSync(path, { recursive: true });
 		{ name: 'locator-map', hash: '#14.89/13.408956/52.519744' },
 		{
 			name: 'map-editor',
-			hash: '#45Lr613MeKWlkdWni5tBhMWIUZ532ZzFjDOZrso4F05ljFe08yg7xVjX1NPIOpXlOaOdHoO5q7Mh72W29SzcGqsYGLy/MDMwGDHIzfu3iPHczwZWsKANs2teClh425zFjFN6GqHCrMEliUUlDAxGTPIs5xYsZmTvZ65f1t3I2sLE0MoEVuJu4MHEwAM2OIWBgQEA'
+			hash: '#45L70LWY8VJzI6vPDCYGERYjRnneZXMWM85kuirjXDiZMVFcK6jsFGNdU08j61SW54x2eozmzu6qopfZ1rNwa6xiYPA2YmAwYpA79ncR476fDaxgMRtm17wUsPCkOYsZ9/Q0QoVZg0sSi0oYGIyY5FnOLVjMyN7PXL+su5G1hYmhlQmsxD3Fg4mBB2wuFwMDAwA='
 		}
 	];
 
