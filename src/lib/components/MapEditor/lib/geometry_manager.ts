@@ -93,10 +93,9 @@ export class GeometryManager {
 	public setActiveElement(element: AbstractElement | undefined) {
 		const elements = get(this.elements);
 		if (element && elements.includes(element)) {
-			elements.forEach((e) => (e.isActive = e.isSelected = e == element));
+			elements.forEach((e) => (e.isSelected = e == element));
 		} else {
 			elements.forEach((e) => {
-				e.isActive = true;
 				e.isSelected = false;
 			});
 		}

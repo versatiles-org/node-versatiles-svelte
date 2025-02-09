@@ -25,7 +25,6 @@ export abstract class AbstractElement {
 		this.source = this.map.getSource(this.sourceId)!;
 	}
 
-	public abstract set isActive(value: boolean);
 	public abstract set isSelected(value: boolean);
 
 	protected randomPositions(length: number): ElementPoint[] {

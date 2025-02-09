@@ -23,8 +23,7 @@ describe('MapLayer', () => {
 
 	it('should initialize layer with given ID', () => {
 		expect(layer).toBeDefined();
-		expect(layer.isActive).toBe(true);
-		expect(layer.isSelected).toBe(true);
+		expect(layer.isSelected).toBe(false);
 	});
 
 	it('should add layer to map', () => {

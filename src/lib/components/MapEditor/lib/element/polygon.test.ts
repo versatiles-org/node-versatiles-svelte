@@ -31,12 +31,6 @@ describe('PolygonElement', () => {
 		expect(element.path).toEqual(customPolygon);
 	});
 
-	it('should set isActive correctly', () => {
-		element.isActive = true;
-		expect(element.fillLayer.isActive).toBe(true);
-		expect(element.strokeLayer.isActive).toBe(true);
-	});
-
 	it('should set isSelected correctly', () => {
 		element.isSelected = true;
 		expect(element.fillLayer.isSelected).toBe(true);

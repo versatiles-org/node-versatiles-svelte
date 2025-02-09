@@ -15,8 +15,7 @@ export abstract class MapLayer<T extends LayerSpec> {
 	protected readonly map: maplibregl.Map;
 
 	public onClick: (() => void)[] = [];
-	public isActive = true;
-	public isSelected = true;
+	public isSelected = false;
 
 	constructor(manager: GeometryManager, id: string) {
 		this.manager = manager;
@@ -43,22 +42,18 @@ export abstract class MapLayer<T extends LayerSpec> {
 
 	addEvents() {
 		this.map.on('mouseenter', this.id, () => {
-			if (this.isActive) {
-				if (this.isSelected) this.manager.cursor.grab(true);
-				this.manager.cursor.hover(true);
-			}
+			if (this.isSelected) this.manager.cursor.grab(true);
+			this.manager.cursor.hover(true);
 		});
 		this.map.on('mouseleave', this.id, () => {
-			if (this.isActive) {
-				if (this.isSelected) this.manager.cursor.grab(false);
-				this.manager.cursor.hover(false);
-			}
+			if (this.isSelected) this.manager.cursor.grab(false);
+			this.manager.cursor.hover(false);
 		});
 		this.map.on('click', this.id, (e) => {
-			if (this.isActive) {
-				this.onClick.forEach((handler) => handler());
-				e.preventDefault();
-			}
+			this.onClick.forEach((handler) => handler());
+			if (this.isSelected) this.manager.cursor.grab(true);
+			this.manager.cursor.hover(true);
+			e.preventDefault();
 		});
 	}
 
