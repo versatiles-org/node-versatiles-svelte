@@ -18,7 +18,10 @@ mkdirSync(path, { recursive: true });
 		{ name: 'basic-map' },
 		{ name: 'bbox-map' },
 		{ name: 'locator-map', hash: '#14.89/13.408956/52.519744' },
-		{ name: 'map-editor', hash: '#45Lr613MeKWlkdWni5tBhMWIUZ532ZzFjDOZrso4F05ljFe08yg7xVjX1NPIOpXlOaOdHoO5q7Mh72W29SzcGqsYGLy/MDMwGDHIzfu3iPHczwZWsKANs2teClh425zFjFN6GqHCrMEliUUlDAxGTPIs5xYsZmTvZ65f1t3I2sLE0MoEVuJu4MHEwAM2OIWBgQEA' }
+		{
+			name: 'map-editor',
+			hash: '#45Lr613MeKWlkdWni5tBhMWIUZ532ZzFjDOZrso4F05ljFe08yg7xVjX1NPIOpXlOaOdHoO5q7Mh72W29SzcGqsYGLy/MDMwGDHIzfu3iPHczwZWsKANs2teClh425zFjFN6GqHCrMEliUUlDAxGTPIs5xYsZmTvZ65f1t3I2sLE0MoEVuJu4MHEwAM2OIWBgQEA'
+		}
 	];
 
 	const browser = await chromium.launch();
