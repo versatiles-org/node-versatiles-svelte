@@ -11,7 +11,7 @@ export class MockGeometryManager {
 	public readonly map = new MockMap();
 	public readonly cursor = new MockCursor();
 
-	constructor() { }
+	constructor() {}
 
 	public setActiveElement = vi.fn();
 	public getState = vi.fn((): StateObject => ({ map: { point: [0, 0], zoom: 10 }, elements: [] }));
