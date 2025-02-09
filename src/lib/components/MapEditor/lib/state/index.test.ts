@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { StateWriter } from './writer.js';
 import { StateReader } from './reader.js';
+import type { StateObject } from './types.js';
+import { defaultState } from './index.js';
 
 describe('StateWriter -> StateReader', () => {
 	const text =
@@ -57,5 +59,35 @@ describe('StateWriter -> StateReader', () => {
 		const base64 = await writer.getBase64compressed();
 		const reader = await StateReader.fromBase64compressed(base64);
 		expect(reader.readString()).toBe(text);
+	});
+});
+
+describe('defaultState', () => {
+	it('should return undefined if value matches default', () => {
+		const value: StateObject = { zoom: 5, color: 'red' };
+		const def: StateObject = { zoom: 5, color: 'red' };
+		expect(defaultState(value, def)).toBeUndefined();
+	});
+
+	it('should return filtered object if some properties differ from default', () => {
+		const value: StateObject = { zoom: 5, color: 'blue' };
+		const def: StateObject = { zoom: 5, color: 'red' };
+		expect(defaultState(value, def)).toEqual({ color: 'blue' });
+	});
+
+	it('should exclude undefined values', () => {
+		const value: StateObject = { zoom: 5, color: undefined };
+		const def: StateObject = { zoom: 5, color: 'red' };
+		expect(defaultState(value, def)).toBeUndefined();
+	});
+
+	it('should return the entire object if no properties match default', () => {
+		const value: StateObject = { zoom: 6, color: 'blue' };
+		const def: StateObject = { zoom: 5, color: 'red' };
+		expect(defaultState(value, def)).toEqual({ zoom: 6, color: 'blue' });
+	});
+
+	it('should handle empty objects correctly', () => {
+		expect(defaultState({}, {})).toBeUndefined();
 	});
 });
