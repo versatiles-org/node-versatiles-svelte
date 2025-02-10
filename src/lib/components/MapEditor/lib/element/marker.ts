@@ -26,7 +26,7 @@ export class MarkerElement extends AbstractElement {
 	getFeature(includeProperties = false): GeoJSON.Feature<GeoJSON.Point> {
 		return {
 			type: 'Feature',
-			properties: includeProperties ? this.layer.getProperties() : {},
+			properties: includeProperties ? this.layer.getGeoJSONProperties() : {},
 			geometry: {
 				type: 'Point',
 				coordinates: this.point
@@ -65,6 +65,12 @@ export class MarkerElement extends AbstractElement {
 	static fromState(manager: GeometryManager, state: StateObject) {
 		const element = new MarkerElement(manager, state.point);
 		if (state.style) element.layer.setState(state.style);
+		return element;
+	}
+
+	static fromGeoJSON(manager: GeometryManager, feature: GeoJSON.Feature<GeoJSON.Point>) {
+		const element = new MarkerElement(manager, feature.geometry.coordinates as ElementPoint);
+		element.layer.setGeoJSONProperties(feature.properties);
 		return element;
 	}
 }

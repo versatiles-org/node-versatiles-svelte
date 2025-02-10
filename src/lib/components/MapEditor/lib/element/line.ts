@@ -30,7 +30,7 @@ export class LineElement extends AbstractPathElement {
 	getFeature(includeProperties: boolean = false): GeoJSON.Feature<GeoJSON.LineString> {
 		return {
 			type: 'Feature',
-			properties: includeProperties ? this.layer.getProperties() : {},
+			properties: includeProperties ? this.layer.getGeoJSONProperties() : {},
 			geometry: { type: 'LineString', coordinates: this.path }
 		};
 	}
@@ -51,6 +51,12 @@ export class LineElement extends AbstractPathElement {
 	static fromState(manager: GeometryManager, state: StateObject) {
 		const element = new LineElement(manager, state.points);
 		if (state.style) element.layer.setState(state.style);
+		return element;
+	}
+
+	static fromGeoJSON(manager: GeometryManager, feature: GeoJSON.Feature<GeoJSON.LineString>) {
+		const element = new LineElement(manager, feature.geometry.coordinates as ElementPath);
+		element.layer.setGeoJSONProperties(feature.properties);
 		return element;
 	}
 }

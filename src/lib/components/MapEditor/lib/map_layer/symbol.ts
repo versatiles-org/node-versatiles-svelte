@@ -4,7 +4,7 @@ import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { StateObject } from '../state/types.js';
-import { getSymbol } from '../symbols.js';
+import { getSymbol, getSymbolIndexByName } from '../symbols.js';
 import { removeDefaultFields } from '../utils.js';
 
 const defaultStyle = {
@@ -105,7 +105,7 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 		if (state.label) this.label.set(state.label);
 	}
 
-	getProperties(): GeoJSON.GeoJsonProperties {
+	getGeoJSONProperties(): GeoJSON.GeoJsonProperties {
 		return {
 			'symbol-color': get(this.color),
 			'symbol-halo-width': get(this.halo),
@@ -114,5 +114,18 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 			'symbol-pattern': get(this.symbol).name,
 			'symbol-label': get(this.label)
 		};
+	}
+
+	setGeoJSONProperties(properties: GeoJSON.GeoJsonProperties): void {
+		if (properties == null) return;
+		if (properties['symbol-color']) this.color.set(properties['symbol-color']);
+		if (properties['symbol-halo-width']) this.halo.set(properties['symbol-halo-width']);
+		if (properties['symbol-rotate']) this.rotate.set(properties['symbol-rotate']);
+		if (properties['symbol-size']) this.size.set(properties['symbol-size']);
+		if (properties['symbol-label']) this.label.set(properties['symbol-label']);
+		if (properties['symbol-pattern']) {
+			const index = getSymbolIndexByName(properties['symbol-pattern']);
+			if (index != null) this.symbolIndex.set(index);
+		}
 	}
 }
