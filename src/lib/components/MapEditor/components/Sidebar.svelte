@@ -95,7 +95,7 @@
 		background-color: #eee;
 		overflow-y: scroll;
 		box-sizing: border-box;
-		padding: 0 var(--gap);
+		padding: 0.5em var(--gap) 0;
 		border-left: 0.5px solid rgba(0, 0, 0, 0.5);
 
 		hr {
