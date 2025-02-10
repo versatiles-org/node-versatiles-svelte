@@ -104,4 +104,15 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 		if (state.pattern) this.symbolIndex.set(state.pattern);
 		if (state.label) this.label.set(state.label);
 	}
+
+	getProperties(): GeoJSON.GeoJsonProperties {
+		return {
+			'symbol-color': get(this.color),
+			'symbol-halo-width': get(this.halo),
+			'symbol-rotate': get(this.rotate),
+			'symbol-size': get(this.size),
+			'symbol-pattern': get(this.symbol).name,
+			'symbol-label': get(this.label)
+		};
+	}
 }

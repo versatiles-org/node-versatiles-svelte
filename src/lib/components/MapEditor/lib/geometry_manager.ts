@@ -192,4 +192,16 @@ export class GeometryManager {
 		if (get(this.selectedElement) === element) this.selectElement(undefined);
 		this.saveState();
 	}
+
+	public getGeoJSON(): GeoJSON.FeatureCollection {
+		const center = this.map.getCenter();
+		return {
+			type: 'FeatureCollection',
+			features: get(this.elements).map((element) => element.getFeature(true)),
+			map: {
+				center: [center.lng, center.lat],
+				zoom: this.map.getZoom()
+			}
+		} as GeoJSON.FeatureCollection;
+	}
 }

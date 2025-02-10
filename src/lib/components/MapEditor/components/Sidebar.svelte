@@ -9,10 +9,27 @@
 	$effect(() => geometryManager.selectElement(activeElement));
 
 	geometryManager.selectedElement.subscribe((value) => (activeElement = value));
+
+	function exportGeoJSON() {
+		return () => {
+			const geoJSON = geometryManager.getGeoJSON();
+			const blob = new Blob([JSON.stringify(geoJSON)], { type: 'application/geo+json' });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.setAttribute('href', url);
+			a.setAttribute('download', 'map.geojson');
+			a.click();
+			URL.revokeObjectURL(url);
+		};
+	}
 </script>
 
 <div class="sidebar" style="--gap: 10px;width: {width}px;">
 	<div style="min-height: calc(100vh - 2em);">
+		<div class="label">GeoJSON:</div>
+		<div class="row-flex">
+			<input type="button" value="Export" onclick={exportGeoJSON()} />
+		</div>
 		<hr />
 		<div class="label">Add new:</div>
 		<div class="row-flex">

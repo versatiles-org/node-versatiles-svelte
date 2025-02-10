@@ -79,4 +79,13 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 		if (state.visible) this.visible.set(state.visible);
 		if (state.width) this.width.set(state.width);
 	}
+
+	getProperties(): GeoJSON.GeoJsonProperties {
+		return {
+			'stroke-color': get(this.color),
+			'stroke-style': dashArrays.get(get(this.dashed))?.name,
+			'stroke-width': get(this.width),
+			'stroke-visibility': get(this.visible)
+		};
+	}
 }

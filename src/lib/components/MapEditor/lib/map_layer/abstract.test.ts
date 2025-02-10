@@ -9,6 +9,9 @@ class TestLayer extends MapLayer<LayerFill> {
 	getState(): StateObject | undefined {
 		return { type: 'fill' };
 	}
+	getProperties(): GeoJSON.GeoJsonProperties {
+		return { 'fill-color': 'red' };
+	}
 }
 
 describe('MapLayer', () => {
