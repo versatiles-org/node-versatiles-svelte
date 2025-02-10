@@ -16,6 +16,7 @@ export class LineElement extends AbstractPathElement {
 		this.layer.on('click', () => this.manager.selectElement(this));
 		this.layer.on('mousedown', (e) => {
 			if (!this.isSelected) return;
+			if ('ignore' in e && e.ignore) return;
 			this.handleDrag(e);
 		});
 
