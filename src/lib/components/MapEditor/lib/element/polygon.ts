@@ -36,7 +36,7 @@ export class PolygonElement extends AbstractPathElement {
 		return {
 			type: 'Feature',
 			properties: includeProperties
-				? { ...this.fillLayer.getProperties(), ...this.strokeLayer.getProperties() }
+				? { ...this.fillLayer.getGeoJSONProperties(), ...this.strokeLayer.getGeoJSONProperties() }
 				: {},
 			geometry: { type: 'Polygon', coordinates: [[...this.path, this.path[0]]] }
 		};
@@ -61,6 +61,14 @@ export class PolygonElement extends AbstractPathElement {
 		const element = new PolygonElement(manager, state.points);
 		if (state.style) element.fillLayer.setState(state.style);
 		if (state.strokeStyle) element.strokeLayer.setState(state.strokeStyle);
+		return element;
+	}
+
+	static fromGeoJSON(manager: GeometryManager, feature: GeoJSON.Feature<GeoJSON.Polygon>) {
+		const coordinates = feature.geometry.coordinates[0].slice(0, -1) as ElementPath;
+		const element = new PolygonElement(manager, coordinates as ElementPath);
+		element.fillLayer.setGeoJSONProperties(feature.properties);
+		element.strokeLayer.setGeoJSONProperties(feature.properties);
 		return element;
 	}
 }

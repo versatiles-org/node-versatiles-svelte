@@ -127,6 +127,11 @@ export function getSymbol(index: number): Symbol {
 	return symbols.get(index) ?? defaultSymbol!;
 }
 
+export function getSymbolIndexByName(name: string): number | undefined {
+	const entry = entries.find((entry) => entry[1] === name);
+	return entry ? entry[0] : undefined;
+}
+
 export class SymbolLibrary {
 	private map: maplibregl.Map;
 	constructor(map: maplibregl.Map) {

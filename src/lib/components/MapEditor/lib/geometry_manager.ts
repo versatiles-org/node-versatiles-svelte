@@ -197,11 +197,44 @@ export class GeometryManager {
 		const center = this.map.getCenter();
 		return {
 			type: 'FeatureCollection',
-			features: get(this.elements).map((element) => element.getFeature(true)),
 			map: {
 				center: [center.lng, center.lat],
 				zoom: this.map.getZoom()
-			}
+			},
+			features: get(this.elements).map((element) => element.getFeature(true))
 		} as GeoJSON.FeatureCollection;
+	}
+
+	public addGeoJSON(geojson: GeoJSON.FeatureCollection) {
+		if ('map' in geojson) {
+			const { map } = geojson as { map: Record<string, unknown> };
+			if (typeof map.zoom === 'number') {
+				this.map.setZoom(map.zoom);
+			}
+			if (Array.isArray(map.center)) {
+				const [lng, lat] = map.center;
+				if (typeof lng === 'number' && typeof lat === 'number') {
+					this.map.setCenter({ lng, lat });
+				}
+			}
+		}
+		for (const feature of geojson.features) {
+			let element: AbstractElement;
+			switch (feature.geometry.type) {
+				case 'Point':
+					element = MarkerElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.Point>);
+					break;
+				case 'LineString':
+					element = LineElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.LineString>);
+					break;
+				case 'Polygon':
+					element = PolygonElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.Polygon>);
+					break;
+				default:
+					throw new Error(`Unknown geometry type "${feature.geometry.type}"`);
+			}
+			this.addElement(element);
+		}
+		this.saveState();
 	}
 }
