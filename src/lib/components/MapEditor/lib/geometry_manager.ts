@@ -10,6 +10,7 @@ import { Cursor } from './cursor.js';
 import type { StateObject } from './state/types.js';
 import { StateWriter } from './state/writer.js';
 import { StateReader } from './state/reader.js';
+import { SymbolLibrary } from './symbols.js';
 
 export class GeometryManager {
 	public readonly elements: Writable<AbstractElement[]>;
@@ -17,6 +18,7 @@ export class GeometryManager {
 	public readonly selectedElement: Writable<AbstractElement | undefined> = writable(undefined);
 	public readonly canvas: HTMLElement;
 	public readonly cursor: Cursor;
+	public readonly symbolLibrary: SymbolLibrary;
 
 	private readonly selectionNodes: maplibregl.GeoJSONSource;
 
@@ -25,6 +27,7 @@ export class GeometryManager {
 		this.map = map;
 		this.canvas = this.map.getCanvasContainer();
 		this.cursor = new Cursor(this.canvas);
+		this.symbolLibrary = new SymbolLibrary(map);
 
 		map.addSource('selection_nodes', {
 			type: 'geojson',

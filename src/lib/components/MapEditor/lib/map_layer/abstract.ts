@@ -13,7 +13,7 @@ export abstract class MapLayer<T extends LayerSpec> {
 	private paint = {} as T['paint'];
 
 	protected readonly id: string;
-	protected readonly manager: GeometryManager;
+	public readonly manager: GeometryManager;
 	protected readonly map: maplibregl.Map;
 
 	public eventHandlers = new Map<Events, MouseEventHandler[]>();
