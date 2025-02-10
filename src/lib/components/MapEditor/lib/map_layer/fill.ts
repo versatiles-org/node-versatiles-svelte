@@ -4,7 +4,7 @@ import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { StateObject } from '../state/types.js';
-import { defaultState } from '../state/index.js';
+import { removeDefaultFields } from '../utils.js';
 
 const size = 32;
 
@@ -87,7 +87,7 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 	}
 
 	getState(): StateObject | undefined {
-		return defaultState(
+		return removeDefaultFields(
 			{
 				color: get(this.color),
 				opacity: get(this.opacity),

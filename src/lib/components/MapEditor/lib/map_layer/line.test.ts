@@ -3,7 +3,6 @@ import { get } from 'svelte/store';
 import { MapLayerLine } from './line.js';
 import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
 import type { GeometryManager } from '../geometry_manager.js';
-import { defaultState } from '../state/index.js';
 
 describe('MapLayerLine', () => {
 	let mockManager: MockGeometryManager;
@@ -85,12 +84,7 @@ describe('MapLayerLine', () => {
 		layer.visible.set(false);
 		layer.width.set(4);
 
-		expect(layer.getState()).toEqual(
-			defaultState(
-				{ color: '#00ff00', pattern: 1, visible: false, width: 4 },
-				{ color: '#ff0000', pattern: 0, visible: true, width: 2 }
-			)
-		);
+		expect(layer.getState()).toEqual({ color: '#00ff00', pattern: 1, visible: false, width: 4 });
 	});
 
 	it('should restore state correctly', () => {

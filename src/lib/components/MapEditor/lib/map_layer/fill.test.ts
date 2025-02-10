@@ -3,7 +3,6 @@ import { get } from 'svelte/store';
 import { MapLayerFill } from './fill.js';
 import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
 import type { GeometryManager } from '../geometry_manager.js';
-import { defaultState } from '../state/index.js';
 
 describe('MapLayerFill', () => {
 	let mockManager: MockGeometryManager;
@@ -75,12 +74,7 @@ describe('MapLayerFill', () => {
 		layer.opacity.set(0.5);
 		layer.pattern.set(1);
 
-		expect(layer.getState()).toEqual(
-			defaultState(
-				{ color: '#00ff00', opacity: 0.5, pattern: 1 },
-				{ color: 'rgb(0,255,0)', opacity: 1, pattern: 0 }
-			)
-		);
+		expect(layer.getState()).toEqual({ color: '#00ff00', opacity: 0.5, pattern: 1 });
 	});
 
 	it('should restore state correctly', () => {

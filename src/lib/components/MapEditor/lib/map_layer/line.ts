@@ -4,7 +4,7 @@ import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { StateObject } from '../state/types.js';
-import { defaultState } from '../state/index.js';
+import { removeDefaultFields } from '../utils.js';
 
 export const dashArrays = new Map<number, { name: string; array: number[] | undefined }>([
 	[0, { name: 'solid', array: [100] }],
@@ -57,7 +57,7 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 	}
 
 	getState(): StateObject | undefined {
-		return defaultState(
+		return removeDefaultFields(
 			{
 				color: get(this.color),
 				pattern: get(this.dashed),
