@@ -1,4 +1,3 @@
-import type { LayerSpecification, MapMouseEvent } from 'maplibre-gl';
 import type { LayerFill, LayerLine, LayerSymbol } from './types.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
@@ -6,7 +5,7 @@ import type { StateObject } from '../state/types.js';
 
 type LayerSpec = LayerFill | LayerLine | LayerSymbol;
 type Events = 'click' | 'mousedown' | 'mousemove' | 'mouseup';
-type MouseEventHandler = (event: MapMouseEvent) => void;
+type MouseEventHandler = (event: maplibregl.MapMouseEvent) => void;
 
 export abstract class MapLayer<T extends LayerSpec> {
 	private layout = {} as T['layout'];
@@ -35,7 +34,7 @@ export abstract class MapLayer<T extends LayerSpec> {
 		this.paint = paint;
 
 		this.map.addLayer(
-			{ id: this.id, source, type, layout, paint } as LayerSpecification,
+			{ id: this.id, source, type, layout, paint } as maplibregl.LayerSpecification,
 			'selection_nodes'
 		);
 
@@ -56,7 +55,7 @@ export abstract class MapLayer<T extends LayerSpec> {
 		);
 	}
 
-	private dispatchEvent(event: Events, e: MapMouseEvent) {
+	private dispatchEvent(event: Events, e: maplibregl.MapMouseEvent) {
 		const handlers = this.eventHandlers.get(event);
 		if (handlers) handlers.forEach((handler) => handler(e));
 	}

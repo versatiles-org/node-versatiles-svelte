@@ -1,5 +1,4 @@
 import { describe, expect, it, beforeEach, vi } from 'vitest';
-import type { Feature } from 'geojson';
 import { AbstractElement } from './abstract.js';
 import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
 import type { GeometryManager } from '../geometry_manager.js';
@@ -13,7 +12,7 @@ class TestElement extends AbstractElement {
 		// Mock destroy behavior
 	}
 
-	getFeature(): Feature {
+	getFeature(): GeoJSON.Feature {
 		return { type: 'Feature', geometry: { type: 'Point', coordinates: [0, 0] }, properties: {} };
 	}
 
