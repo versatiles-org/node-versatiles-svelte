@@ -24,7 +24,7 @@ export abstract class AbstractPathElement extends AbstractElement {
 			y0 = y;
 			x0 = lng;
 			this.path = this.path.map(([x, y]) => [x + dx, mercator2lat(lat2mercator(y) + dy)]);
-			this.source.setData(this.getFeature());
+			this.source.setData(this.getFeature(false));
 			this.manager.drawSelectionNodes();
 			e.preventDefault();
 		};
@@ -65,7 +65,7 @@ export abstract class AbstractPathElement extends AbstractElement {
 			update: (lng: number, lat: number) => {
 				point[0] = lng;
 				point[1] = lat;
-				this.source.setData(this.getFeature());
+				this.source.setData(this.getFeature(false));
 			},
 			delete: () => {
 				if (this.isLine) {
@@ -75,7 +75,7 @@ export abstract class AbstractPathElement extends AbstractElement {
 				}
 
 				this.path.splice(index, 1);
-				this.source.setData(this.getFeature());
+				this.source.setData(this.getFeature(false));
 			}
 		};
 	}

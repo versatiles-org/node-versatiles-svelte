@@ -23,10 +23,10 @@ export class MarkerElement extends AbstractElement {
 		this.layer.isSelected = value;
 	}
 
-	getFeature(): GeoJSON.Feature<GeoJSON.Point> {
+	getFeature(includeProperties = false): GeoJSON.Feature<GeoJSON.Point> {
 		return {
 			type: 'Feature',
-			properties: {},
+			properties: includeProperties ? this.layer.getProperties() : {},
 			geometry: {
 				type: 'Point',
 				coordinates: this.point

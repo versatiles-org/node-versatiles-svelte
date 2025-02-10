@@ -32,10 +32,12 @@ export class PolygonElement extends AbstractPathElement {
 		this.strokeLayer.isSelected = value;
 	}
 
-	getFeature(): GeoJSON.Feature<GeoJSON.Polygon> {
+	getFeature(includeProperties = false): GeoJSON.Feature<GeoJSON.Polygon> {
 		return {
 			type: 'Feature',
-			properties: {},
+			properties: includeProperties
+				? { ...this.fillLayer.getProperties(), ...this.strokeLayer.getProperties() }
+				: {},
 			geometry: { type: 'Polygon', coordinates: [[...this.path, this.path[0]]] }
 		};
 	}

@@ -27,10 +27,10 @@ export class LineElement extends AbstractPathElement {
 		this.layer.isSelected = value;
 	}
 
-	getFeature(): GeoJSON.Feature<GeoJSON.LineString> {
+	getFeature(includeProperties: boolean = false): GeoJSON.Feature<GeoJSON.LineString> {
 		return {
 			type: 'Feature',
-			properties: {},
+			properties: includeProperties ? this.layer.getProperties() : {},
 			geometry: { type: 'LineString', coordinates: this.path }
 		};
 	}

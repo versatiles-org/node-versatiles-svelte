@@ -106,4 +106,12 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 		if (state.opacity) this.opacity.set(state.opacity);
 		if (state.pattern) this.pattern.set(state.pattern);
 	}
+
+	getProperties(): GeoJSON.GeoJsonProperties {
+		return {
+			'fill-color': get(this.color),
+			'fill-opacity': get(this.opacity),
+			'fill-pattern': fillPatterns.get(get(this.pattern))?.name
+		};
+	}
 }
