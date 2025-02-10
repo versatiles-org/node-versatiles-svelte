@@ -2,7 +2,6 @@ import { AbstractElement } from './abstract.js';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { ElementPath, ElementPoint, SelectionNode, SelectionNodeUpdater } from './types.js';
 import { getMiddlePoint, lat2mercator, mercator2lat } from '../utils.js';
-import type { MapMouseEvent } from 'maplibre-gl';
 
 export abstract class AbstractPathElement extends AbstractElement {
 	public path: ElementPath = [];
@@ -13,11 +12,11 @@ export abstract class AbstractPathElement extends AbstractElement {
 		this.isLine = isLine;
 	}
 
-	protected handleDrag(e: MapMouseEvent) {
+	protected handleDrag(e: maplibregl.MapMouseEvent) {
 		const { lng, lat } = e.lngLat;
 		let x0 = lng;
 		let y0 = lat2mercator(lat);
-		const moveHandler = (e: MapMouseEvent) => {
+		const moveHandler = (e: maplibregl.MapMouseEvent) => {
 			const { lng, lat } = e.lngLat;
 			const y = lat2mercator(lat);
 			const dx = lng - x0;

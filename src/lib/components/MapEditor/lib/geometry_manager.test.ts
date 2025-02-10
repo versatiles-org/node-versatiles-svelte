@@ -5,15 +5,14 @@ import { LineElement } from './element/line.js';
 import { PolygonElement } from './element/polygon.js';
 import type { StateObject } from './state/types.js';
 import { MockMap } from './__mocks__/map.js';
-import type { Map } from 'maplibre-gl';
 import { StateWriter } from './state/writer.js';
 
 describe('GeometryManager', () => {
-	let mockMap: Map;
+	let mockMap: maplibregl.Map;
 	let manager: GeometryManager;
 
 	beforeEach(() => {
-		mockMap = new MockMap() as unknown as Map;
+		mockMap = new MockMap() as unknown as maplibregl.Map;
 		manager = new GeometryManager(mockMap);
 	});
 

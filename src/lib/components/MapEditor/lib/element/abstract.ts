@@ -1,5 +1,3 @@
-import type { Feature } from 'geojson';
-import type maplibregl from 'maplibre-gl';
 import type { ElementPoint, SelectionNode, SelectionNodeUpdater } from './types.js';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { StateObject } from '../state/types.js';

@@ -1,8 +1,6 @@
 import { get, writable, type Writable } from 'svelte/store';
 import type { AbstractElement } from './element/abstract.js';
 import { MarkerElement } from './element/marker.js';
-import type maplibregl from 'maplibre-gl';
-import type { MapMouseEvent } from 'maplibre-gl';
 import { LineElement } from './element/line.js';
 import type { SelectionNode } from './element/types.js';
 import { PolygonElement } from './element/polygon.js';
@@ -65,7 +63,7 @@ export class GeometryManager {
 				this.drawSelectionNodes();
 				this.saveState();
 			} else {
-				const onMove = (e: MapMouseEvent) => {
+				const onMove = (e: maplibregl.MapMouseEvent) => {
 					e.preventDefault();
 					selectedNode.update(e.lngLat.lng, e.lngLat.lat);
 					this.drawSelectionNodes();

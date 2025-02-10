@@ -1,11 +1,4 @@
 import type { Color } from '@versatiles/style';
-import type {
-	ExpressionSpecification,
-	FormattedSpecification,
-	PaddingSpecification,
-	ResolvedImageSpecification,
-	VariableAnchorOffsetCollectionSpecification
-} from 'maplibre-gl';
 
 export interface LayerFill {
 	layout: {
@@ -19,7 +12,7 @@ export interface LayerFill {
 		'fill-outline-color'?: string | Color;
 		'fill-translate'?: [number, number];
 		'fill-translate-anchor'?: 'map' | 'viewport';
-		'fill-pattern'?: ResolvedImageSpecification;
+		'fill-pattern'?: maplibregl.ResolvedImageSpecification;
 	};
 }
 
@@ -42,8 +35,8 @@ export interface LayerLine {
 		'line-offset'?: number;
 		'line-blur'?: number;
 		'line-dasharray'?: Array<number>;
-		'line-pattern'?: ResolvedImageSpecification;
-		'line-gradient'?: ExpressionSpecification;
+		'line-pattern'?: maplibregl.ResolvedImageSpecification;
+		'line-gradient'?: maplibregl.ExpressionSpecification;
 	};
 }
 
@@ -62,9 +55,9 @@ export interface LayerSymbol {
 		'icon-size'?: number;
 		'icon-text-fit'?: 'none' | 'width' | 'height' | 'both';
 		'icon-text-fit-padding'?: [number, number, number, number];
-		'icon-image'?: ResolvedImageSpecification;
+		'icon-image'?: maplibregl.ResolvedImageSpecification;
 		'icon-rotate'?: number;
-		'icon-padding'?: PaddingSpecification;
+		'icon-padding'?: maplibregl.PaddingSpecification;
 		'icon-keep-upright'?: boolean;
 		'icon-offset'?: [number, number];
 		'icon-anchor'?:
@@ -80,7 +73,7 @@ export interface LayerSymbol {
 		'icon-pitch-alignment'?: 'map' | 'viewport' | 'auto';
 		'text-pitch-alignment'?: 'map' | 'viewport' | 'auto';
 		'text-rotation-alignment'?: 'map' | 'viewport' | 'viewport-glyph' | 'auto';
-		'text-field'?: FormattedSpecification;
+		'text-field'?: maplibregl.FormattedSpecification;
 		'text-font'?: Array<string>;
 		'text-size'?: number;
 		'text-max-width'?: number;
@@ -99,7 +92,7 @@ export interface LayerSymbol {
 			| 'bottom-left'
 			| 'bottom-right'
 		>;
-		'text-variable-anchor-offset'?: VariableAnchorOffsetCollectionSpecification;
+		'text-variable-anchor-offset'?: maplibregl.VariableAnchorOffsetCollectionSpecification;
 		'text-anchor'?:
 			| 'center'
 			| 'left'

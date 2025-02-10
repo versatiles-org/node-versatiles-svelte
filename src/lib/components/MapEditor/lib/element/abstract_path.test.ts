@@ -4,7 +4,6 @@ import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
 import type { GeometryManager } from '../geometry_manager.js';
 import { getMiddlePoint } from '../utils.js';
 import type { SelectionNode } from './types.js';
-import type { Feature } from 'geojson';
 import type { StateObject } from '../state/types.js';
 
 class TestPathElement extends AbstractPathElement {
@@ -15,7 +14,7 @@ class TestPathElement extends AbstractPathElement {
 
 	isSelected = true;
 
-	getFeature(): Feature {
+	getFeature(): GeoJSON.Feature {
 		return {
 			type: 'Feature',
 			geometry: { type: 'LineString', coordinates: this.path },
