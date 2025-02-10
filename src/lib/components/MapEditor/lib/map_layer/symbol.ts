@@ -25,7 +25,7 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 	label = writable(defaultStyle.label);
 
 	haloWidth = derived([this.halo, this.size], ([halo, size]) => halo * size);
-	symbol = derived(this.symbolIndex, (index) => getSymbol(index));
+	symbolInfo = derived(this.symbolIndex, (index) => getSymbol(index));
 
 	constructor(manager: GeometryManager, id: string, source: string) {
 		super(manager, id);
@@ -34,8 +34,8 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 			source,
 			'symbol',
 			{
-				'icon-image': get(this.symbol).image,
-				'icon-offset': get(this.symbol).offset,
+				'icon-image': get(this.symbolInfo).image,
+				'icon-offset': get(this.symbolInfo).offset,
 				'icon-overlap': 'always',
 				'icon-rotate': defaultStyle.rotate,
 				'icon-size': defaultStyle.size,
@@ -70,7 +70,7 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 			this.updateLayout('icon-size', v);
 			this.updateLayout('text-size', v * 16);
 		});
-		this.symbol.subscribe((v) => {
+		this.symbolInfo.subscribe((v) => {
 			if (v.image == null) {
 				this.updateLayout('icon-image', undefined);
 				this.updateLayout('text-variable-anchor', ['center']);
@@ -111,7 +111,7 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 			'symbol-halo-width': get(this.halo),
 			'symbol-rotate': get(this.rotate),
 			'symbol-size': get(this.size),
-			'symbol-pattern': get(this.symbol).name,
+			'symbol-pattern': get(this.symbolInfo).name,
 			'symbol-label': get(this.label)
 		};
 	}

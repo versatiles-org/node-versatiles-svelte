@@ -23,6 +23,7 @@
 					const json = JSON.parse(evt.target.result as string);
 					geometryManager.addGeoJSON(json);
 				} catch (error) {
+					console.error(error);
 					return alert('Failed to import GeoJSON. Please check the file format.');
 				}
 			};

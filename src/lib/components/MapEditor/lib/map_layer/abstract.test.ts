@@ -12,6 +12,12 @@ class TestLayer extends MapLayer<LayerFill> {
 	getProperties(): GeoJSON.GeoJsonProperties {
 		return { 'fill-color': 'red' };
 	}
+	getGeoJSONProperties(): GeoJSON.GeoJsonProperties {
+		return {};
+	}
+	setGeoJSONProperties(): void {
+		// Mock setGeoJSONProperties
+	}
 }
 
 describe('MapLayer', () => {
