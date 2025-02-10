@@ -56,6 +56,8 @@ export class GeometryManager {
 			const selectedNode = element.getSelectionNodeUpdater(feature.properties);
 			if (selectedNode == undefined) return;
 
+			// @ts-expect-error ensure that the event is ignored by other layers
+			e.ignore = true;
 			e.preventDefault();
 
 			if (e.originalEvent.shiftKey) {
