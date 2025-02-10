@@ -36,3 +36,16 @@ export async function decompress(data: Uint8Array): Promise<Uint8Array> {
 	const arrayBuffer = await new Response(decompressedStream).arrayBuffer();
 	return new Uint8Array(arrayBuffer);
 }
+
+export function removeDefaultFields<T extends Record<string, unknown>>(
+	value: T,
+	def: T
+): Partial<T> | undefined {
+	const entries = Object.entries(value).filter(([k, v]) => {
+		if (v === undefined) return false;
+		if (v === def[k]) return false;
+		return true;
+	});
+	if (entries.length === 0) return undefined;
+	return Object.fromEntries(entries) as Partial<T>;
+}

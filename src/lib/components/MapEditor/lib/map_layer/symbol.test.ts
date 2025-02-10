@@ -3,7 +3,6 @@ import { get } from 'svelte/store';
 import { MapLayerSymbol } from './symbol.js';
 import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
 import type { GeometryManager } from '../geometry_manager.js';
-import { defaultState } from '../state/index.js';
 
 describe('MapLayerSymbol', () => {
 	let mockManager: MockGeometryManager;
@@ -91,19 +90,14 @@ describe('MapLayerSymbol', () => {
 		layer.symbolIndex.set(1);
 		layer.label.set('Test Label');
 
-		expect(layer.getState()).toEqual(
-			defaultState(
-				{ color: '#00ff00', rotate: 45, size: 2, halo: 3, pattern: 1, label: 'Test Label' },
-				{
-					color: '#ff0000',
-					rotate: 0,
-					size: 1,
-					halo: 1,
-					pattern: 38,
-					label: ''
-				}
-			)
-		);
+		expect(layer.getState()).toEqual({
+			color: '#00ff00',
+			rotate: 45,
+			size: 2,
+			halo: 3,
+			pattern: 1,
+			label: 'Test Label'
+		});
 	});
 
 	it('should restore state correctly', () => {

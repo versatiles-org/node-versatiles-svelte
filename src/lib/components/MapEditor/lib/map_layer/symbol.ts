@@ -4,8 +4,8 @@ import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { StateObject } from '../state/types.js';
-import { defaultState } from '../state/index.js';
 import { getSymbol } from '../symbols.js';
+import { removeDefaultFields } from '../utils.js';
 
 const defaultStyle = {
 	color: '#ff0000',
@@ -83,7 +83,7 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 	}
 
 	getState(): StateObject | undefined {
-		return defaultState(
+		return removeDefaultFields(
 			{
 				color: get(this.color),
 				rotate: get(this.rotate),
