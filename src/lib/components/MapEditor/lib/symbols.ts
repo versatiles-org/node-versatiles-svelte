@@ -110,7 +110,7 @@ const entries: [number, string, string?, [number, number]?][] = [
 	[108, 'zoo', 'basics:icon-zoo']
 ];
 
-interface Symbol {
+export interface SymbolInfo {
 	index: number;
 	name: string;
 	image?: string;
@@ -118,12 +118,12 @@ interface Symbol {
 	icon?: string;
 }
 
-const symbols = new Map<number, Symbol>(
+const symbols = new Map<number, SymbolInfo>(
 	entries.map(([index, name, image, offset]) => [index, { index, name, image, offset }])
 );
 const defaultSymbol = symbols.get(38)!;
 
-export function getSymbol(index: number): Symbol {
+export function getSymbol(index: number): SymbolInfo {
 	return symbols.get(index) ?? defaultSymbol!;
 }
 
@@ -137,7 +137,7 @@ export class SymbolLibrary {
 	constructor(map: maplibregl.Map) {
 		this.map = map;
 	}
-	getSymbol(index: number): Symbol {
+	getSymbol(index: number): SymbolInfo {
 		return symbols.get(index) ?? defaultSymbol!;
 	}
 	drawSymbol(canvas: HTMLCanvasElement, index: number, halo = false): void {
@@ -184,7 +184,7 @@ export class SymbolLibrary {
 		const ctx = canvas.getContext('2d')!;
 		ctx.putImageData(new ImageData(data1, width1, height1), 0, 0);
 	}
-	asList(): Symbol[] {
+	asList(): SymbolInfo[] {
 		return Array.from(symbols.values());
 	}
 }
