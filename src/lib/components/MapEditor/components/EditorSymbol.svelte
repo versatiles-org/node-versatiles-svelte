@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { MapLayerSymbol, symbols } from '../lib/map_layer/symbol.js';
+	import { MapLayerSymbol } from '../lib/map_layer/symbol.js';
+	import SymbolSelector from './SymbolSelector.svelte';
 
 	const { layer }: { layer: MapLayerSymbol } = $props();
 
@@ -12,12 +13,8 @@
 </script>
 
 <div class="row-input">
-	<label for="symbol-input">Symbol:</label>
-	<select id="symbol-input" bind:value={$symbolIndex} class="input">
-		{#each symbols as [index, symbol]}
-			<option value={index}>{symbol.name}</option>
-		{/each}
-	</select>
+	<div class="label">Symbol:</div>
+	<SymbolSelector bind:symbolIndex={$symbolIndex} symbolLibrary={layer.manager.symbolLibrary} />
 </div>
 
 <div class="row-input">

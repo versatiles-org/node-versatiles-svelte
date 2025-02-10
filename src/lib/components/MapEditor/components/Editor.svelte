@@ -16,17 +16,17 @@
 </script>
 
 {#if element instanceof MarkerElement}
-	<h2>Symbol</h2>
+	<h2>Marker</h2>
 	<EditorSymbol layer={element.layer} />
 {/if}
 {#if element instanceof LineElement}
-	<h2>Stroke</h2>
+	<h2>Line Stroke</h2>
 	<EditorStroke layer={element.layer} />
 {/if}
 {#if element instanceof PolygonElement}
-	<h2>Fill</h2>
+	<h2>Polygon Fill</h2>
 	<EditorFill layer={element.fillLayer} />
-	<h2>Stroke</h2>
+	<h2>Polygon Stroke</h2>
 
 	<div class="row-input">
 		<label for="showStroke">Outline:</label>

@@ -88,15 +88,16 @@
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			:global(label) {
+			& > :global(label) {
 				flex-grow: 0;
 			}
-			:global(input),
-			:global(select) {
+			& > :global(button),
+			& > :global(input),
+			& > :global(select) {
 				width: 60%;
 				flex-grow: 0;
 			}
-			:global(input[type='checkbox']) {
+			& > :global(input[type='checkbox']) {
 				width: auto;
 			}
 		}
@@ -107,6 +108,7 @@
 			font-size: 0.8em;
 		}
 
+		:global(button),
 		:global(input),
 		:global(select) {
 			width: 100%;
