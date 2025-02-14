@@ -38,6 +38,6 @@
 </div>
 
 <div class="row-input">
-	<label for="text">Text:</label>
-	<input id="text" type="text" bind:value={$label} />
+	<label for="label">Label:</label>
+	<input id="label" type="label" bind:value={$label} />
 </div>
