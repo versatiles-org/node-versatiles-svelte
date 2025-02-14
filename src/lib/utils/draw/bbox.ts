@@ -1,7 +1,7 @@
 import type geojson from 'geojson';
 import { get, writable, type Writable } from 'svelte/store';
+import maplibregl from 'maplibre-gl';
 
-const maplibregl = await import('maplibre-gl');
 const { LngLatBounds } = maplibregl;
 
 type DragPoint = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | false;
