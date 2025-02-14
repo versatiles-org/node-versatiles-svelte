@@ -1,6 +1,6 @@
 {
   "name": "@versatiles/svelte",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "scripts": {
     "build": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && vite build && npm run package",
