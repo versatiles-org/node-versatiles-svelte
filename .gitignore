@@ -7,5 +7,6 @@
 /coverage
 /dist
 /node_modules
+/screenshots
 /test-results
 Thumbs.db
