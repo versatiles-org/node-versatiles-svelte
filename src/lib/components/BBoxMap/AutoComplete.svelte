@@ -135,7 +135,7 @@
 		aria-controls="autocomplete-results"
 	/>
 	<div class="autocomplete-results" class:hide-results={!isOpen}>
-		{#each results as result, i}
+		{#each results as result, i (result.key)}
 			<button
 				onclick={() => close(i)}
 				class={i === selectedIndex ? ' is-active' : ''}

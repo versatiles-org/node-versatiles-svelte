@@ -38,7 +38,7 @@
 <div class="modal" style="display: {open ? 'block' : 'none'};">
 	<button class="close" onclick={() => (open = false)}>&#x2715;</button>
 	<div class="inner">
-		{#each symbolLibrary.asList() as symbol}
+		{#each symbolLibrary.asList() as symbol (symbol.index)}
 			<button
 				class="icon"
 				onclick={() => {

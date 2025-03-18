@@ -11,7 +11,7 @@
 <div class="row-input">
 	<label for="dashed">Dashed:</label>
 	<select id="dashed" bind:value={$dashed}>
-		{#each dashArrays as [index, dash]}
+		{#each dashArrays as [index, dash] (index)}
 			<option value={index}>{dash.name}</option>
 		{/each}
 	</select>

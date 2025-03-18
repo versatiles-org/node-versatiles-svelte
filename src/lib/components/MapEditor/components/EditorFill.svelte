@@ -16,7 +16,7 @@
 <div class="row-input">
 	<label for="pattern">Pattern:</label>
 	<select id="pattern" bind:value={$pattern}>
-		{#each fillPatterns as [index, fill]}
+		{#each fillPatterns as [index, fill] (index)}
 			<option value={index}>{fill.name}</option>
 		{/each}
 	</select>
