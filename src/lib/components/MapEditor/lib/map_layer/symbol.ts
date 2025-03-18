@@ -59,16 +59,27 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 			}
 		);
 
-		this.color.subscribe((v) => this.updatePaint('icon-color', Color.parse(v)));
+		this.color.subscribe((v) => {
+			this.updatePaint('icon-color', Color.parse(v));
+			this.manager.saveState();
+		});
 		this.haloWidth.subscribe((v) => {
 			this.updatePaint('icon-halo-width', v);
 			this.updatePaint('text-halo-width', v);
+			this.manager.saveState();
 		});
-		this.label.subscribe((v) => this.updateLayout('text-field', v));
-		this.rotate.subscribe((v) => this.updateLayout('icon-rotate', v));
+		this.label.subscribe((v) => {
+			this.updateLayout('text-field', v);
+			this.manager.saveState();
+		});
+		this.rotate.subscribe((v) => {
+			this.updateLayout('icon-rotate', v);
+			this.manager.saveState();
+		});
 		this.size.subscribe((v) => {
 			this.updateLayout('icon-size', v);
 			this.updateLayout('text-size', v * 16);
+			this.manager.saveState();
 		});
 		this.symbolInfo.subscribe((v) => {
 			if (v.image == null) {
@@ -79,6 +90,7 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 				this.updateLayout('text-variable-anchor', ['right', 'left', 'top', 'bottom']);
 				this.updateLayout('icon-offset', v.offset);
 			}
+			this.manager.saveState();
 		});
 	}
 
