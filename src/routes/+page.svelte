@@ -9,7 +9,7 @@
 </script>
 
 <div class="page">
-	<h1>Welcome to VersaTiles SvelteKit library project</h1>
+	<h1>Welcome to VersaTiles Svelte library project</h1>
 	<p>Available components:</p>
 
 	<table style="margin: 5em auto 1em;">
