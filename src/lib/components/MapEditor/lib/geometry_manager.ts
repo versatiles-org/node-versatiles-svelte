@@ -80,10 +80,10 @@ export class GeometryManager {
 		});
 
 		map.on('mouseenter', 'selection_nodes', () => {
-			this.cursor.togglePrecise('selection_nodes')
+			this.cursor.togglePrecise('selection_nodes');
 		});
 		map.on('mouseleave', 'selection_nodes', () => {
-			this.cursor.togglePrecise('selection_nodes', false)
+			this.cursor.togglePrecise('selection_nodes', false);
 		});
 
 		map.on('click', (e) => {
