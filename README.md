@@ -23,22 +23,22 @@ npm i @versatiles/svelte
 	</tr>
 	<tr>
 		<th>BasicMap</th>
-		<td><img width="512" src="./screenshots/basic-map-light.png"></td>
-		<td><img width="512" src="./screenshots/basic-map-dark.png"></td>
+		<td><img width="512" src="https://versatiles.org/node-versatiles-svelte/screenshots/basic-map-light.png"></td>
+		<td><img width="512" src="https://versatiles.org/node-versatiles-svelte/screenshots/basic-map-dark.png"></td>
 	</tr>
 	<tr>
 		<th>BBoxMap</th>
-		<td><img width="512" src="./screenshots/bbox-map-light.png"></td>
-		<td><img width="512" src="./screenshots/bbox-map-dark.png"></td>
+		<td><img width="512" src="https://versatiles.org/node-versatiles-svelte/screenshots/bbox-map-light.png"></td>
+		<td><img width="512" src="https://versatiles.org/node-versatiles-svelte/screenshots/bbox-map-dark.png"></td>
 	</tr>
 	<tr>
 		<th>LocatorMap</th>
-		<td><img width="512" src="./screenshots/locator-map-light.png"></td>
-		<td><img width="512" src="./screenshots/locator-map-dark.png"></td>
+		<td><img width="512" src="https://versatiles.org/node-versatiles-svelte/screenshots/locator-map-light.png"></td>
+		<td><img width="512" src="https://versatiles.org/node-versatiles-svelte/screenshots/locator-map-dark.png"></td>
 	</tr>
 	<tr>
 		<th>MapEditor</th>
-		<td><img width="512" src="./screenshots/map-editor-light.png"></td>
-		<td><img width="512" src="./screenshots/map-editor-dark.png"></td>
+		<td><img width="512" src="https://versatiles.org/node-versatiles-svelte/screenshots/map-editor-light.png"></td>
+		<td><img width="512" src="https://versatiles.org/node-versatiles-svelte/screenshots/map-editor-dark.png"></td>
 	</tr>
 </table>
