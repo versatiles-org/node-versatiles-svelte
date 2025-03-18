@@ -122,7 +122,7 @@ export class StateReader {
 					state.pattern = this.readUnsignedInteger();
 					break;
 				case 73:
-					state.rotate = this.readUnsignedInteger();
+					state.rotate = this.readSignedInteger();
 					break;
 				case 74:
 					state.size = this.readUnsignedInteger() / 10;
