@@ -51,11 +51,11 @@ jobs:
       - name: Build the project
         run: npm run build
 
-      - name: Build screenshots
+      - name: Generate screenshots
         run: npm run screenshots
 
       - name: Add screenshots to build
-        run: mv screenshots/*.png build
+        run: mv screenshots build/
 
       - name: Upload Artifact
         if: github.ref == 'refs/heads/main'
