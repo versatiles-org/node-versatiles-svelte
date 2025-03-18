@@ -139,7 +139,7 @@ export class StateWriter {
 					writeInteger(72, value);
 					break;
 				case 'rotate':
-					writeInteger(73, value);
+					writeSignedInteger(73, value);
 					break;
 				case 'size':
 					writeInteger(74, value, 10);
@@ -175,6 +175,13 @@ export class StateWriter {
 			if (value < 0) throw new Error(`Negative Number: ${obj}`);
 			me.writeByte(id);
 			me.writeUnsignedInteger(value * factor);
+		}
+
+		function writeSignedInteger(id: number, obj: unknown, factor = 1) {
+			if (typeof obj !== 'number') throw new Error(`Invalid number: ${obj}`);
+			const value = Math.round(obj);
+			me.writeByte(id);
+			me.writeSignedInteger(value * factor);
 		}
 	}
 
