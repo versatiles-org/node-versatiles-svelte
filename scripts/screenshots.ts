@@ -43,11 +43,12 @@ mkdirSync(path, { recursive: true });
 		await screenShot(pageDark, 'dark');
 
 		async function screenShot(page: Page, suffix: string) {
-			console.log('generate screenshot: ' + name + ' - ' + suffix);
+			console.log('generating screenshot: ' + name + ' - ' + suffix);
 			await page.goto('http://localhost:4173/' + name + (hash ?? ''), { waitUntil: 'networkidle' });
 			await wait(5);
 
 			const l = page.locator('.wrapper');
+			console.log(l);
 			const clip = await l.boundingBox();
 			if (!clip) throw Error();
 
