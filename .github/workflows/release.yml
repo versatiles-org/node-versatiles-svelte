@@ -1,9 +1,8 @@
 name: Release
 
 on:
-  #  release:
-  #    types:
-  #      - published
+  release:
+    types: [published]
   workflow_dispatch:
 
 jobs:
@@ -28,7 +27,7 @@ jobs:
         run: npm ci
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps
 
       - name: Run screenshots
         run: npm run screenshots
