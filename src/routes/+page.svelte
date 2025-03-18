@@ -25,18 +25,22 @@
 				<tr>
 					<th><a href={component.slug}>{component.title}</a></th>
 					<td>
-						<a href={component.slug}><img
-							width="256"
-							src="{baseUrl + component.slug}-light.png"
-							alt="screenshot of {component.title} in light mode"
-						/></a>
+						<a href={component.slug}
+							><img
+								width="256"
+								src="{baseUrl + component.slug}-light.png"
+								alt="screenshot of {component.title} in light mode"
+							/></a
+						>
 					</td>
 					<td>
-						<a href={component.slug}><img
-							width="256"
-							src="{baseUrl + component.slug}-dark.png"
-							alt="screenshot of {component.title} in dark mode"
-						/></a>
+						<a href={component.slug}
+							><img
+								width="256"
+								src="{baseUrl + component.slug}-dark.png"
+								alt="screenshot of {component.title} in dark mode"
+							/></a
+						>
 					</td>
 				</tr>
 			{/each}
