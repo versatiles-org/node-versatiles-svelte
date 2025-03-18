@@ -47,7 +47,6 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 	label = writable(defaultStyle.label);
 	labelAlign = writable<LabelAlign['index']>(defaultStyle.align);
 
-	haloWidth = derived([this.halo, this.size], ([halo, size]) => halo * size);
 	symbolInfo = derived(this.symbolIndex, (index) => getSymbol(index));
 
 	constructor(manager: GeometryManager, id: string, source: string) {
@@ -86,7 +85,7 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 			this.updatePaint('icon-color', Color.parse(v));
 			this.manager.saveState();
 		});
-		this.haloWidth.subscribe((v) => {
+		this.halo.subscribe((v) => {
 			this.updatePaint('icon-halo-width', v);
 			this.updatePaint('text-halo-width', v);
 			this.manager.saveState();
