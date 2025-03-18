@@ -3,7 +3,8 @@
 	import type { Map as MaplibreMapType, MapOptions } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { getMapStyle, isDarkMode } from '$lib/utils/map_style.js';
-	import { Map as MaplibreMap } from 'maplibre-gl';
+	import maplibre from 'maplibre-gl';
+	const { Map } = maplibre;
 
 	// Props
 	let {
@@ -39,7 +40,7 @@
 
 		const style = getMapStyle(darkMode, styleOptions);
 		style.transition = { duration: 0, delay: 0 };
-		map = new MaplibreMap({
+		map = new Map({
 			container,
 			style,
 			renderWorldCopies: false,
