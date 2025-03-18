@@ -79,8 +79,12 @@ export class GeometryManager {
 			}
 		});
 
-		map.on('mouseenter', 'selection_nodes', () => this.cursor.precise(true));
-		map.on('mouseleave', 'selection_nodes', () => this.cursor.precise(false));
+		map.on('mouseenter', 'selection_nodes', () => {
+			this.cursor.togglePrecise('selection_nodes')
+		});
+		map.on('mouseleave', 'selection_nodes', () => {
+			this.cursor.togglePrecise('selection_nodes', false)
+		});
 
 		map.on('click', (e) => {
 			if (!e.originalEvent.shiftKey) this.selectElement(undefined);
@@ -142,20 +146,19 @@ export class GeometryManager {
 			}
 
 			if (state.elements) {
-				this.elements.set(
-					state.elements.map((element) => {
-						switch (element.type) {
-							case 'marker':
-								return MarkerElement.fromState(this, element);
-							case 'line':
-								return LineElement.fromState(this, element);
-							case 'polygon':
-								return PolygonElement.fromState(this, element);
-							default:
-								throw new Error('Unknown element type');
-						}
-					})
-				);
+				const elements = state.elements.map((element) => {
+					switch (element.type) {
+						case 'marker':
+							return MarkerElement.fromState(this, element);
+						case 'line':
+							return LineElement.fromState(this, element);
+						case 'polygon':
+							return PolygonElement.fromState(this, element);
+						default:
+							throw new Error('Unknown element type');
+					}
+				});
+				this.elements.set(elements);
 			}
 		} catch (error) {
 			console.error(error);

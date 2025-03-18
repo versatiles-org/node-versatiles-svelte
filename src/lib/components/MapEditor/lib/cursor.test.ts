@@ -15,44 +15,44 @@ describe('Cursor', () => {
 	});
 
 	it('should set cursor to pointer when hover is increased', () => {
-		cursor.hover(true);
+		cursor.toggleHover('test');
 		expect(mockElement.style.cursor).toBe('pointer');
 	});
 
 	it('should return to default when hover is decreased back to zero', () => {
-		cursor.hover(true);
-		cursor.hover(false);
+		cursor.toggleHover('test');
+		cursor.toggleHover('test', false);
 		expect(mockElement.style.cursor).toBe('default');
 	});
 
 	it('should set cursor to crosshair when precise is increased', () => {
-		cursor.precise(true);
+		cursor.togglePrecise('test');
 		expect(mockElement.style.cursor).toBe('crosshair');
 	});
 
 	it('should override hover cursor when precise is active', () => {
-		cursor.hover(true);
-		cursor.precise(true);
+		cursor.toggleHover('test');
+		cursor.togglePrecise('test');
 		expect(mockElement.style.cursor).toBe('crosshair');
 	});
 
 	it('should set cursor to grab when grab is increased', () => {
-		cursor.grab(true);
+		cursor.toggleGrab('test');
 		expect(mockElement.style.cursor).toBe('grab');
 	});
 
 	it('should override hover and grab with precise', () => {
-		cursor.hover(true);
-		cursor.precise(true);
-		cursor.grab(true);
+		cursor.toggleHover('test');
+		cursor.togglePrecise('test');
+		cursor.toggleGrab('test');
 		expect(mockElement.style.cursor).toBe('crosshair');
 	});
 
 	it('should revert to correct state when grab is decreased', () => {
-		cursor.grab(true);
-		cursor.precise(true);
-		cursor.hover(true);
-		cursor.grab(false);
+		cursor.toggleGrab('test');
+		cursor.togglePrecise('test');
+		cursor.toggleHover('test');
+		cursor.toggleGrab('test', false);
 		expect(mockElement.style.cursor).toBe('crosshair');
 	});
 });

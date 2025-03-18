@@ -1,9 +1,9 @@
 export class Cursor {
 	private readonly element: HTMLElement;
 
-	#hover = 0;
-	#precise = 0;
-	#grab = 0;
+	#precise = new Set<string>(); // Priority: high
+	#grab = new Set<string>(); // Priority: medium
+	#hover = new Set<string>(); // Priority: low
 
 	constructor(element: HTMLElement) {
 		this.element = element;
@@ -11,24 +11,31 @@ export class Cursor {
 	}
 
 	private update() {
-		if (this.#precise > 0) return (this.element.style.cursor = 'crosshair');
-		if (this.#grab > 0) return (this.element.style.cursor = 'grab');
-		if (this.#hover > 0) return (this.element.style.cursor = 'pointer');
+		if (this.#precise.size > 0) return (this.element.style.cursor = 'crosshair');
+		if (this.#grab.size > 0) return (this.element.style.cursor = 'grab');
+		if (this.#hover.size > 0) return (this.element.style.cursor = 'pointer');
 		this.element.style.cursor = 'default';
 	}
 
-	public hover(increase: boolean) {
-		this.#hover = Math.max(0, this.#hover + (increase ? 1 : -1));
+	public toggleHover(id: string, add: boolean = true) {
+		if (add) this.#hover.add(id);
+		else this.#hover.delete(id);
 		this.update();
 	}
 
-	public precise(increase: boolean) {
-		this.#precise = Math.max(0, this.#precise + (increase ? 1 : -1));
+	public togglePrecise(id: string, add: boolean = true) {
+		if (add) this.#precise.add(id);
+		else this.#precise.delete(id);
 		this.update();
 	}
 
-	public grab(increase: boolean) {
-		this.#grab = Math.max(0, this.#grab + (increase ? 1 : -1));
+	public toggleGrab(id: string, add: boolean = true) {
+		if (add) this.#grab.add(id);
+		else this.#grab.delete(id);
 		this.update();
+	}
+
+	public isPrecise() {
+		return this.#precise.size > 0;
 	}
 }

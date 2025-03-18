@@ -62,20 +62,23 @@ export abstract class MapLayer<T extends LayerSpec> {
 
 	private addEvents() {
 		this.map.on('mouseenter', this.id, () => {
-			if (this.isSelected) this.manager.cursor.grab(true);
-			this.manager.cursor.hover(true);
+			if (this.isSelected) this.manager.cursor.toggleGrab(this.id);
+			this.manager.cursor.toggleHover(this.id);
 		});
 		this.map.on('mouseleave', this.id, () => {
-			if (this.isSelected) this.manager.cursor.grab(false);
-			this.manager.cursor.hover(false);
+			if (this.isSelected) this.manager.cursor.toggleGrab(this.id, false);
+			this.manager.cursor.toggleHover(this.id, false);
 		});
 		this.map.on('click', this.id, (e) => {
 			this.dispatchEvent('click', e);
-			if (this.isSelected) this.manager.cursor.grab(true);
-			this.manager.cursor.hover(true);
+			if (this.isSelected) this.manager.cursor.toggleGrab(this.id);
+			this.manager.cursor.toggleHover(this.id);
 			e.preventDefault();
 		});
-		this.map.on('mousedown', this.id, (e) => this.dispatchEvent('mousedown', e));
+		this.map.on('mousedown', this.id, (e) => {
+			if (this.manager.cursor.isPrecise()) return;
+			this.dispatchEvent('mousedown', e);
+		});
 		this.map.on('mouseup', this.id, (e) => this.dispatchEvent('mouseup', e));
 		this.map.on('mousemove', this.id, (e) => this.dispatchEvent('mousemove', e));
 	}
