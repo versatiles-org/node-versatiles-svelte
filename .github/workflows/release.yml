@@ -7,7 +7,7 @@ on:
 
 jobs:
   screenshots:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -18,7 +18,7 @@ jobs:
           node-version: 22
 
       - name: Install dependencies for screenshots
-        run: brew install pngquant optipng
+        run: sudo apt-get install pngquant optipng
 
       - name: Cache node modules
         uses: actions/cache@v4
