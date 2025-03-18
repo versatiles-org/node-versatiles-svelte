@@ -1,7 +1,7 @@
 import { ChildProcess, spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { chromium } from 'playwright';
+import { firefox } from 'playwright';
 import type { Page } from 'playwright';
 
 const path = resolve(import.meta.dirname, '../screenshots');
@@ -24,7 +24,7 @@ mkdirSync(path, { recursive: true });
 		}
 	];
 
-	const browser = await chromium.launch();
+	const browser = await firefox.launch();
 	const option = {
 		colorScheme: 'light',
 		deviceScaleFactor: 1,
@@ -48,7 +48,6 @@ mkdirSync(path, { recursive: true });
 			await wait(5);
 
 			const l = page.locator('.wrapper');
-			console.log(l);
 			const clip = await l.boundingBox();
 			if (!clip) throw Error();
 
