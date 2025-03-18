@@ -1,7 +1,6 @@
 <!-- BBoxMap.svelte -->
 <script lang="ts">
 	import type { CameraOptions, Map as MaplibreMapType } from 'maplibre-gl';
-	import 'maplibre-gl/dist/maplibre-gl.css';
 	import AutoComplete from '$lib/components/BBoxMap/AutoComplete.svelte';
 	import { getCountryName } from '$lib/utils/location.js';
 	import BasicMap from '../BasicMap/BasicMap.svelte';

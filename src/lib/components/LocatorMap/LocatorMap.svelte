@@ -1,7 +1,6 @@
 <!-- LocatorMap.svelte -->
 <script lang="ts">
 	import type { Map as MaplibreMapType, GeoJSONSource } from 'maplibre-gl';
-	import 'maplibre-gl/dist/maplibre-gl.css';
 	import BasicMap from '../BasicMap/BasicMap.svelte';
 	let map: MaplibreMapType;
 

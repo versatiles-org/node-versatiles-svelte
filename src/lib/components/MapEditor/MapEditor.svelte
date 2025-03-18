@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Map as MaplibreMapType } from 'maplibre-gl';
-	import 'maplibre-gl/dist/maplibre-gl.css';
 	import BasicMap from '../BasicMap/BasicMap.svelte';
 	import { onMount } from 'svelte';
 	import Sidebar from './components/Sidebar.svelte';
