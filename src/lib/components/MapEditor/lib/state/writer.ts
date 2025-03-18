@@ -78,6 +78,7 @@ export class StateWriter {
 
 				case 'elements':
 					if (!Array.isArray(value)) throw new Error(`Invalid elements: ${value}`);
+					if (value.length === 0) return;
 					this.writeByte(20);
 					this.writeUnsignedInteger(value.length);
 					value.forEach((element: StateObject) => this.writeObject(element));
@@ -93,6 +94,7 @@ export class StateWriter {
 
 				case 'points':
 					if (!Array.isArray(value)) throw new Error(`Invalid points: ${value}`);
+					if (value.length === 0) return;
 					this.writeByte(31);
 					this.writeUnsignedInteger(value.length);
 					this.writeDifferential(value.map((p) => Math.round(p[0] * 1e5)));
