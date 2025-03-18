@@ -8,6 +8,7 @@
 	import { PolygonElement } from '../lib/element/polygon.js';
 
 	const { element }: { element: AbstractElement } = $props();
+
 	let strokeVisible = $state(false);
 
 	if (element instanceof PolygonElement) {

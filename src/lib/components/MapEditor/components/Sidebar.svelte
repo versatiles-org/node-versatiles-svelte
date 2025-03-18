@@ -1,14 +1,10 @@
 <script lang="ts">
-	import type { AbstractElement } from '../lib/element/abstract.js';
 	import Editor from './Editor.svelte';
 	import type { GeometryManager } from '../lib/geometry_manager.js';
 
 	const { geometryManager, width }: { geometryManager: GeometryManager; width: number } = $props();
 
-	let activeElement: AbstractElement | undefined = $state(undefined);
-	$effect(() => geometryManager.selectElement(activeElement));
-
-	geometryManager.selectedElement.subscribe((value) => (activeElement = value));
+	let activeElement = geometryManager.selectedElement;
 
 	function importGeoJSON() {
 		const input = document.createElement('input');
@@ -60,22 +56,24 @@
 			<input
 				type="button"
 				value="Marker"
-				onclick={() => (activeElement = geometryManager.addNewMarker())}
+				onclick={() => activeElement.set(geometryManager.addNewMarker())}
 			/>
 			<input
 				type="button"
 				value="Line"
-				onclick={() => (activeElement = geometryManager.addNewLine())}
+				onclick={() => activeElement.set(geometryManager.addNewLine())}
 			/>
 			<input
 				type="button"
 				value="Polygon"
-				onclick={() => (activeElement = geometryManager.addNewPolygon())}
+				onclick={() => activeElement.set(geometryManager.addNewPolygon())}
 			/>
 		</div>
-		{#if activeElement != null}
+		{#if $activeElement != null}
 			<hr />
-			<Editor element={activeElement} />
+			{#key $activeElement}
+				<Editor element={$activeElement} />
+			{/key}
 		{/if}
 	</div>
 	<div class="footer">

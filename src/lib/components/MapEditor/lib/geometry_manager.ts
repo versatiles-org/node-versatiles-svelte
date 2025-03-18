@@ -98,6 +98,7 @@ export class GeometryManager {
 	}
 
 	public selectElement(element: AbstractElement | undefined) {
+		if (element == get(this.selectedElement)) return;
 		const elements = get(this.elements);
 		elements.forEach((e) => e.select(e == element));
 		this.selectedElement.set(element);
