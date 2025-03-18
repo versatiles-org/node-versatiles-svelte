@@ -51,6 +51,12 @@ jobs:
       - name: Build the project
         run: npm run build
 
+      - name: Build screenshots
+        run: npm run screenshots
+
+      - name: Add screenshots to build
+        run: mv screenshots/*.png build
+
       - name: Upload Artifact
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
