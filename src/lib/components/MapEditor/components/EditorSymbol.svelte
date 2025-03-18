@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MapLayerSymbol } from '../lib/map_layer/symbol.js';
+	import { labelPositions, MapLayerSymbol } from '../lib/map_layer/symbol.js';
 	import SymbolSelector from './SymbolSelector.svelte';
 
 	const { layer }: { layer: MapLayerSymbol } = $props();
@@ -9,6 +9,7 @@
 	let rotate = $state(layer.rotate);
 	let halo = $state(layer.halo);
 	let label = $state(layer.label);
+	let labelAlign = $state(layer.labelAlign);
 	let size = $state(layer.size);
 </script>
 
@@ -40,4 +41,13 @@
 <div class="row-input">
 	<label for="label">Label:</label>
 	<input id="label" type="label" bind:value={$label} />
+</div>
+
+<div class="row-input">
+	<label for="labelAlign">Align Label:</label>
+	<select id="labelAlign" bind:value={$labelAlign}>
+		{#each labelPositions as { index, name } (index)}
+			<option value={index}>{name}</option>
+		{/each}
+	</select>
 </div>

@@ -36,10 +36,10 @@ describe('MapLayerSymbol', () => {
 					'text-field': '',
 					'text-font': ['noto_sans_regular'],
 					'text-justify': 'left',
-					'text-offset': [0.7, 0.7],
+					'text-radial-offset': 0.7,
 					'text-optional': true,
 					'text-size': 16,
-					'text-variable-anchor': ['right', 'left', 'top', 'bottom']
+					'text-anchor': 'left'
 				},
 				paint: {
 					'icon-color': 'rgb(255,0,0)',
@@ -89,6 +89,7 @@ describe('MapLayerSymbol', () => {
 		layer.halo.set(3);
 		layer.symbolIndex.set(1);
 		layer.label.set('Test Label');
+		layer.labelAlign.set(2);
 
 		expect(layer.getState()).toEqual({
 			color: '#00ff00',
@@ -96,7 +97,8 @@ describe('MapLayerSymbol', () => {
 			size: 2,
 			halo: 3,
 			pattern: 1,
-			label: 'Test Label'
+			label: 'Test Label',
+			align: 2
 		});
 	});
 
@@ -107,7 +109,8 @@ describe('MapLayerSymbol', () => {
 			size: 3,
 			halo: 2,
 			pattern: 5,
-			label: 'New Label'
+			label: 'New Label',
+			align: 2
 		});
 
 		expect(get(layer.color)).toBe('#0000ff');
@@ -116,5 +119,6 @@ describe('MapLayerSymbol', () => {
 		expect(get(layer.halo)).toBe(2);
 		expect(get(layer.symbolIndex)).toBe(5);
 		expect(get(layer.label)).toBe('New Label');
+		expect(get(layer.labelAlign)).toBe(2);
 	});
 });

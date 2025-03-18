@@ -150,6 +150,9 @@ export class StateWriter {
 				case 'zoom':
 					writeInteger(76, value, 20);
 					break;
+				case 'align':
+					writeInteger(77, value);
+					break;
 
 				case 'visible':
 					if (typeof value !== 'boolean') throw new Error(`Invalid boolean: ${value}`);

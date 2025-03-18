@@ -133,6 +133,9 @@ export class StateReader {
 				case 76:
 					state.zoom = this.readUnsignedInteger() / 20;
 					break;
+				case 77:
+					state.align = this.readUnsignedInteger();
+					break;
 				case 90:
 					state.visible = this.readBoolean();
 					break;

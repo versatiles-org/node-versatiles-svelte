@@ -1,4 +1,4 @@
-import { derived, get, writable } from 'svelte/store';
+import { derived, get, writable, type Writable } from 'svelte/store';
 import type { LayerSymbol } from './types.js';
 import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
@@ -7,13 +7,35 @@ import type { StateObject } from '../state/types.js';
 import { getSymbol, getSymbolIndexByName } from '../symbols.js';
 import { removeDefaultFields } from '../utils.js';
 
-const defaultStyle = {
+interface LabelAlign {
+	index: 0 | 1 | 2 | 3;
+	name: string;
+	value: 'bottom' | 'left' | 'right' | 'top';
+}
+
+export const labelPositions: LabelAlign[] = [
+	{ index: 0, name: 'right', value: 'left' },
+	{ index: 1, name: 'left', value: 'right' },
+	{ index: 2, name: 'top', value: 'bottom' },
+	{ index: 3, name: 'bottom', value: 'top' }
+];
+
+const defaultStyle: {
+	color: string;
+	rotate: number;
+	size: number;
+	halo: number;
+	pattern: number;
+	label: string;
+	align: LabelAlign['index'];
+} = {
 	color: '#ff0000',
 	rotate: 0,
 	size: 1,
 	halo: 1,
 	pattern: 38,
-	label: ''
+	label: '',
+	align: 0
 };
 
 export class MapLayerSymbol extends MapLayer<LayerSymbol> {
@@ -23,6 +45,7 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 	size = writable(defaultStyle.size);
 	symbolIndex = writable(defaultStyle.pattern);
 	label = writable(defaultStyle.label);
+	labelAlign = writable<LabelAlign['index']>(defaultStyle.align);
 
 	haloWidth = derived([this.halo, this.size], ([halo, size]) => halo * size);
 	symbolInfo = derived(this.symbolIndex, (index) => getSymbol(index));
@@ -44,8 +67,8 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 				'text-font': ['noto_sans_regular'],
 				'text-justify': 'left',
 				'text-optional': true,
-				'text-offset': [0.7, 0.7],
-				'text-variable-anchor': ['right', 'left', 'top', 'bottom']
+				'text-radial-offset': 0.7,
+				'text-anchor': lookupLabelAlign(defaultStyle.align).value
 			},
 			{
 				'icon-color': defaultStyle.color,
@@ -72,6 +95,10 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 			this.updateLayout('text-field', v);
 			this.manager.saveState();
 		});
+		this.labelAlign.subscribe((v) => {
+			this.updateLayout('text-anchor', lookupLabelAlign(v).value);
+			this.manager.saveState();
+		});
 		this.rotate.subscribe((v) => {
 			this.updateLayout('icon-rotate', v);
 			this.manager.saveState();
@@ -84,10 +111,10 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 		this.symbolInfo.subscribe((v) => {
 			if (v.image == null) {
 				this.updateLayout('icon-image', undefined);
-				this.updateLayout('text-variable-anchor', ['center']);
+				this.updateLayout('text-anchor', 'center');
 			} else {
 				this.updateLayout('icon-image', v.image);
-				this.updateLayout('text-variable-anchor', ['right', 'left', 'top', 'bottom']);
+				this.updateLayout('text-anchor', lookupLabelAlign(this.labelAlign).value);
 				this.updateLayout('icon-offset', v.offset);
 			}
 			this.manager.saveState();
@@ -102,7 +129,8 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 				size: get(this.size),
 				halo: get(this.halo),
 				pattern: get(this.symbolIndex),
-				label: get(this.label)
+				label: get(this.label),
+				align: get(this.labelAlign)
 			},
 			defaultStyle
 		);
@@ -115,6 +143,7 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 		if (state.halo) this.halo.set(state.halo);
 		if (state.pattern) this.symbolIndex.set(state.pattern);
 		if (state.label) this.label.set(state.label);
+		if (state.align) this.labelAlign.set(lookupLabelAlign(state.align).index);
 	}
 
 	getGeoJSONProperties(): GeoJSON.GeoJsonProperties {
@@ -124,7 +153,8 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 			'symbol-rotate': get(this.rotate),
 			'symbol-size': get(this.size),
 			'symbol-pattern': get(this.symbolInfo).name,
-			'symbol-label': get(this.label)
+			'symbol-label': get(this.label),
+			'symbol-label-align': lookupLabelAlign(this.labelAlign).name
 		};
 	}
 
@@ -135,9 +165,28 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 		if (properties['symbol-rotate']) this.rotate.set(properties['symbol-rotate']);
 		if (properties['symbol-size']) this.size.set(properties['symbol-size']);
 		if (properties['symbol-label']) this.label.set(properties['symbol-label']);
+		if (properties['symbol-label-align'])
+			this.labelAlign.set(lookupLabelAlign(properties['symbol-label-align']).index);
 		if (properties['symbol-pattern']) {
 			const index = getSymbolIndexByName(properties['symbol-pattern']);
 			if (index != null) this.symbolIndex.set(index);
 		}
 	}
+}
+
+function lookupLabelAlign(index: number | string | Writable<LabelAlign['index']>): LabelAlign {
+	let pos;
+
+	if (typeof index === 'object') {
+		index = get(index);
+	}
+
+	if (typeof index === 'number') {
+		pos = labelPositions.find((p) => p.index === index);
+	} else if (typeof index === 'string') {
+		pos = labelPositions.find((p) => p.name === index);
+	}
+
+	if (pos == null) return labelPositions[0];
+	return pos;
 }

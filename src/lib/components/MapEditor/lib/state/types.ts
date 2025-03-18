@@ -36,6 +36,7 @@ export interface StateObject {
 	/*74*/ size?: number;
 	/*75*/ width?: number;
 	/*76*/ zoom?: number;
+	/*76*/ align?: number;
 
 	//### BOOLEANS
 	/*90*/ visible?: boolean;
