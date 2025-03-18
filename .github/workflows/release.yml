@@ -18,7 +18,7 @@ jobs:
           node-version: 22
 
       - name: Install dependencies for screenshots
-        run: sudo apt-get install pngquant optipng
+        run: brew install pngquant optipng
 
       - name: Cache node modules
         uses: actions/cache@v4
