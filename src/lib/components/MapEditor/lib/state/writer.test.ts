@@ -136,10 +136,8 @@ describe('StateWriter', () => {
 
 		it('should handle numeric fields (halo, opacity, etc.)', () => {
 			const writer = new StateWriter();
-			writer.writeObject({ halo: 5, opacity: 123, rotate: 360 });
-			expect(writer.getBuffer()).toStrictEqual(
-				new Uint8Array([70, 50, 71, 140, 96, 73, 232, 2, 0])
-			);
+			writer.writeObject({ halo: 5, opacity: 123, rotate: -30 });
+			expect(writer.getBuffer()).toStrictEqual(new Uint8Array([70, 50, 71, 140, 96, 73, 59, 0]));
 		});
 
 		it('should throw error if numeric fields are negative', () => {
