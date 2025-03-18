@@ -10,16 +10,16 @@
     "format": "prettier --write .",
     "lint": "prettier --check . && eslint --color .",
     "package": "svelte-kit sync && svelte-package && publint",
-    "prepack": "npm run package",
+    "prepack": "npm run build",
     "prepublishOnly": "npm run package",
     "preview": "vite preview",
     "screenshots": "npm run build && npx tsx ./scripts/screenshots.ts && pngquant --nofs --force --ext .png screenshots/*.png && optipng -quiet screenshots/*.png",
-    "release": "npm run build && npx vrt release-npm",
+    "release": "vrt release-npm",
     "test:integration": "playwright test",
     "test:unit": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test": "npm run test:unit && npm run test:integration",
-    "upgrade": "npm-check-updates -u && rm -f package-lock.json; rm -rf node_modules; npm update --save && npm install"
+    "upgrade": "vrt deps-upgrade"
   },
   "exports": {
     ".": {
@@ -56,7 +56,6 @@
     "geojson": "^0.5.0",
     "globals": "^16.0.0",
     "happy-dom": "^17.4.4",
-    "npm-check-updates": "^17.1.15",
     "prettier": "^3.5.3",
     "prettier-plugin-svelte": "^3.3.3",
     "publint": "^0.3.9",
