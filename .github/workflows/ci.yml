@@ -13,6 +13,9 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.51.1-noble
+      options: --user 1001
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,9 +31,6 @@ jobs:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-      - name: Fix NPM permissions
-        run: sudo chown -R 1001:118 "/root/.npm"
-
       - name: Install
         run: npm ci
 
@@ -42,9 +42,6 @@ jobs:
 
       - name: Test Code
         run: npx vitest run --testTimeout 10000
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
 
       - name: Test Playwright
         run: npx playwright test

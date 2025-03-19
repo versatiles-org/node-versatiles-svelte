@@ -8,6 +8,9 @@ jobs:
   build:
     name: Build and Generate Screenshots
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.51.1-noble
+      options: --user 1001
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,9 +31,6 @@ jobs:
 
       - name: Install
         run: npm ci
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
 
       - name: Build the project
         run: npm run build
