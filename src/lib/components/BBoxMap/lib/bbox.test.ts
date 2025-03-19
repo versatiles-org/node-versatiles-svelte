@@ -37,17 +37,57 @@ describe('BBoxDrawer', () => {
 		expect(canvasStyleSpy).toHaveBeenCalledWith('ns-resize');
 	});
 
-	it('should handle dragging correctly', () => {
-		const lngLat = new maplibregl.LngLat(15, 15);
-		bboxDrawer['dragPoint'] = 'se';
-		bboxDrawer['doDrag'](lngLat);
-		expect(get(bboxDrawer.bbox)).toEqual([-10, 10, 15, 15]);
+	describe('should handle dragging correctly', () => {
+		function testDrag(dragPoint: DragPoint): BBox {
+			bboxDrawer.setGeometry(initialBBox);
+			const lngLat = new LngLat(0, 0);
+			bboxDrawer['dragPoint'] = dragPoint;
+			bboxDrawer['doDrag'](lngLat);
+			return get(bboxDrawer.bbox);
+		}
+
+		it('ne', () => expect(testDrag('ne')).toEqual([-20, -10, 0, 0]));
+		it('se', () => expect(testDrag('se')).toEqual([-20, 0, 0, 20]));
+		it('nw', () => expect(testDrag('nw')).toEqual([0, -10, 10, 0]));
+		it('sw', () => expect(testDrag('sw')).toEqual([0, 0, 10, 20]));
+		it('n', () => expect(testDrag('n')).toEqual([-20, -10, 10, 0]));
+		it('s', () => expect(testDrag('s')).toEqual([-20, 0, 10, 20]));
+		it('w', () => expect(testDrag('w')).toEqual([0, -10, 10, 20]));
+		it('e', () => expect(testDrag('e')).toEqual([-20, -10, 0, 20]));
+		it('false', () => expect(testDrag(false)).toEqual([-20, -10, 10, 20]));
 	});
 
 	it('should flip bbox correctly when dragging past boundaries', () => {
-		const lngLat = new maplibregl.LngLat(-15, -15);
+		const lngLat = new LngLat(-15, -15);
 		bboxDrawer['dragPoint'] = 'nw';
 		bboxDrawer['doDrag'](lngLat);
-		expect(get(bboxDrawer.bbox)).toEqual([-15, -15, 15, 15]);
+		expect(get(bboxDrawer.bbox)).toEqual([-15, -15, 10, -10]);
+	});
+
+	it('should redraw the bbox', () => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const redrawSpy = vi.spyOn(bboxDrawer, 'redraw' as any);
+		bboxDrawer.setGeometry([-30, -20, 20, 30]);
+		expect(redrawSpy).toHaveBeenCalled();
+	});
+
+	it('should check drag point at given point', () => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const updateDragPointSpy = vi.spyOn(bboxDrawer, 'updateDragPoint' as any);
+		const point = new Point(0, 0);
+		bboxDrawer['checkDragPointAt'](point);
+		expect(updateDragPointSpy).toHaveBeenCalled();
+	});
+
+	it('should get the correct cursor for drag point', () => {
+		expect(bboxDrawer['getCursor']('n')).toEqual('ns-resize');
+		expect(bboxDrawer['getCursor']('ne')).toEqual('nesw-resize');
+		expect(bboxDrawer['getCursor']('e')).toEqual('ew-resize');
+		expect(bboxDrawer['getCursor']('se')).toEqual('nwse-resize');
+		expect(bboxDrawer['getCursor']('s')).toEqual('ns-resize');
+		expect(bboxDrawer['getCursor']('sw')).toEqual('nesw-resize');
+		expect(bboxDrawer['getCursor']('w')).toEqual('ew-resize');
+		expect(bboxDrawer['getCursor']('nw')).toEqual('nwse-resize');
+		expect(bboxDrawer['getCursor'](false)).toEqual('default');
 	});
 });
