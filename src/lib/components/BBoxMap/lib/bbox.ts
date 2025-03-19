@@ -4,7 +4,7 @@ import maplibregl from 'maplibre-gl';
 
 const { LngLatBounds } = maplibregl;
 
-type DragPoint = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | false;
+export type DragPoint = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | false;
 // prettier-ignore
 export const DragPointMap = new Map<DragPoint, { cursor: string, flipH: DragPoint, flipV: DragPoint }>([
 	['n', { cursor: 'ns-resize', flipH: 'n', flipV: 's' }],

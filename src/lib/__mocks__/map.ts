@@ -1,27 +1,35 @@
 import { vi } from 'vitest';
+import maplibre from 'maplibre-gl';
 
 export class MockMap {
-	getCanvasContainer = vi.fn(() => ({ style: { cursor: 'default' } }));
+	constructor() {}
+	getCanvasContainer = vi.fn(() => ({ style: { cursor: 'default' } }) as HTMLElement);
 	addSource = vi.fn();
 	removeSource = vi.fn();
-	getSource = vi.fn(() => ({ setData: vi.fn() }));
+	getSource = vi.fn(() => ({ setData: vi.fn() })) as unknown as maplibre.Map['getSource'];
 	addLayer = vi.fn();
 	on = vi.fn();
 	setCenter = vi.fn();
 	setZoom = vi.fn();
 	getZoom = vi.fn(() => 10);
-	getCenter = vi.fn(() => ({ lng: 0, lat: 0 }));
-	queryRenderedFeatures = vi.fn(() => [{ properties: {} }]);
+	getCenter = vi.fn(() => new maplibre.LngLat(0, 0));
+	queryRenderedFeatures = vi.fn(() => [
+		{ properties: {} }
+	]) as unknown as maplibre.Map['queryRenderedFeatures'];
 	setPaintProperty = vi.fn();
 	setLayoutProperty = vi.fn();
 	removeLayer = vi.fn();
 	hasImage = vi.fn();
 	removeImage = vi.fn();
 	addImage = vi.fn();
-	getBounds = vi.fn(() => ({
-		getWest: () => -180,
-		getEast: () => 180,
-		getSouth: () => -90,
-		getNorth: () => 90
-	}));
+	project = vi.fn((lnglat: maplibre.LngLatLike) => {
+		const c = LngLat.convert(lnglat);
+		return new Point(c.lng, Math.sin(c.lat / 1000) * 1000);
+	});
+	getBounds = vi.fn(() => new LngLatBounds([-180, -90, 180, 90]));
 }
+
+export type MaplibreMap = maplibre.Map;
+export const LngLat = maplibre.LngLat;
+export const LngLatBounds = maplibre.LngLatBounds;
+export const Point = maplibre.Point;

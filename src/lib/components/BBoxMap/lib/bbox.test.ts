@@ -1,17 +1,16 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import maplibregl from 'maplibre-gl';
-import { BBoxDrawer, type BBox } from './bbox.js';
+import { BBoxDrawer } from './bbox.js';
+import type { BBox, DragPoint } from './bbox.js';
 import { get } from 'svelte/store';
-import { MockMap } from '../../../__mocks__/map.js';
+import { LngLat, MockMap, Point, type MaplibreMap } from '../../../__mocks__/map.js';
 
 describe('BBoxDrawer', () => {
-	let map: maplibregl.Map;
-	let bboxDrawer: BBoxDrawer;
-	const initialBBox: BBox = [-10, -10, 10, 10];
+	const initialBBox: BBox = [-20, -10, 10, 20];
+	const map = new MockMap();
+	const bboxDrawer = new BBoxDrawer(map as unknown as MaplibreMap, initialBBox, '#ff0000');
 
 	beforeEach(() => {
-		map = new MockMap() as unknown as maplibregl.Map;
-		bboxDrawer = new BBoxDrawer(map, initialBBox, '#ff0000');
+		bboxDrawer.setGeometry(initialBBox);
 	});
 
 	it('should initialize with the correct bbox', () => {
@@ -19,7 +18,7 @@ describe('BBoxDrawer', () => {
 	});
 
 	it('should update the bbox geometry', () => {
-		const newBBox: BBox = [-20, -20, 20, 20];
+		const newBBox: BBox = [-30, -20, 20, 30];
 		bboxDrawer.setGeometry(newBBox);
 		expect(get(bboxDrawer.bbox)).toEqual(newBBox);
 	});

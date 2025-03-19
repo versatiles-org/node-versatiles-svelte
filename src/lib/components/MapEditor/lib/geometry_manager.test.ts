@@ -4,17 +4,16 @@ import { MarkerElement } from './element/marker.js';
 import { LineElement } from './element/line.js';
 import { PolygonElement } from './element/polygon.js';
 import type { StateObject } from './state/types.js';
-import { MockMap } from '../../../__mocks__/map.js';
+import { LngLat, MockMap, type MaplibreMap } from '../../../__mocks__/map.js';
 import { StateWriter } from './state/writer.js';
-import maplibregl from 'maplibre-gl';
 
 describe('GeometryManager', () => {
-	let mockMap: maplibregl.Map;
+	let mockMap: MockMap;
 	let manager: GeometryManager;
 
 	beforeEach(() => {
-		mockMap = new MockMap() as unknown as maplibregl.Map;
-		manager = new GeometryManager(mockMap);
+		mockMap = new MockMap();
+		manager = new GeometryManager(mockMap as unknown as MaplibreMap);
 	});
 
 	it('should initialize correctly', () => {
@@ -89,7 +88,7 @@ describe('GeometryManager', () => {
 		});
 
 		it('should return correct GeoJSON', () => {
-			const center = new maplibregl.LngLat(10, 20);
+			const center = new LngLat(10, 20);
 			vi.spyOn(mockMap, 'getCenter').mockReturnValue(center);
 			vi.spyOn(mockMap, 'getZoom').mockReturnValue(5);
 
