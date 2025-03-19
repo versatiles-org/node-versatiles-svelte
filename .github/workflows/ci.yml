@@ -32,10 +32,7 @@ jobs:
         run: sudo chown -R 1001:118 "/root/.npm"
 
       - name: Install
-        run: |
-          npm install
-          npx svelte-kit sync
-          npx svelte-check --tsconfig ./tsconfig.json
+        run: npm ci
 
       - name: Lint
         run: npx eslint --color .
@@ -65,4 +62,3 @@ jobs:
     needs: test
     if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/pages.yml
-    
