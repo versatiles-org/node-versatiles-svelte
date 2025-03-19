@@ -30,6 +30,9 @@ export abstract class MapLayer<T extends LayerSpec> {
 		layout: T['layout'],
 		paint: T['paint']
 	) {
+		layout = cloneClean(layout);
+		paint = cloneClean(paint);
+
 		this.layout = layout;
 		this.paint = paint;
 
@@ -39,6 +42,14 @@ export abstract class MapLayer<T extends LayerSpec> {
 		);
 
 		this.addEvents();
+
+		function cloneClean<T>(obj: T): Partial<T> {
+			const clone = { ...obj };
+			for (const key in clone) {
+				if (clone[key] == null) delete clone[key];
+			}
+			return clone;
+		}
 	}
 
 	on(event: Events, handler: MouseEventHandler) {
@@ -99,18 +110,25 @@ export abstract class MapLayer<T extends LayerSpec> {
 		this.paint[key] = value;
 	}
 
-	setLayout(layout: T['layout']) {
-		if (layout === undefined) return;
-		const keys = new Set(
-			Object.keys(layout).concat(Object.keys(this.layout)) as (keyof T['layout'])[]
-		);
-		for (const key of keys.values()) this.updateLayout(key, (layout as T['layout'])[key]);
-	}
-
-	updateLayout<K extends keyof T['layout'], V extends T['layout'][K]>(key: K, value: V) {
-		if (this.layout[key] == value) return;
-		this.map.setLayoutProperty(this.id, key as string, value);
-		this.layout[key] = value;
+	updateLayout(obj: T['layout']): void;
+	updateLayout<K extends keyof T['layout'], V extends T['layout'][K]>(key: K, value: V): void;
+	updateLayout<K extends keyof T['layout'], V extends T['layout'][K]>(
+		arg1: K | T['layout'],
+		arg2?: V
+	) {
+		if (typeof arg1 === 'string') {
+			if (this.layout[arg1] == arg2) return;
+			this.map.setLayoutProperty(this.id, arg1 as string, arg2);
+			if (arg2 == null) {
+				delete this.layout[arg1];
+			} else {
+				this.layout[arg1 as K] = arg2;
+			}
+		} else if (typeof arg1 === 'object') {
+			for (const [key, value] of Object.entries(arg1)) {
+				this.updateLayout(key as K, value as V);
+			}
+		}
 	}
 
 	destroy(): void {

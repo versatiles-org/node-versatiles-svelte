@@ -53,7 +53,7 @@ describe('MapLayer', () => {
 	});
 
 	it('should update layout property', () => {
-		layer.setLayout({ visibility: 'none' });
+		layer.updateLayout({ visibility: 'none' });
 		expect(mockManager.map.setLayoutProperty).toHaveBeenCalledWith(
 			'test-layer',
 			'visibility',

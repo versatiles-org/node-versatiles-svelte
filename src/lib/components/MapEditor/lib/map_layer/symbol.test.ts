@@ -28,18 +28,18 @@ describe('MapLayerSymbol', () => {
 			{
 				id: 'test-layer',
 				layout: {
+					'icon-allow-overlap': true,
 					'icon-image': 'basics:icon-embassy',
 					'icon-offset': [0, 0],
-					'icon-overlap': 'always',
 					'icon-rotate': 0,
 					'icon-size': 1,
 					'text-field': '',
 					'text-font': ['noto_sans_regular'],
 					'text-justify': 'left',
+					'text-overlap': 'always',
 					'text-radial-offset': 0.7,
-					'text-optional': true,
 					'text-size': 16,
-					'text-anchor': 'left'
+					'text-variable-anchor': ['left', 'right', 'top', 'bottom']
 				},
 				paint: {
 					'icon-color': 'rgb(255,0,0)',

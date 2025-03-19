@@ -8,16 +8,17 @@ import { getSymbol, getSymbolIndexByName } from '../symbols.js';
 import { removeDefaultFields } from '../utils.js';
 
 interface LabelAlign {
-	index: 0 | 1 | 2 | 3;
+	index: 0 | 1 | 2 | 3 | 4;
 	name: string;
-	value: 'bottom' | 'left' | 'right' | 'top';
+	anchor?: 'center' | 'left' | 'right' | 'bottom' | 'top';
 }
 
 export const labelPositions: LabelAlign[] = [
-	{ index: 0, name: 'right', value: 'left' },
-	{ index: 1, name: 'left', value: 'right' },
-	{ index: 2, name: 'top', value: 'bottom' },
-	{ index: 3, name: 'bottom', value: 'top' }
+	{ index: 0, name: 'auto' },
+	{ index: 1, name: 'right', anchor: 'left' },
+	{ index: 2, name: 'left', anchor: 'right' },
+	{ index: 3, name: 'top', anchor: 'bottom' },
+	{ index: 4, name: 'bottom', anchor: 'top' }
 ];
 
 const defaultStyle: {
@@ -38,6 +39,8 @@ const defaultStyle: {
 	align: 0
 };
 
+type TextVariableAnchor = LayerSymbol['layout']['text-variable-anchor'];
+
 export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 	color = writable(defaultStyle.color);
 	halo = writable(defaultStyle.halo);
@@ -48,6 +51,16 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 	labelAlign = writable<LabelAlign['index']>(defaultStyle.align);
 
 	symbolInfo = derived(this.symbolIndex, (index) => getSymbol(index));
+	textAnchor = derived(this.labelAlign, (index) => {
+		return lookupLabelAlign(index).anchor;
+	});
+	textVariableAnchor = derived([this.labelAlign, this.symbolInfo], ([index, symbol]) => {
+		if (index !== 0) return undefined;
+		if (symbol.image == null) {
+			return ['center', 'left', 'right', 'top', 'bottom'] as TextVariableAnchor;
+		}
+		return ['left', 'right', 'top', 'bottom'] as TextVariableAnchor;
+	});
 
 	constructor(manager: GeometryManager, id: string, source: string) {
 		super(manager, id);
@@ -58,16 +71,17 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 			{
 				'icon-image': get(this.symbolInfo).image,
 				'icon-offset': get(this.symbolInfo).offset,
-				'icon-overlap': 'always',
+				'icon-allow-overlap': true,
 				'icon-rotate': defaultStyle.rotate,
 				'icon-size': defaultStyle.size,
 
 				'text-field': defaultStyle.label,
 				'text-font': ['noto_sans_regular'],
 				'text-justify': 'left',
-				'text-optional': true,
+				'text-overlap': 'always',
 				'text-radial-offset': 0.7,
-				'text-anchor': lookupLabelAlign(defaultStyle.align).value
+				'text-variable-anchor': get(this.textVariableAnchor),
+				'text-anchor': get(this.textAnchor)
 			},
 			{
 				'icon-color': defaultStyle.color,
@@ -94,8 +108,12 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 			this.updateLayout('text-field', v);
 			this.manager.saveState();
 		});
-		this.labelAlign.subscribe((v) => {
-			this.updateLayout('text-anchor', lookupLabelAlign(v).value);
+		this.textAnchor.subscribe((v) => {
+			this.updateLayout('text-anchor', v);
+			this.manager.saveState();
+		});
+		this.textVariableAnchor.subscribe((v) => {
+			this.updateLayout('text-variable-anchor', v);
 			this.manager.saveState();
 		});
 		this.rotate.subscribe((v) => {
@@ -110,10 +128,8 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 		this.symbolInfo.subscribe((v) => {
 			if (v.image == null) {
 				this.updateLayout('icon-image', undefined);
-				this.updateLayout('text-anchor', 'center');
 			} else {
 				this.updateLayout('icon-image', v.image);
-				this.updateLayout('text-anchor', lookupLabelAlign(this.labelAlign).value);
 				this.updateLayout('icon-offset', v.offset);
 			}
 			this.manager.saveState();
