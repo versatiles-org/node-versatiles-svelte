@@ -53,9 +53,3 @@ jobs:
         uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-  pages:
-    name: Pages
-    needs: test
-    if: github.ref == 'refs/heads/main'
-    uses: ./.github/workflows/pages.yml
