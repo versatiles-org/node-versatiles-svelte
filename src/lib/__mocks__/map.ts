@@ -21,6 +21,7 @@ export class MockMap {
 	removeLayer = vi.fn();
 	hasImage = vi.fn();
 	removeImage = vi.fn();
+	getImage = vi.fn();
 	addImage = vi.fn();
 	project = vi.fn((lnglat: maplibre.LngLatLike) => {
 		const c = LngLat.convert(lnglat);

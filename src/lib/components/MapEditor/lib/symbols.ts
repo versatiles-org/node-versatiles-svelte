@@ -137,9 +137,11 @@ export class SymbolLibrary {
 	constructor(map: maplibregl.Map) {
 		this.map = map;
 	}
+
 	getSymbol(index: number): SymbolInfo {
 		return symbols.get(index) ?? defaultSymbol!;
 	}
+
 	drawSymbol(canvas: HTMLCanvasElement, index: number, halo = false): void {
 		const symbol = this.getSymbol(index);
 		if (!symbol.image) return;
@@ -184,6 +186,7 @@ export class SymbolLibrary {
 		const ctx = canvas.getContext('2d')!;
 		ctx.putImageData(new ImageData(data1, width1, height1), 0, 0);
 	}
+
 	asList(): SymbolInfo[] {
 		return Array.from(symbols.values());
 	}

@@ -10,4 +10,3 @@ jobs:
     name: Pages
     if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/pages.yml
-        
