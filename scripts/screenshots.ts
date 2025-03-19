@@ -44,7 +44,7 @@ mkdirSync(path, { recursive: true });
 
 		async function screenShot(page: Page, suffix: string) {
 			console.log('generating screenshot: ' + name + ' - ' + suffix);
-			await page.goto('http://localhost:4173/' + name + (hash ?? ''), { waitUntil: 'networkidle' });
+			await page.goto('http://localhost:5173/' + name + (hash ?? ''), { waitUntil: 'networkidle' });
 			await wait(5);
 
 			const l = page.locator('.wrapper');
