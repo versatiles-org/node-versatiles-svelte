@@ -48,6 +48,7 @@ mkdirSync(path, { recursive: true });
 			await wait(5);
 
 			const l = page.locator('.wrapper');
+			console.log('locator count', await l.count());
 			const clip = await l.boundingBox();
 			if (!clip) throw Error();
 
