@@ -34,6 +34,9 @@ jobs:
       - name: Install
         run: npm ci
 
+      - name: Build the project
+        run: npm run build
+
       - name: Lint
         run: npx eslint --color .
 
@@ -45,9 +48,6 @@ jobs:
 
       - name: Test Playwright
         run: npx playwright test
-
-      - name: Build the project
-        run: npm run build
 
       - name: Generate test coverage
         run: npm run test-coverage
