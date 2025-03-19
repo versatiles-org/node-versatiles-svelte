@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     name: Build and Generate Screenshots
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     container:
       image: mcr.microsoft.com/playwright:v1.51.1-noble
       options: --user 1001
