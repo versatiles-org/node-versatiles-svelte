@@ -1,4 +1,4 @@
-name: CI
+name: Pages
 
 on:
   workflow_call:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: Build and Generate Screenshots
+    name: Build Svelte and Generate Screenshots
     runs-on: macos-latest
     container:
       image: mcr.microsoft.com/playwright:v1.51.1-noble
