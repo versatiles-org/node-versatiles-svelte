@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach } from 'vitest';
+import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { AbstractPathElement } from './abstract_path.js';
 import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
 import type { GeometryManager } from '../geometry_manager.js';
@@ -22,36 +22,34 @@ class TestPathElement extends AbstractPathElement {
 		};
 	}
 	getState(): StateObject {
-		return {
-			points: [
-				[100, -81],
-				[102, -83]
-			]
-		};
+		return { points: [[100, -81], [102, -83]] };
 	}
 
-	destroy() {}
+	public handleDrag(e: maplibregl.MapMouseEvent): void {
+		super.handleDrag(e);
+	}
+
+	destroy() { }
 }
 
 describe('AbstractPathElement', () => {
-	let mockManager: GeometryManager;
+	let mockManager: MockGeometryManager;
+	let manager: GeometryManager;
 
 	beforeEach(() => {
-		mockManager = new MockGeometryManager() as unknown as GeometryManager;
+		mockManager = new MockGeometryManager();
+		manager = mockManager as unknown as GeometryManager;
 	});
 
 	it('should initialize with empty path', () => {
-		const element = new TestPathElement(mockManager, true);
+		const element = new TestPathElement(manager, true);
 		expect(element).toBeDefined();
 		expect(element['path']).toEqual([]);
 	});
 
 	it('should generate selection nodes correctly', () => {
-		const element = new TestPathElement(mockManager, true);
-		element['path'] = [
-			[0, 0],
-			[10, 10]
-		];
+		const element = new TestPathElement(manager, true);
+		element['path'] = [[0, 0], [10, 10]];
 		const nodes: SelectionNode[] = element.getSelectionNodes();
 
 		expect(nodes.length).toBe(3);
@@ -65,11 +63,8 @@ describe('AbstractPathElement', () => {
 	});
 
 	it('should update selection node correctly', () => {
-		const element = new TestPathElement(mockManager, true);
-		element['path'] = [
-			[0, 0],
-			[10, 10]
-		];
+		const element = new TestPathElement(manager, true);
+		element['path'] = [[0, 0], [10, 10]];
 		const updater = element.getSelectionNodeUpdater({ index: 1 });
 		if (updater) {
 			updater.update(5, 5);
@@ -78,16 +73,38 @@ describe('AbstractPathElement', () => {
 	});
 
 	it('should delete selection node correctly', () => {
-		const element = new TestPathElement(mockManager, true);
-		element['path'] = [
-			[0, 0],
-			[10, 10],
-			[20, 20]
-		];
+		const element = new TestPathElement(manager, true);
+		element['path'] = [[0, 0], [10, 10], [20, 20]];
 		const updater = element.getSelectionNodeUpdater({ index: 1 });
 		if (updater) {
 			updater.delete();
 			expect(element['path'].length).toBe(2);
 		}
+	});
+
+	it('should handle drag correctly', () => {
+		const element = new TestPathElement(manager, true);
+		element['path'] = [[0, 0], [10, 10]];
+		const mockEvent = {
+			lngLat: { lng: 5, lat: 5 },
+			preventDefault: vi.fn()
+		} as unknown as maplibregl.MapMouseEvent;
+
+		const mockMoveEvent = {
+			lngLat: { lng: 15, lat: 15 },
+			preventDefault: vi.fn()
+		} as unknown as maplibregl.MapMouseEvent;
+
+		element.handleDrag(mockEvent);
+
+		expect(mockManager.map.on).toHaveBeenCalledWith('mousemove', expect.any(Function));
+		expect(mockManager.map.once).toHaveBeenCalledWith('mouseup', expect.any(Function));
+		expect(mockEvent.preventDefault).toHaveBeenCalled();
+
+		const moveHandler = mockManager.map.on.mock.calls[0][1];
+		moveHandler(mockMoveEvent);
+
+		expect(element['path']).toEqual([[10, 10.115029793656424], [20, 19.812100256379562]]);
+		expect(mockMoveEvent.preventDefault).toHaveBeenCalled();
 	});
 });

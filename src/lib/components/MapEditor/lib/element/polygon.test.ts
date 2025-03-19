@@ -81,4 +81,27 @@ describe('PolygonElement', () => {
 		expect(get(restoredElement.fillLayer.color)).toBe('#00ff00');
 		expect(get(restoredElement.strokeLayer.width)).toBe(2);
 	});
+
+	it('should restore from GeoJSON correctly', () => {
+		const feature0: GeoJSON.Feature<GeoJSON.Polygon> = {
+			type: 'Feature',
+			properties: {
+				'stroke-color': '#111111',
+				'stroke-style': 'dashed',
+				'stroke-width': 3,
+				'stroke-visibility': true,
+				'fill-color': '#222222',
+				"fill-opacity": 0.3,
+				"fill-pattern": "diagonal",
+			},
+			geometry: {
+				type: 'Polygon',
+				coordinates: [[[0, 0], [10, 10], [20, 20], [0, 0]]]
+			}
+		};
+		const restoredElement = PolygonElement.fromGeoJSON(mockManager, feature0);
+		const feature1 = restoredElement.getFeature(true);
+
+		expect(feature0).toStrictEqual(feature1);
+	});
 });

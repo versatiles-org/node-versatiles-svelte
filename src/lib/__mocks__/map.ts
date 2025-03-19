@@ -9,6 +9,7 @@ export class MockMap {
 	getSource = vi.fn(() => ({ setData: vi.fn() })) as unknown as maplibre.Map['getSource'];
 	addLayer = vi.fn();
 	on = vi.fn();
+	once = vi.fn();
 	setCenter = vi.fn();
 	setZoom = vi.fn();
 	getZoom = vi.fn(() => 10);

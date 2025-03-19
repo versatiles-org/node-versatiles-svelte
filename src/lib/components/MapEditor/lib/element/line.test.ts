@@ -72,4 +72,24 @@ describe('LineElement', () => {
 		expect(restoredElement.path).toEqual(state.points);
 		expect(restoredElement.layer.getState()?.color).toBe('#00ff00');
 	});
+
+	it('should restore from GeoJSON correctly', () => {
+		const feature0: GeoJSON.Feature<GeoJSON.LineString> = {
+			type: 'Feature',
+			properties: {
+				'stroke-color': '#111111',
+				'stroke-style': 'dashed',
+				'stroke-width': 3,
+				'stroke-visibility': true,
+			},
+			geometry: {
+				type: 'LineString',
+				coordinates: [[0, 0], [10, 10]]
+			}
+		};
+		const restoredElement = LineElement.fromGeoJSON(mockManager, feature0);
+		const feature1 = restoredElement.getFeature(true);
+
+		expect(feature0).toStrictEqual(feature1);
+	});
 });
