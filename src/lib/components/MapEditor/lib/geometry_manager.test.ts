@@ -6,6 +6,7 @@ import { PolygonElement } from './element/polygon.js';
 import type { StateObject } from './state/types.js';
 import { MockMap } from '../../../__mocks__/map.js';
 import { StateWriter } from './state/writer.js';
+import maplibregl from 'maplibre-gl';
 
 describe('GeometryManager', () => {
 	let mockMap: maplibregl.Map;
@@ -65,5 +66,55 @@ describe('GeometryManager', () => {
 		vi.spyOn(manager, 'loadState');
 		await manager.loadState(hash);
 		expect(manager.loadState).toHaveBeenCalled();
+	});
+
+	describe('JSON', () => {
+		it('should return correct state', () => {
+			const state = manager.getState();
+			expect(state.map).toBeDefined();
+			expect(state.elements).toBeDefined();
+		});
+
+		it('should restore from state correctly', async () => {
+			const state: StateObject = {
+				map: { point: [0, 0], zoom: 10 },
+				elements: [{ type: 'marker', point: [10, 20], style: { color: '#00ff00' } }]
+			};
+			const writer = new StateWriter();
+			writer.writeObject(state);
+			const hash = await writer.getBase64compressed();
+			vi.spyOn(manager, 'loadState');
+			await manager.loadState(hash);
+			expect(manager.loadState).toHaveBeenCalled();
+		});
+
+		it('should return correct GeoJSON', () => {
+			const center = new maplibregl.LngLat(10, 20);
+			vi.spyOn(mockMap, 'getCenter').mockReturnValue(center);
+			vi.spyOn(mockMap, 'getZoom').mockReturnValue(5);
+
+			const marker = manager.addNewMarker();
+			vi.spyOn(marker, 'getFeature').mockReturnValue({
+				type: 'Feature',
+				geometry: { type: 'Point', coordinates: [10, 20] },
+				properties: {}
+			});
+
+			const geojson = manager.getGeoJSON();
+			expect(geojson).toEqual({
+				type: 'FeatureCollection',
+				map: {
+					center: [center.lng, center.lat],
+					zoom: 5
+				},
+				features: [
+					{
+						type: 'Feature',
+						geometry: { type: 'Point', coordinates: [10, 20] },
+						properties: {}
+					}
+				]
+			});
+		});
 	});
 });
