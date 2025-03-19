@@ -21,9 +21,6 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install dependencies for screenshots
-        run: sudo apt-get install pngquant optipng
-
       - name: Init cache
         uses: actions/cache@v4
         with:
@@ -54,18 +51,6 @@ jobs:
       - name: Build the project
         run: npm run build
 
-      - name: Generate screenshots
-        run: npm run screenshots
-
-      - name: Add screenshots to build
-        run: mv screenshots build/
-
-      - name: Upload Artifact
-        if: github.ref == 'refs/heads/main'
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./build
-
       - name: Generate test coverage
         run: npm run test:coverage
 
@@ -77,17 +62,5 @@ jobs:
   page:
     needs: test
     if: github.ref == 'refs/heads/main'
-
-    permissions:
-      pages: write
-      id-token: write
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    uses: ./.github/workflows/pages.yml
+    
