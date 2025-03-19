@@ -53,7 +53,7 @@ jobs:
         run: npm run build
 
       - name: Generate test coverage
-        run: npm run test:coverage
+        run: npm run test-coverage
 
       - name: Upload test coverage
         uses: codecov/codecov-action@v5

@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "build": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && vite build && npm run package",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "check-watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "check": "npm run lint && npm run build && npm run test",
     "dev": "vite dev",
     "format": "prettier --write .",
@@ -13,12 +13,12 @@
     "prepack": "npm run build",
     "prepublishOnly": "npm run package",
     "preview": "vite preview",
-    "screenshots": "npm run build && npx tsx ./scripts/screenshots.ts && pngquant --nofs --force --ext .png screenshots/*.png && optipng -quiet screenshots/*.png",
+    "screenshots": "npx tsx ./scripts/screenshots.ts && pngquant --nofs --force --ext .png screenshots/*.png && optipng -quiet screenshots/*.png",
     "release": "vrt release-npm",
-    "test:integration": "playwright test",
-    "test:unit": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "test": "npm run test:unit && npm run test:integration",
+    "test-integration": "playwright test",
+    "test-unit": "vitest run",
+    "test-coverage": "vitest run --coverage",
+    "test": "npm run test-unit && npm run test-integration",
     "upgrade": "vrt deps-upgrade"
   },
   "exports": {
