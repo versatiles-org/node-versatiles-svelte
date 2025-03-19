@@ -2,7 +2,7 @@ import { writable, type Writable } from 'svelte/store';
 import type { AbstractElement } from '../element/abstract.js';
 import type { StateObject } from '../state/types.js';
 import { vi } from 'vitest';
-import { MockMap } from './map.js';
+import { MockMap } from '../../../../__mocks__/map.js';
 import { MockCursor } from './cursor.js';
 
 export class MockGeometryManager {

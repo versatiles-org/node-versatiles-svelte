@@ -4,7 +4,7 @@ import { MarkerElement } from './element/marker.js';
 import { LineElement } from './element/line.js';
 import { PolygonElement } from './element/polygon.js';
 import type { StateObject } from './state/types.js';
-import { MockMap } from './__mocks__/map.js';
+import { MockMap } from '../../../__mocks__/map.js';
 import { StateWriter } from './state/writer.js';
 
 describe('GeometryManager', () => {

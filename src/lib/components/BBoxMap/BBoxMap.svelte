@@ -1,13 +1,13 @@
 <!-- BBoxMap.svelte -->
 <script lang="ts">
 	import type { CameraOptions, Map as MaplibreMapType } from 'maplibre-gl';
-	import AutoComplete from '$lib/components/BBoxMap/AutoComplete.svelte';
+	import AutoComplete from './AutoComplete.svelte';
 	import { getCountryName } from '$lib/utils/location.js';
 	import BasicMap from '../BasicMap/BasicMap.svelte';
 	import { isDarkMode } from '$lib/utils/map_style.js';
 	import type { BBox } from 'geojson';
 	import { loadBBoxes } from './BBoxMap.js';
-	import { BBoxDrawer } from '$lib/utils/draw/bbox.js';
+	import { BBoxDrawer } from './lib/bbox.js';
 
 	let { selectedBBox = $bindable() }: { selectedBBox?: BBox } = $props();
 	const startTime = Date.now();

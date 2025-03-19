@@ -30,6 +30,7 @@
   "files": [
     "dist",
     "!dist/**/*.spec.*",
+    "!dist/**/__mocks__/*",
     "!dist/**/*.test.*",
     "!dist/BBoxMap/data/*",
     "!dist/BBoxMap/helpers/*"
