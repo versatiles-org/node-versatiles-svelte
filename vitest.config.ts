@@ -6,9 +6,9 @@ export default defineConfig({
 		coverage: {
 			provider: 'v8',
 			reporter: ['lcov', 'text'],
-			include: ['scripts/**/*.ts', 'src/**/*.ts']
+			include: ['scripts/bboxes/**/*.ts', 'src/**/*.ts']
 		},
-		include: ['scripts/bboxes/**/*.test.ts', 'src/**/*.test.ts', '!.svelte-kit/**']
+		include: ['scripts/**/*.test.ts', 'src/**/*.test.ts', '!.svelte-kit/**'],
 	},
 	esbuild: {
 		supported: {
