@@ -48,7 +48,11 @@ mkdirSync(path, { recursive: true });
 			await wait(5);
 
 			const l = page.locator('.wrapper');
-			console.log('locator count', await l.count());
+			const count = await l.count();
+			if (count !== 1) {
+				console.log('locator count', count);
+				console.log(await page.innerHTML('html'));
+			}
 			const clip = await l.boundingBox();
 			if (!clip) throw Error();
 
@@ -72,7 +76,7 @@ mkdirSync(path, { recursive: true });
 })();
 
 async function npm_run_preview(): Promise<ChildProcess> {
-	const cp = spawn('npm', ['run', 'preview'], { stdio: 'pipe' });
+	const cp = spawn('npm', ['run', 'dev'], { stdio: 'pipe' });
 	await wait(5);
 	return cp;
 }
