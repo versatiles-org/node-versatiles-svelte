@@ -20,9 +20,6 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install dependencies for screenshots
-        run: apt-get install pngquant optipng
-
       - name: Init cache
         uses: actions/cache@v4
         with:
