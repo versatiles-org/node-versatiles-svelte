@@ -5,7 +5,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  build:
+    name: Build and Generate Screenshots
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -46,8 +47,9 @@ jobs:
         with:
           path: ./build
 
-  page:
-    needs: test
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
     if: github.ref == 'refs/heads/main'
 
     permissions:

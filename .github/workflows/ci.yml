@@ -11,6 +11,7 @@ on:
 
 jobs:
   test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -59,7 +60,8 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  page:
+  pages:
+    name: Pages
     needs: test
     if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/pages.yml
