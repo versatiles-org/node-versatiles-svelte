@@ -43,10 +43,13 @@ mkdirSync(path, { recursive: true });
 		await screenShot(pageDark, 'dark');
 
 		async function screenShot(page: Page, suffix: string) {
-			console.log('generating screenshot: ' + name + ' - ' + suffix);
+			console.log(`screenshot: ${name} - ${suffix}`);
+
+			console.log(`  - loading`);
 			await page.goto('http://localhost:5173/' + name + (hash ?? ''), { waitUntil: 'networkidle' });
 			await wait(5);
 
+			console.log(`  - capturing`);
 			const l = page.locator('.wrapper');
 			const count = await l.count();
 			if (count !== 1) {
@@ -61,11 +64,14 @@ mkdirSync(path, { recursive: true });
 			clip.width = width;
 			clip.height = height;
 
-			await page.screenshot({
-				path: resolve(path, `${name}-${suffix}.png`),
+			const filename = resolve(path, `${name}-${suffix}.png`);
+			const buffer = await page.screenshot({
+				path: filename,
 				clip,
 				fullPage: true
 			});
+
+			console.log(`  - saved in ${Math.round(buffer.length / 1024)} KB`);
 		}
 	}
 
