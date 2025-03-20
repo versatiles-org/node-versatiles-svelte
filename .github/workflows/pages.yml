@@ -41,6 +41,14 @@ jobs:
       - name: Generate screenshots
         run: npm run screenshots
 
+      - name: Check screenshots folder
+        run: |
+          if [ $(du -k screenshots | cut -f1) -lt 1024 ]; then
+            echo "Screenshots folder is less than 1MB"
+            echo "Maybe the screenshots are not generated correctly"
+            exit 1
+          fi
+
       - name: pngquant
         run: pngquant screenshots/*.png --ext .png --force --nofs
 
