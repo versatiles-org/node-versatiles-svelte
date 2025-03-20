@@ -108,7 +108,7 @@ function logPage(page: Page) {
 	page.on('console', (msg) => {
 		const text = msg.text();
 		if (text.includes('Alpha-premult and y-flip are deprecated')) return;
-		console.log(`console.${msg.type()}: ${text}`)
+		console.log(`console.${msg.type()}: ${text}`);
 	});
 	page.on('requestfailed', (request) =>
 		console.log(`url: ${request.url()}, error: ${request.failure()?.errorText}`)
