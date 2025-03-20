@@ -1,22 +1,24 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const viewport = { width: 1024, height: 768 };
+
 export default defineConfig({
 	webServer: {
 		command: 'npm run build && npm run preview',
 		port: 4173
 	},
 	testDir: 'tests',
-	testMatch: /(.+\.)?(test|spec)\.[jt]s/,
+	testMatch: /\.ts$/,
 	projects: [
 		// Test against desktop browsers
 		{
 			name: 'chromium',
-			use: { ...devices['Desktop Chrome'] }
+			use: { ...devices['Desktop Chrome'], viewport }
 		}
 		/*
 		{
 			name: 'firefox',
-			use: { ...devices['Desktop Firefox'] }
+			use: {  ...devices['Desktop Firefox'], viewport }
 		}
 		/*
 		{
