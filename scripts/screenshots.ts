@@ -46,8 +46,8 @@ mkdirSync(path, { recursive: true });
 			console.log(`screenshot: ${name} - ${suffix}`);
 
 			console.log(`  - loading`);
-			await page.goto('http://localhost:5173/' + name + (hash ?? ''), { waitUntil: 'networkidle' });
-			await wait(5);
+			await page.goto('http://localhost:4173/' + name + (hash ?? ''), { waitUntil: 'networkidle' });
+			await wait(3);
 
 			console.log(`  - capturing`);
 			const l = page.locator('.wrapper');
@@ -82,7 +82,7 @@ mkdirSync(path, { recursive: true });
 })();
 
 async function npm_run_preview(): Promise<ChildProcess> {
-	const cp = spawn('npm', ['run', 'dev'], { stdio: 'pipe' });
+	const cp = spawn('npm', ['run', 'preview'], { stdio: 'pipe' });
 	await wait(5);
 	return cp;
 }
