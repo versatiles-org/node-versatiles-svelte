@@ -9,6 +9,9 @@ jobs:
     name: Build Svelte and Generate Screenshots
     runs-on: macos-latest
     steps:
+      - name: Install Dependencies
+        run: brew install pngquant optipng
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -37,6 +40,12 @@ jobs:
 
       - name: Generate screenshots
         run: npm run screenshots
+
+      - name: pngquant
+        run: pngquant screenshots/*.png --ext .png --force --nofs
+
+      - name: optipng
+        run: optipng screenshots/*.png
 
       - name: Add screenshots to build
         run: mv screenshots build/
