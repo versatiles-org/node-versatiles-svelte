@@ -10,17 +10,19 @@ export default defineConfig({
 	testDir: 'tests',
 	testMatch: /\.ts$/,
 	projects: [
-		// Test against desktop browsers
 		{
 			name: 'chromium',
-			use: { ...devices['Desktop Chrome'], viewport }
+			use: {
+				...devices['Desktop Chrome'],
+				viewport,
+				headless: false,
+			}
 		}
 		/*
 		{
 			name: 'firefox',
-			use: {  ...devices['Desktop Firefox'], viewport }
+			use: { ...devices['Desktop Firefox'], viewport }
 		}
-		/*
 		{
 		  name: 'webkit',
 		  use: { ...devices['Desktop Safari'] },
