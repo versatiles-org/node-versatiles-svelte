@@ -38,6 +38,9 @@ mkdirSync(path, { recursive: true });
 	const pageLight = await contextLight.newPage();
 	const pageDark = await contextDark.newPage();
 
+	pageLight.on('console', (msg) => console.log('console: ' + msg.text()));
+	pageDark.on('console', (msg) => console.log('console: ' + msg.text()));
+
 	for (const { name, hash } of sites) {
 		await screenShot(pageLight, 'light');
 		await screenShot(pageDark, 'dark');

@@ -32,6 +32,9 @@ jobs:
       - name: Build the project
         run: npm run build
 
+      - name: Test Playwright
+        run: npx playwright test
+
       - name: Generate screenshots
         run: npm run screenshots
 
