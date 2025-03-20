@@ -2,7 +2,7 @@ import { ChildProcess, spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { chromium } from 'playwright';
-import type { Page } from 'playwright';
+import type { BrowserContext, Page } from 'playwright';
 
 const path = resolve(import.meta.dirname, '../screenshots');
 mkdirSync(path, { recursive: true });
@@ -35,11 +35,14 @@ mkdirSync(path, { recursive: true });
 	const contextLight = await browser.newContext({ ...option, colorScheme: 'light' });
 	const contextDark = await browser.newContext({ ...option, colorScheme: 'dark' });
 
+	logContext(contextLight);
+	logContext(contextDark);
+
 	const pageLight = await contextLight.newPage();
 	const pageDark = await contextDark.newPage();
 
-	pageLight.on('console', (msg) => console.log('console: ' + msg.text()));
-	pageDark.on('console', (msg) => console.log('console: ' + msg.text()));
+	logPage(pageLight);
+	logPage(pageDark);
 
 	for (const { name, hash } of sites) {
 		await screenShot(pageLight, 'light');
@@ -64,15 +67,18 @@ mkdirSync(path, { recursive: true });
 
 			clip.x += 1;
 			clip.y += 1;
-			clip.width = width;
-			clip.height = height;
+			clip.width -= 2;
+			clip.height -= 2;
+
+			if (clip.width != width || clip.height != height || clip.x != 1 || clip.y != 1) {
+				console.log('clip', clip);
+				console.log('viewport', page.viewportSize());
+				console.log('html', await page.innerHTML('html'));
+				throw Error('wrong bounding box');
+			}
 
 			const filename = resolve(path, `${name}-${suffix}.png`);
-			const buffer = await page.screenshot({
-				path: filename,
-				clip,
-				fullPage: true
-			});
+			const buffer = await page.screenshot({ path: filename, clip });
 
 			console.log(`  - saved in ${Math.round(buffer.length / 1024)} KB`);
 		}
@@ -92,4 +98,15 @@ async function npm_run_preview(): Promise<ChildProcess> {
 
 function wait(seconds: number): Promise<void> {
 	return new Promise<void>((r) => setTimeout(() => r(), seconds * 1500));
+}
+
+function logContext(context: BrowserContext) {
+	context.on('weberror', (webError) => console.log(`Uncaught exception: "${webError.error()}"`));
+}
+
+function logPage(page: Page) {
+	page.on('console', (msg) => console.log(`console.${msg.type()}: ${msg.text()}`));
+	page.on('requestfailed', (request) =>
+		console.log(`url: ${request.url()}, error: ${request.failure()?.errorText}`)
+	);
 }
