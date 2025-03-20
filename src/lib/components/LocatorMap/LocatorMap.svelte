@@ -9,7 +9,6 @@
 			let coordinates: [number, number] = [0, 0];
 			const initialHash = parseHash();
 			if (initialHash) {
-				console.log('initialHash', initialHash);
 				coordinates = [initialHash[1], initialHash[2]];
 				map.setZoom(initialHash[0]);
 				map.setCenter(coordinates);
