@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, vi } from 'vitest';
-import { GeometryManager } from './geometry_manager.js';
+import { GeometryManager, type ExtendedGeoJSON } from './geometry_manager.js';
 import { MarkerElement } from './element/marker.js';
 import { LineElement } from './element/line.js';
 import { PolygonElement } from './element/polygon.js';
@@ -114,6 +114,97 @@ describe('GeometryManager', () => {
 					}
 				]
 			});
+		});
+
+		it('should add GeoJSON with map properties', () => {
+			const geojson: ExtendedGeoJSON = {
+				type: 'FeatureCollection',
+				map: {
+					center: [10, 20],
+					zoom: 5
+				},
+				features: []
+			};
+
+			manager.addGeoJSON(geojson);
+
+			expect(mockMap.setCenter).toHaveBeenCalledWith({ lng: 10, lat: 20 });
+			expect(mockMap.setZoom).toHaveBeenCalledWith(5);
+		});
+
+		it('should add GeoJSON with Point feature', () => {
+			const geojson: ExtendedGeoJSON = {
+				type: 'FeatureCollection',
+				features: [
+					{
+						type: 'Feature',
+						geometry: { type: 'Point', coordinates: [10, 20] },
+						properties: {}
+					}
+				]
+			};
+
+			const spy = vi.spyOn(MarkerElement, 'fromGeoJSON').mockReturnValue(new MarkerElement(manager));
+
+			manager.addGeoJSON(geojson);
+
+			expect(spy).toHaveBeenCalled();
+			expect(manager.elements).toBeDefined();
+		});
+
+		it('should add GeoJSON with LineString feature', () => {
+			const geojson: ExtendedGeoJSON = {
+				type: 'FeatureCollection',
+				features: [
+					{
+						type: 'Feature',
+						geometry: { type: 'LineString', coordinates: [[10, 20], [30, 40]] },
+						properties: {}
+					}
+				]
+			};
+
+			const spy = vi.spyOn(LineElement, 'fromGeoJSON').mockReturnValue(new LineElement(manager));
+
+			manager.addGeoJSON(geojson);
+
+			expect(spy).toHaveBeenCalled();
+			expect(manager.elements).toBeDefined();
+		});
+
+		it('should add GeoJSON with Polygon feature', () => {
+			const geojson: ExtendedGeoJSON = {
+				type: 'FeatureCollection',
+				features: [
+					{
+						type: 'Feature',
+						geometry: { type: 'Polygon', coordinates: [[[10, 20], [30, 40], [50, 60], [10, 20]]] },
+						properties: {}
+					}
+				]
+			};
+
+			const spy = vi.spyOn(PolygonElement, 'fromGeoJSON').mockReturnValue(new PolygonElement(manager));
+
+			manager.addGeoJSON(geojson);
+
+			expect(spy).toHaveBeenCalled();
+			expect(manager.elements).toBeDefined();
+		});
+
+		it('should throw an error for unknown geometry type', () => {
+			const geojson = {
+				type: 'FeatureCollection',
+				features: [
+					{
+						type: 'Feature',
+						geometry: { type: 'Unknown', coordinates: [] },
+						properties: {}
+					}
+				]
+			} as unknown as ExtendedGeoJSON;
+
+			expect(() => manager.addGeoJSON(geojson)).toThrow('Unknown geometry type "Unknown"');
 		});
 	});
 });

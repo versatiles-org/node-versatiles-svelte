@@ -121,4 +121,75 @@ describe('MapLayerSymbol', () => {
 		expect(get(layer.label)).toBe('New Label');
 		expect(get(layer.labelAlign)).toBe(2);
 	});
+
+	it('should return correct GeoJSON properties', () => {
+		layer.color.set('#00ff00');
+		layer.rotate.set(45);
+		layer.size.set(2);
+		layer.halo.set(3);
+		layer.symbolIndex.set(1);
+		layer.label.set('Test Label');
+		layer.labelAlign.set(2);
+
+		const properties = layer.getGeoJSONProperties();
+
+		expect(properties).toEqual({
+			'symbol-color': '#00ff00',
+			'symbol-halo-width': 3,
+			'symbol-rotate': 45,
+			'symbol-size': 2,
+			'symbol-pattern': 'airplane',
+			'symbol-label': 'Test Label',
+			'symbol-label-align': 'left'
+		});
+	});
+
+	it('should set GeoJSON properties correctly', () => {
+		const properties = {
+			'symbol-color': '#00ff00',
+			'symbol-halo-width': 3,
+			'symbol-rotate': 45,
+			'symbol-size': 2,
+			'symbol-label': 'Test Label',
+			'symbol-label-align': 'left',
+			'symbol-pattern': 'airplane'
+		};
+
+		layer.setGeoJSONProperties(properties);
+
+		expect(get(layer.color)).toBe('#00ff00');
+		expect(get(layer.halo)).toBe(3);
+		expect(get(layer.rotate)).toBe(45);
+		expect(get(layer.size)).toBe(2);
+		expect(get(layer.label)).toBe('Test Label');
+		expect(get(layer.labelAlign)).toBe(2);
+		expect(get(layer.symbolIndex)).toBe(1);
+	});
+
+	it('should handle null properties gracefully', () => {
+		layer.setGeoJSONProperties(null);
+		expect(get(layer.color)).toBe('#ff0000'); // Default value
+		expect(get(layer.halo)).toBe(1); // Default value
+		expect(get(layer.rotate)).toBe(0); // Default value
+		expect(get(layer.size)).toBe(1); // Default value
+		expect(get(layer.label)).toBe(''); // Default value
+		expect(get(layer.labelAlign)).toBe(0); // Default value
+		expect(get(layer.symbolIndex)).toBe(38); // Default value
+	});
+
+	it('should handle missing properties gracefully', () => {
+		const properties = {
+			'symbol-color': '#00ff00'
+		};
+
+		layer.setGeoJSONProperties(properties);
+
+		expect(get(layer.color)).toBe('#00ff00');
+		expect(get(layer.halo)).toBe(1); // Default value
+		expect(get(layer.rotate)).toBe(0); // Default value
+		expect(get(layer.size)).toBe(1); // Default value
+		expect(get(layer.label)).toBe(''); // Default value
+		expect(get(layer.labelAlign)).toBe(0); // Default value
+		expect(get(layer.symbolIndex)).toBe(38); // Default value
+	});
 });

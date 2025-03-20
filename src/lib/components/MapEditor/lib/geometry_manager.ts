@@ -10,6 +10,8 @@ import { StateWriter } from './state/writer.js';
 import { StateReader } from './state/reader.js';
 import { SymbolLibrary } from './symbols.js';
 
+export type ExtendedGeoJSON = GeoJSON.FeatureCollection & { map?: { center: [number, number]; zoom: number } };
+
 export class GeometryManager {
 	public readonly elements: Writable<AbstractElement[]>;
 	public readonly map: maplibregl.Map;
@@ -211,9 +213,9 @@ export class GeometryManager {
 		} as GeoJSON.FeatureCollection;
 	}
 
-	public addGeoJSON(geojson: GeoJSON.FeatureCollection) {
-		if ('map' in geojson) {
-			const { map } = geojson as { map: Record<string, unknown> };
+	public addGeoJSON(geojson: ExtendedGeoJSON) {
+		if ('map' in geojson && geojson.map) {
+			const { map } = geojson;
 			if (typeof map.zoom === 'number') {
 				this.map.setZoom(map.zoom);
 			}
