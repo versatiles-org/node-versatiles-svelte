@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Map as MaplibreMapType } from 'maplibre-gl';
-	import BasicMap from '../BasicMap/BasicMap.svelte';
+	import BasicMap from '$lib/components/BasicMap/BasicMap.svelte';
 	import { onMount } from 'svelte';
 	import Sidebar from './components/Sidebar.svelte';
 	import type { GeometryManager } from './lib/geometry_manager.js';

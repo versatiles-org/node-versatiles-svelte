@@ -1,4 +1,3 @@
-<!-- AutoComplete.svelte -->
 <script lang="ts" generics="T">
 	import { isDarkMode } from '$lib/utils/map_style.js';
 	/* eslint svelte/no-at-html-tags: off */

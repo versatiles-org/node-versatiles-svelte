@@ -1,4 +1,3 @@
-<!-- BasicMap.svelte -->
 <script lang="ts">
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { getMapStyle, isDarkMode } from '$lib/utils/map_style.js';
