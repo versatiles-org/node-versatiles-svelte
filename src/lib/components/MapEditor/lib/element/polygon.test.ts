@@ -91,12 +91,19 @@ describe('PolygonElement', () => {
 				'stroke-width': 3,
 				'stroke-visibility': true,
 				'fill-color': '#222222',
-				"fill-opacity": 0.3,
-				"fill-pattern": "diagonal",
+				'fill-opacity': 0.3,
+				'fill-pattern': 'diagonal'
 			},
 			geometry: {
 				type: 'Polygon',
-				coordinates: [[[0, 0], [10, 10], [20, 20], [0, 0]]]
+				coordinates: [
+					[
+						[0, 0],
+						[10, 10],
+						[20, 20],
+						[0, 0]
+					]
+				]
 			}
 		};
 		const restoredElement = PolygonElement.fromGeoJSON(mockManager, feature0);

@@ -6,17 +6,17 @@ export class MockMap {
 	getCanvasContainer = vi.fn(() => ({ style: { cursor: 'default' } }) as HTMLElement);
 	addSource = vi.fn();
 	removeSource = vi.fn();
-	getSource = vi.fn(() => ({ setData: vi.fn() })) as unknown as maplibre.Map['getSource'];
+	getSource = vi.fn(() => ({ setData: vi.fn() })) as unknown as MaplibreMap['getSource'];
 	addLayer = vi.fn();
 	on = vi.fn();
 	once = vi.fn();
 	setCenter = vi.fn();
 	setZoom = vi.fn();
 	getZoom = vi.fn(() => 10);
-	getCenter = vi.fn(() => new maplibre.LngLat(0, 0));
+	getCenter = vi.fn(() => new LngLat(0, 0));
 	queryRenderedFeatures = vi.fn(() => [
 		{ properties: {} }
-	]) as unknown as maplibre.Map['queryRenderedFeatures'];
+	]) as unknown as MaplibreMap['queryRenderedFeatures'];
 	setPaintProperty = vi.fn();
 	setLayoutProperty = vi.fn();
 	removeLayer = vi.fn();

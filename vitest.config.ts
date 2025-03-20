@@ -8,7 +8,7 @@ export default defineConfig({
 			reporter: ['lcov', 'text'],
 			include: ['scripts/bboxes/**/*.ts', 'src/**/*.ts']
 		},
-		include: ['scripts/**/*.test.ts', 'src/**/*.test.ts', '!.svelte-kit/**'],
+		include: ['scripts/**/*.test.ts', 'src/**/*.test.ts', '!.svelte-kit/**']
 	},
 	esbuild: {
 		supported: {

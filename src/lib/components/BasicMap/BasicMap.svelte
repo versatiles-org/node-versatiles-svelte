@@ -1,10 +1,9 @@
 <!-- BasicMap.svelte -->
 <script lang="ts">
-	import type { Map as MaplibreMapType, MapOptions } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { getMapStyle, isDarkMode } from '$lib/utils/map_style.js';
 	import maplibre from 'maplibre-gl';
-	const { Map } = maplibre;
+	import type { MapOptions } from 'maplibre-gl';
 
 	// Props
 	let {
@@ -18,9 +17,9 @@
 		style?: string;
 		styleOptions?: Parameters<typeof getMapStyle>[1];
 		mapOptions?: Partial<MapOptions>;
-		map?: MaplibreMapType;
-		onMapInit?: (map: MaplibreMapType) => void;
-		onMapLoad?: (map: MaplibreMapType) => void;
+		map?: maplibre.Map;
+		onMapInit?: (map: maplibre.Map) => void;
+		onMapLoad?: (map: maplibre.Map) => void;
 	} = $props();
 
 	let container: HTMLDivElement;
@@ -40,7 +39,7 @@
 
 		const style = getMapStyle(darkMode, styleOptions);
 		style.transition = { duration: 0, delay: 0 };
-		map = new Map({
+		map = new maplibre.Map({
 			container,
 			style,
 			renderWorldCopies: false,

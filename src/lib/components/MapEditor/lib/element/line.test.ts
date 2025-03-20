@@ -80,11 +80,14 @@ describe('LineElement', () => {
 				'stroke-color': '#111111',
 				'stroke-style': 'dashed',
 				'stroke-width': 3,
-				'stroke-visibility': true,
+				'stroke-visibility': true
 			},
 			geometry: {
 				type: 'LineString',
-				coordinates: [[0, 0], [10, 10]]
+				coordinates: [
+					[0, 0],
+					[10, 10]
+				]
 			}
 		};
 		const restoredElement = LineElement.fromGeoJSON(mockManager, feature0);
