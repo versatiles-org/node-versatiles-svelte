@@ -8,9 +8,9 @@ export default defineConfig({
 	},
 	build: {
 		target: 'esnext',
-		chunkSizeWarningLimit: 1024,
+		chunkSizeWarningLimit: 1500,
 		rollupOptions: {
-			treeshake: 'smallest'
+			treeshake: true
 		}
 	}
 });
