@@ -10,19 +10,23 @@ export default defineConfig({
 	testDir: 'tests',
 	testMatch: /\.ts$/,
 	projects: [
+		/*
 		{
 			name: 'chromium',
 			use: {
 				...devices['Desktop Chrome'],
 				viewport,
-				headless: false,
+			}
+		}
+			*/
+		{
+			name: 'firefox',
+			use: {
+				...devices['Desktop Firefox'],
+				viewport
 			}
 		}
 		/*
-		{
-			name: 'firefox',
-			use: { ...devices['Desktop Firefox'], viewport }
-		}
 		{
 		  name: 'webkit',
 		  use: { ...devices['Desktop Safari'] },

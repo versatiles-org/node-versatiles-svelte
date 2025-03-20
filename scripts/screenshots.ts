@@ -1,7 +1,7 @@
 import { ChildProcess, spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { chromium } from 'playwright';
+import { firefox } from 'playwright';
 import type { BrowserContext, Page } from 'playwright';
 
 const path = resolve(import.meta.dirname, '../screenshots');
@@ -24,7 +24,7 @@ mkdirSync(path, { recursive: true });
 		}
 	];
 
-	const browser = await chromium.launch();
+	const browser = await firefox.launch();
 	const option = {
 		colorScheme: 'light',
 		deviceScaleFactor: 1,
