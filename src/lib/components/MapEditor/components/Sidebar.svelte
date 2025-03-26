@@ -82,7 +82,7 @@
 	href="https://github.com/versatiles-org/node-versatiles-svelte/"
 	target="_blank"
 	aria-label="Repository on GitHub"
->Improve on GitHub
+	>Improve on GitHub
 	<svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24"
 		><path
 			fill="currentColor"

@@ -3,9 +3,7 @@ import { GeometryManager, type ExtendedGeoJSON } from './geometry_manager.js';
 import { MarkerElement } from './element/marker.js';
 import { LineElement } from './element/line.js';
 import { PolygonElement } from './element/polygon.js';
-import type { StateObject } from './state/types.js';
 import { LngLat, MockMap, type MaplibreMap } from '../../../__mocks__/map.js';
-import { StateWriter } from './state/writer.js';
 
 describe('GeometryManager', () => {
 	let mockMap: MockMap;
@@ -14,6 +12,7 @@ describe('GeometryManager', () => {
 	beforeEach(() => {
 		mockMap = new MockMap();
 		manager = new GeometryManager(mockMap as unknown as MaplibreMap);
+		manager.state.pause = true;
 	});
 
 	it('should initialize correctly', () => {
@@ -44,7 +43,7 @@ describe('GeometryManager', () => {
 		const element = manager.addNewMarker();
 		manager.selectElement(element);
 		vi.spyOn(manager, 'selectElement');
-		manager.deleteElement(element);
+		manager.removeElement(element);
 		expect(manager.selectElement).toHaveBeenCalledWith(undefined);
 	});
 
@@ -54,39 +53,7 @@ describe('GeometryManager', () => {
 		expect(state.elements).toBeDefined();
 	});
 
-	it('should restore from state correctly', async () => {
-		const state: StateObject = {
-			map: { point: [0, 0], zoom: 10 },
-			elements: [{ type: 'marker', point: [10, 20], style: { color: '#00ff00' } }]
-		};
-		const writer = new StateWriter();
-		writer.writeObject(state);
-		const hash = await writer.getBase64compressed();
-		vi.spyOn(manager, 'loadState');
-		await manager.loadState(hash);
-		expect(manager.loadState).toHaveBeenCalled();
-	});
-
 	describe('JSON', () => {
-		it('should return correct state', () => {
-			const state = manager.getState();
-			expect(state.map).toBeDefined();
-			expect(state.elements).toBeDefined();
-		});
-
-		it('should restore from state correctly', async () => {
-			const state: StateObject = {
-				map: { point: [0, 0], zoom: 10 },
-				elements: [{ type: 'marker', point: [10, 20], style: { color: '#00ff00' } }]
-			};
-			const writer = new StateWriter();
-			writer.writeObject(state);
-			const hash = await writer.getBase64compressed();
-			vi.spyOn(manager, 'loadState');
-			await manager.loadState(hash);
-			expect(manager.loadState).toHaveBeenCalled();
-		});
-
 		it('should return correct GeoJSON', () => {
 			const center = new LngLat(10, 20);
 			vi.spyOn(mockMap, 'getCenter').mockReturnValue(center);
@@ -144,7 +111,9 @@ describe('GeometryManager', () => {
 				]
 			};
 
-			const spy = vi.spyOn(MarkerElement, 'fromGeoJSON').mockReturnValue(new MarkerElement(manager));
+			const spy = vi
+				.spyOn(MarkerElement, 'fromGeoJSON')
+				.mockReturnValue(new MarkerElement(manager));
 
 			manager.addGeoJSON(geojson);
 
@@ -158,7 +127,13 @@ describe('GeometryManager', () => {
 				features: [
 					{
 						type: 'Feature',
-						geometry: { type: 'LineString', coordinates: [[10, 20], [30, 40]] },
+						geometry: {
+							type: 'LineString',
+							coordinates: [
+								[10, 20],
+								[30, 40]
+							]
+						},
 						properties: {}
 					}
 				]
@@ -178,13 +153,25 @@ describe('GeometryManager', () => {
 				features: [
 					{
 						type: 'Feature',
-						geometry: { type: 'Polygon', coordinates: [[[10, 20], [30, 40], [50, 60], [10, 20]]] },
+						geometry: {
+							type: 'Polygon',
+							coordinates: [
+								[
+									[10, 20],
+									[30, 40],
+									[50, 60],
+									[10, 20]
+								]
+							]
+						},
 						properties: {}
 					}
 				]
 			};
 
-			const spy = vi.spyOn(PolygonElement, 'fromGeoJSON').mockReturnValue(new PolygonElement(manager));
+			const spy = vi
+				.spyOn(PolygonElement, 'fromGeoJSON')
+				.mockReturnValue(new PolygonElement(manager));
 
 			manager.addGeoJSON(geojson);
 

@@ -1,6 +1,33 @@
+import { before } from 'node:test';
 import { describe, expect, it } from 'vitest';
-import { StateWriter } from './writer.js';
+import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
+import { State } from './index.js';
 import { StateReader } from './reader.js';
+import { StateWriter } from './writer.js';
+import type { GeometryManager } from '../geometry_manager.js';
+import type { StateObject } from './types.js';
+
+describe('state', () => {
+	let state: State;
+	let manager: MockGeometryManager;
+	before(() => {
+		manager = new MockGeometryManager();
+		state = new State(manager as unknown as GeometryManager);
+	});
+
+	it('should restore from state correctly', async () => {
+		const stateObject: StateObject = {
+			map: { point: [1, 2], zoom: 10 },
+			elements: [{ type: 'marker', point: [10, 20], style: { color: '#00FF00' } }]
+		};
+		const writer = new StateWriter();
+		writer.writeObject(stateObject);
+		const hash = await writer.getBase64compressed();
+		await state.load(hash);
+
+		expect(manager.setState.mock.calls).toStrictEqual([[stateObject]]);
+	});
+});
 
 describe('StateWriter -> StateReader', () => {
 	const text =

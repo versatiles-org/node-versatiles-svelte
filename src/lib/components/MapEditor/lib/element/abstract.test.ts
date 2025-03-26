@@ -55,11 +55,11 @@ describe('AbstractElement', () => {
 	it('should call destroy and delete itself', () => {
 		const element = new TestElement(mockManager);
 		vi.spyOn(element, 'destroy');
-		vi.spyOn(mockManager, 'deleteElement');
+		vi.spyOn(mockManager, 'removeElement');
 
 		element.delete();
 
 		expect(element.destroy).toHaveBeenCalled();
-		expect(mockManager.deleteElement).toHaveBeenCalledWith(element);
+		expect(mockManager.removeElement).toHaveBeenCalledWith(element);
 	});
 });

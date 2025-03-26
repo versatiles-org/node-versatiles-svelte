@@ -16,13 +16,13 @@ export class MockGeometryManager {
 	public setActiveElement = vi.fn();
 	public getState = vi.fn((): StateObject => ({ map: { point: [0, 0], zoom: 10 }, elements: [] }));
 	public saveState = vi.fn();
-	public loadState = vi.fn();
+	public setState = vi.fn();
 	public getElement = vi.fn(
 		(index: number): AbstractElement => ({ index }) as unknown as AbstractElement
 	);
 	public addNewMarker = vi.fn(() => ({}) as AbstractElement);
 	public addNewLine = vi.fn(() => ({}) as AbstractElement);
 	public addNewPolygon = vi.fn(() => ({}) as AbstractElement);
-	public deleteElement = vi.fn();
+	public removeElement = vi.fn();
 	public drawSelectionNodes = vi.fn();
 }

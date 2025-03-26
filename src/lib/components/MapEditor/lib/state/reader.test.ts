@@ -65,7 +65,7 @@ describe('StateReader', () => {
 				opacity: 1,
 				pattern: 1,
 				rotate: 1,
-				align: 3,
+				align: 3
 			},
 			strokeStyle: {
 				size: 1,

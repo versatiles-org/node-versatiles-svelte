@@ -6,11 +6,12 @@ import type { SelectionNode } from './element/types.js';
 import { PolygonElement } from './element/polygon.js';
 import { Cursor } from './cursor.js';
 import type { StateObject } from './state/types.js';
-import { StateWriter } from './state/writer.js';
-import { StateReader } from './state/reader.js';
 import { SymbolLibrary } from './symbols.js';
+import { State } from './state/index.js';
 
-export type ExtendedGeoJSON = GeoJSON.FeatureCollection & { map?: { center: [number, number]; zoom: number } };
+export type ExtendedGeoJSON = GeoJSON.FeatureCollection & {
+	map?: { center: [number, number]; zoom: number };
+};
 
 export class GeometryManager {
 	public readonly elements: Writable<AbstractElement[]>;
@@ -19,6 +20,7 @@ export class GeometryManager {
 	public readonly canvas: HTMLElement;
 	public readonly cursor: Cursor;
 	public readonly symbolLibrary: SymbolLibrary;
+	public readonly state = new State(this);
 
 	private readonly selectionNodes: maplibregl.GeoJSONSource;
 
@@ -65,7 +67,7 @@ export class GeometryManager {
 			if (e.originalEvent.shiftKey) {
 				selectedNode.delete();
 				this.drawSelectionNodes();
-				this.saveState();
+				this.state.save();
 			} else {
 				const onMove = (e: maplibregl.MapMouseEvent) => {
 					e.preventDefault();
@@ -75,7 +77,7 @@ export class GeometryManager {
 
 				map.on('mousemove', onMove);
 				map.once('mouseup', () => {
-					this.saveState();
+					this.state.save();
 					map.off('mousemove', onMove);
 				});
 			}
@@ -93,10 +95,11 @@ export class GeometryManager {
 			e.preventDefault();
 		});
 
-		map.on('moveend', () => this.saveState());
+		map.on('moveend', () => this.state.save());
 
 		const hash = location.hash.slice(1);
-		if (hash) this.loadState(hash);
+		if (hash) this.state.load(hash);
+		addEventListener('hashchange', () => this.state.load(location.hash.slice(1)));
 	}
 
 	public selectElement(element: AbstractElement | undefined) {
@@ -119,6 +122,10 @@ export class GeometryManager {
 		});
 	}
 
+	public saveState() {
+		this.state.save();
+	}
+
 	public getState(): StateObject {
 		const center = this.map.getCenter();
 		return {
@@ -130,41 +137,37 @@ export class GeometryManager {
 		};
 	}
 
-	public async saveState() {
-		const writer = new StateWriter();
-		writer.writeObject(this.getState());
-		location.hash = await writer.getBase64compressed();
-	}
+	public setState(state: StateObject) {
+		if (!state) return;
 
-	public async loadState(hash: string) {
-		if (!hash) return;
-		try {
-			const reader = await StateReader.fromBase64compressed(hash);
-			const state = reader.readObject();
-			if (!state) return;
+		this.selectElement(undefined);
+		this.elements.update((elements) => {
+			elements.forEach((e) => e.destroy());
+			return [];
+		});
+		this.state.save();
 
-			if (state.map?.zoom) this.map.setZoom(state.map.zoom);
-			if (state.map?.point) {
-				this.map.setCenter({ lng: state.map.point[0], lat: state.map.point[1] });
-			}
+		if (state.map?.zoom) this.map.setZoom(state.map.zoom);
+		if (state.map?.point)
+			this.map.setCenter({
+				lng: state.map.point[0],
+				lat: state.map.point[1]
+			});
 
-			if (state.elements) {
-				const elements = state.elements.map((element) => {
-					switch (element.type) {
-						case 'marker':
-							return MarkerElement.fromState(this, element);
-						case 'line':
-							return LineElement.fromState(this, element);
-						case 'polygon':
-							return PolygonElement.fromState(this, element);
-						default:
-							throw new Error('Unknown element type');
-					}
-				});
-				this.elements.set(elements);
-			}
-		} catch (error) {
-			console.error(error);
+		if (state.elements) {
+			const elements = state.elements.map((element) => {
+				switch (element.type) {
+					case 'marker':
+						return MarkerElement.fromState(this, element);
+					case 'line':
+						return LineElement.fromState(this, element);
+					case 'polygon':
+						return PolygonElement.fromState(this, element);
+					default:
+						throw new Error('Unknown element type');
+				}
+			});
+			this.elements.set(elements);
 		}
 	}
 
@@ -174,31 +177,31 @@ export class GeometryManager {
 
 	public addNewMarker(): AbstractElement {
 		const element = new MarkerElement(this);
-		this.addElement(element);
+		this.appendElement(element);
 		return element;
 	}
 
 	public addNewLine(): AbstractElement {
 		const element = new LineElement(this);
-		this.addElement(element);
+		this.appendElement(element);
 		return element;
 	}
 
 	public addNewPolygon(): AbstractElement {
 		const element = new PolygonElement(this);
-		this.addElement(element);
+		this.appendElement(element);
 		return element;
 	}
 
-	private addElement(element: AbstractElement) {
+	private appendElement(element: AbstractElement) {
 		this.elements.update((elements) => [...elements, element]);
-		this.saveState();
+		this.state.save();
 	}
 
-	public deleteElement(element: AbstractElement) {
-		this.elements.update((elements) => elements.filter((e) => e !== element));
+	public removeElement(element: AbstractElement) {
 		if (get(this.selectedElement) === element) this.selectElement(undefined);
-		this.saveState();
+		this.elements.update((elements) => elements.filter((e) => e !== element));
+		this.state.save();
 	}
 
 	public getGeoJSON(): GeoJSON.FeatureCollection {
@@ -241,8 +244,8 @@ export class GeometryManager {
 				default:
 					throw new Error(`Unknown geometry type "${feature.geometry.type}"`);
 			}
-			this.addElement(element);
+			this.appendElement(element);
 		}
-		this.saveState();
+		this.state.save();
 	}
 }

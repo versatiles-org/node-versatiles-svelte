@@ -44,8 +44,8 @@ export abstract class AbstractElement {
 	}
 
 	public delete() {
+		this.manager.removeElement(this);
 		this.destroy();
-		this.manager.deleteElement(this);
 	}
 
 	abstract destroy(): void;
