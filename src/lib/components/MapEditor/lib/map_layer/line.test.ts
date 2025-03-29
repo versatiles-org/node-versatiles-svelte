@@ -49,13 +49,11 @@ describe('MapLayerLine', () => {
 			'line-color',
 			'rgb(0,255,0)'
 		);
-		expect(mockManager.saveState).toHaveBeenCalled();
 	});
 
 	it('should update line width correctly', () => {
 		layer.width.set(4);
 		expect(mockManager.map.setPaintProperty).toHaveBeenCalledWith('test-layer', 'line-width', 4);
-		expect(mockManager.saveState).toHaveBeenCalled();
 	});
 
 	it('should update line visibility correctly', () => {
@@ -65,7 +63,6 @@ describe('MapLayerLine', () => {
 			'visibility',
 			'none'
 		);
-		expect(mockManager.saveState).toHaveBeenCalled();
 	});
 
 	it('should update line dash pattern correctly', () => {
@@ -75,7 +72,6 @@ describe('MapLayerLine', () => {
 			'line-dasharray',
 			[2, 4]
 		);
-		expect(mockManager.saveState).toHaveBeenCalled();
 	});
 
 	it('should return correct state object', () => {

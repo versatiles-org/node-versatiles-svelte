@@ -49,7 +49,7 @@ export abstract class AbstractElement {
 	}
 
 	abstract destroy(): void;
-	abstract getFeature(includeProperties: boolean): GeoJSON.Feature;
+	abstract getFeature(includeProperties?: boolean): GeoJSON.Feature;
 	abstract getSelectionNodes(): SelectionNode[];
 	abstract getSelectionNodeUpdater(
 		properties?: Record<string, unknown>

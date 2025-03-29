@@ -5,9 +5,10 @@ import { LineElement } from './element/line.js';
 import type { SelectionNode } from './element/types.js';
 import { PolygonElement } from './element/polygon.js';
 import { Cursor } from './cursor.js';
-import type { StateObject } from './state/types.js';
 import { SymbolLibrary } from './symbols.js';
-import { State } from './state/index.js';
+import { StateReader } from './state/reader.js';
+import { StateWriter } from './state/writer.js';
+import type { StateObject } from './state/types.js';
 
 export type ExtendedGeoJSON = GeoJSON.FeatureCollection & {
 	map?: { center: [number, number]; zoom: number };
@@ -20,7 +21,6 @@ export class GeometryManager {
 	public readonly canvas: HTMLElement;
 	public readonly cursor: Cursor;
 	public readonly symbolLibrary: SymbolLibrary;
-	public readonly state = new State(this);
 
 	private readonly selectionNodes: maplibregl.GeoJSONSource;
 
@@ -67,7 +67,6 @@ export class GeometryManager {
 			if (e.originalEvent.shiftKey) {
 				selectedNode.delete();
 				this.drawSelectionNodes();
-				this.state.save();
 			} else {
 				const onMove = (e: maplibregl.MapMouseEvent) => {
 					e.preventDefault();
@@ -76,10 +75,7 @@ export class GeometryManager {
 				};
 
 				map.on('mousemove', onMove);
-				map.once('mouseup', () => {
-					this.state.save();
-					map.off('mousemove', onMove);
-				});
+				map.once('mouseup', () => map.off('mousemove', onMove));
 			}
 		});
 
@@ -95,11 +91,12 @@ export class GeometryManager {
 			e.preventDefault();
 		});
 
-		map.on('moveend', () => this.state.save());
-
 		const hash = location.hash.slice(1);
-		if (hash) this.state.load(hash);
-		addEventListener('hashchange', () => this.state.load(location.hash.slice(1)));
+		if (hash) {
+			this.loadFromHash(hash);
+			location.hash = '';
+		}
+		addEventListener('hashchange', () => this.loadFromHash(location.hash.slice(1)));
 	}
 
 	public selectElement(element: AbstractElement | undefined) {
@@ -122,10 +119,6 @@ export class GeometryManager {
 		});
 	}
 
-	public saveState() {
-		this.state.save();
-	}
-
 	public getState(): StateObject {
 		const center = this.map.getCenter();
 		return {
@@ -145,7 +138,6 @@ export class GeometryManager {
 			elements.forEach((e) => e.destroy());
 			return [];
 		});
-		this.state.save();
 
 		if (state.map?.zoom) this.map.setZoom(state.map.zoom);
 		if (state.map?.point)
@@ -171,23 +163,39 @@ export class GeometryManager {
 		}
 	}
 
+	public async getHash(): Promise<string> {
+		const writer = new StateWriter();
+		writer.writeObject(this.getState());
+		return await writer.getBase64compressed();
+	}
+
+	public async loadFromHash(hash: string) {
+		if (!hash) return;
+		try {
+			const state = (await StateReader.fromBase64compressed(hash)).readObject();
+			this.setState(state);
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
 	public getElement(index: number): AbstractElement {
 		return get(this.elements)[index];
 	}
 
-	public addNewMarker(): AbstractElement {
+	public addNewMarker(): MarkerElement {
 		const element = new MarkerElement(this);
 		this.appendElement(element);
 		return element;
 	}
 
-	public addNewLine(): AbstractElement {
+	public addNewLine(): LineElement {
 		const element = new LineElement(this);
 		this.appendElement(element);
 		return element;
 	}
 
-	public addNewPolygon(): AbstractElement {
+	public addNewPolygon(): PolygonElement {
 		const element = new PolygonElement(this);
 		this.appendElement(element);
 		return element;
@@ -195,13 +203,11 @@ export class GeometryManager {
 
 	private appendElement(element: AbstractElement) {
 		this.elements.update((elements) => [...elements, element]);
-		this.state.save();
 	}
 
 	public removeElement(element: AbstractElement) {
 		if (get(this.selectedElement) === element) this.selectElement(undefined);
 		this.elements.update((elements) => elements.filter((e) => e !== element));
-		this.state.save();
 	}
 
 	public getGeoJSON(): GeoJSON.FeatureCollection {
@@ -246,6 +252,5 @@ export class GeometryManager {
 			}
 			this.appendElement(element);
 		}
-		this.state.save();
 	}
 }

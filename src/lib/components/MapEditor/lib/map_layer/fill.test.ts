@@ -43,7 +43,6 @@ describe('MapLayerFill', () => {
 			'fill-color',
 			'rgb(0,255,0)'
 		);
-		expect(mockManager.saveState).toHaveBeenCalled();
 	});
 
 	it('should update opacity correctly', () => {
@@ -53,12 +52,10 @@ describe('MapLayerFill', () => {
 			'fill-opacity',
 			0.5
 		);
-		expect(mockManager.saveState).toHaveBeenCalled();
 	});
 
 	it('should update fill pattern correctly', () => {
 		layer.pattern.set(1);
-		expect(mockManager.saveState).toHaveBeenCalled();
 	});
 
 	it('should remove and add new fill pattern image when pattern changes', () => {

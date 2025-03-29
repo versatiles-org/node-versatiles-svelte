@@ -95,35 +95,18 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 			}
 		);
 
-		this.color.subscribe((v) => {
-			this.updatePaint('icon-color', Color.parse(v));
-			this.manager.saveState();
-		});
+		this.color.subscribe((v) => this.updatePaint('icon-color', Color.parse(v)));
 		this.halo.subscribe((v) => {
 			this.updatePaint('icon-halo-width', v);
 			this.updatePaint('text-halo-width', v);
-			this.manager.saveState();
 		});
-		this.label.subscribe((v) => {
-			this.updateLayout('text-field', v);
-			this.manager.saveState();
-		});
-		this.textAnchor.subscribe((v) => {
-			this.updateLayout('text-anchor', v);
-			this.manager.saveState();
-		});
-		this.textVariableAnchor.subscribe((v) => {
-			this.updateLayout('text-variable-anchor', v);
-			this.manager.saveState();
-		});
-		this.rotate.subscribe((v) => {
-			this.updateLayout('icon-rotate', v);
-			this.manager.saveState();
-		});
+		this.label.subscribe((v) => this.updateLayout('text-field', v));
+		this.textAnchor.subscribe((v) => this.updateLayout('text-anchor', v));
+		this.textVariableAnchor.subscribe((v) => this.updateLayout('text-variable-anchor', v));
+		this.rotate.subscribe((v) => this.updateLayout('icon-rotate', v));
 		this.size.subscribe((v) => {
 			this.updateLayout('icon-size', v);
 			this.updateLayout('text-size', v * 16);
-			this.manager.saveState();
 		});
 		this.symbolInfo.subscribe((v) => {
 			if (v.image == null) {
@@ -132,7 +115,6 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 				this.updateLayout('icon-image', v.image);
 				this.updateLayout('icon-offset', v.offset);
 			}
-			this.manager.saveState();
 		});
 	}
 

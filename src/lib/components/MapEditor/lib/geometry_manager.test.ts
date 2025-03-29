@@ -4,6 +4,7 @@ import { MarkerElement } from './element/marker.js';
 import { LineElement } from './element/line.js';
 import { PolygonElement } from './element/polygon.js';
 import { LngLat, MockMap, type MaplibreMap } from '../../../__mocks__/map.js';
+import { get } from 'svelte/store';
 
 describe('GeometryManager', () => {
 	let mockMap: MockMap;
@@ -12,7 +13,6 @@ describe('GeometryManager', () => {
 	beforeEach(() => {
 		mockMap = new MockMap();
 		manager = new GeometryManager(mockMap as unknown as MaplibreMap);
-		manager.state.pause = true;
 	});
 
 	it('should initialize correctly', () => {
@@ -47,10 +47,40 @@ describe('GeometryManager', () => {
 		expect(manager.selectElement).toHaveBeenCalledWith(undefined);
 	});
 
-	it('should return correct state', () => {
-		const state = manager.getState();
-		expect(state.map).toBeDefined();
-		expect(state.elements).toBeDefined();
+	describe('state', () => {
+		it('should return correct state', async () => {
+			expect(manager.getState()).toStrictEqual({
+				elements: [],
+				map: { point: [0, 0], zoom: 10 }
+			});
+			expect(await manager.getHash()).toBe('45JjYPA5wcjAAAA=');
+
+			let marker = manager.addNewMarker();
+			marker.point = [12, 34];
+			marker.layer.label.set('Test');
+			expect(manager.getState()).toStrictEqual({
+				elements: [
+					{
+						point: [12, 34],
+						style: { label: 'Test' },
+						type: 'marker'
+					}
+				],
+				map: { point: [0, 0], zoom: 10 }
+			});
+			expect(await manager.getHash()).toBe('45JjYPA5wcggwmjEINewbxJjQ+t8Zm4blpDU4hIGBgYA');
+		});
+
+		it('should restore from state correctly', async () => {
+			await manager.loadFromHash('45JjYPA5wcggwmjEINewbxJjQ+t8Zm4blpDU4hIGBgYA');
+			const elements = get(manager.elements);
+			expect(elements.length).toBe(1);
+			expect(elements[0].getState()).toStrictEqual({
+				point: [12, 34],
+				style: { label: 'Test' },
+				type: 'marker'
+			});
+		});
 	});
 
 	describe('JSON', () => {

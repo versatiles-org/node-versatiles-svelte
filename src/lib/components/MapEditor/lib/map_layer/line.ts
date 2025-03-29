@@ -38,22 +38,10 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 			}
 		);
 
-		this.color.subscribe((v) => {
-			this.updatePaint('line-color', Color.parse(v));
-			this.manager.saveState();
-		});
-		this.dashArray.subscribe((v) => {
-			this.updatePaint('line-dasharray', v);
-			this.manager.saveState();
-		});
-		this.visible.subscribe((v) => {
-			this.updateLayout('visibility', v ? 'visible' : 'none');
-			this.manager.saveState();
-		});
-		this.width.subscribe((v) => {
-			this.updatePaint('line-width', v);
-			this.manager.saveState();
-		});
+		this.color.subscribe((v) => this.updatePaint('line-color', Color.parse(v)));
+		this.dashArray.subscribe((v) => this.updatePaint('line-dasharray', v));
+		this.visible.subscribe((v) => this.updateLayout('visibility', v ? 'visible' : 'none'));
+		this.width.subscribe((v) => this.updatePaint('line-width', v));
 	}
 
 	getState(): StateObject | undefined {
