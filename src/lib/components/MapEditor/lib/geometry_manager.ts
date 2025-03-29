@@ -7,7 +7,7 @@ import { PolygonElement } from './element/polygon.js';
 import { Cursor } from './cursor.js';
 import { SymbolLibrary } from './symbols.js';
 import type { StateObject } from './state/types.js';
-import { StateManager } from './state/index.js';
+import { StateManager } from './state/manager.js';
 
 export type ExtendedGeoJSON = GeoJSON.FeatureCollection & {
 	map?: { center: [number, number]; zoom: number };
