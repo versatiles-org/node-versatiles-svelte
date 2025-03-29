@@ -6,9 +6,8 @@ import type { SelectionNode } from './element/types.js';
 import { PolygonElement } from './element/polygon.js';
 import { Cursor } from './cursor.js';
 import { SymbolLibrary } from './symbols.js';
-import { StateReader } from './state/reader.js';
-import { StateWriter } from './state/writer.js';
 import type { StateObject } from './state/types.js';
+import { StateManager } from './state/index.js';
 
 export type ExtendedGeoJSON = GeoJSON.FeatureCollection & {
 	map?: { center: [number, number]; zoom: number };
@@ -21,6 +20,7 @@ export class GeometryManager {
 	public readonly canvas: HTMLElement;
 	public readonly cursor: Cursor;
 	public readonly symbolLibrary: SymbolLibrary;
+	public readonly state = new StateManager(this);
 
 	private readonly selectionNodes: maplibregl.GeoJSONSource;
 
@@ -90,13 +90,6 @@ export class GeometryManager {
 			if (!e.originalEvent.shiftKey) this.selectElement(undefined);
 			e.preventDefault();
 		});
-
-		const hash = location.hash.slice(1);
-		if (hash) {
-			this.loadFromHash(hash);
-			location.hash = '';
-		}
-		addEventListener('hashchange', () => this.loadFromHash(location.hash.slice(1)));
 	}
 
 	public selectElement(element: AbstractElement | undefined) {
@@ -160,22 +153,6 @@ export class GeometryManager {
 				}
 			});
 			this.elements.set(elements);
-		}
-	}
-
-	public async getHash(): Promise<string> {
-		const writer = new StateWriter();
-		writer.writeObject(this.getState());
-		return await writer.getBase64compressed();
-	}
-
-	public async loadFromHash(hash: string) {
-		if (!hash) return;
-		try {
-			const state = (await StateReader.fromBase64compressed(hash)).readObject();
-			this.setState(state);
-		} catch (error) {
-			console.error(error);
 		}
 	}
 

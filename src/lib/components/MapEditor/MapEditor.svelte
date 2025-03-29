@@ -20,6 +20,9 @@
 		map.on('load', async () => {
 			const { GeometryManager } = await import('./lib/geometry_manager.js');
 			geometryManager = new GeometryManager(map!);
+			const hash = location.hash.slice(1);
+			if (hash) geometryManager.state.setHash(hash);
+			addEventListener('hashchange', () => geometryManager!.state.setHash(location.hash.slice(1)));
 		});
 	}
 </script>
