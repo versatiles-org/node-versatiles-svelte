@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { MarkerElement } from './marker.js';
 import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
 import type { GeometryManager } from '../geometry_manager.js';
-import type { StateObject } from '../state/types.js';
+import type { StateElementMarker } from '../state/types.js';
 import type { ElementPoint } from './types.js';
 
 describe('MarkerElement', () => {
@@ -77,7 +77,7 @@ describe('MarkerElement', () => {
 	});
 
 	it('should restore from state correctly', () => {
-		const state: StateObject = {
+		const state: StateElementMarker = {
 			type: 'marker',
 			point: [10, 20],
 			style: { color: '#00ff00' }

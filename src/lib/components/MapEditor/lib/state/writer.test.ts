@@ -1,163 +1,197 @@
 import { describe, it, expect } from 'vitest';
 import { StateWriter } from './writer.js';
-import type { StateObject } from './types.js';
+import { StateReader } from './reader.js';
 
 describe('StateWriter', () => {
-	it('should write bytes correctly', () => {
+	it('should initialize with an empty bits array', () => {
 		const writer = new StateWriter();
-		writer.writeByte(10);
-		writer.writeByte(20);
-		writer.writeByte(30);
-
-		expect(writer.getBase64()).toBe(btoa(String.fromCharCode(10, 20, 30)));
+		expect(writer.asBitString()).toBe('');
 	});
 
-	it('should write integers correctly (varint encoding with ZigZag)', () => {
+	it('should write a single bit correctly', () => {
 		const writer = new StateWriter();
-		writer.writeSignedInteger(1);
-		writer.writeSignedInteger(133);
-		writer.writeSignedInteger(-42);
-		expect(writer.getBuffer()).toStrictEqual(new Uint8Array([2, 138, 2, 83]));
+		writer.writeBit(true);
+		expect(writer.asBitString()).toBe('1');
+		writer.writeBit(false);
+		expect(writer.asBitString()).toBe('10');
 	});
 
-	it('should write strings correctly', () => {
+	it('should write an integer correctly', () => {
 		const writer = new StateWriter();
-		writer.writeString('Hello');
-		expect(writer.getBuffer()).toStrictEqual(new Uint8Array([0x05, 72, 101, 108, 108, 111]));
+		writer.writeInteger(3, 4);
+		expect(writer.asBitString()).toBe('0011');
 	});
 
-	it('should correctly handle base64 encoding', () => {
-		const writer = new StateWriter();
-		writer.writeByte(255);
-		writer.writeByte(128);
-		writer.writeByte(63);
-		expect(writer.getBase64()).toBe(btoa(String.fromCharCode(255, 128, 63)));
+	it('should write signed varint correctly', () => {
+		function test(value: number): string {
+			const writer = new StateWriter();
+			writer.writeVarint(value, true);
+			return writer.asBitString();
+		}
+		expect(test(-16)).toBe('111110');
+		expect(test(-8)).toBe('011110');
+		expect(test(-4)).toBe('001110');
+		expect(test(-2)).toBe('000110');
+		expect(test(-1)).toBe('000010');
+		expect(test(0)).toBe('000000');
+		expect(test(1)).toBe('000100');
+		expect(test(2)).toBe('001000');
+		expect(test(4)).toBe('010000');
+		expect(test(8)).toBe('100000');
+
+		expect(test(-32)).toBe('111111000010');
+		expect(test(16)).toBe('000001000010');
+		expect(test(32)).toBe('000001000100');
 	});
 
-	it('should correctly handle compressed base64 encoding', async () => {
+	it('should write a signed varint correctly', () => {
 		const writer = new StateWriter();
-		writer.writeSignedInteger(1234567);
-		writer.writeString('please compress, compress, compress, compress, compress, compress me');
-		expect(await writer.getBase64compressed()).toStrictEqual(
-			'67s1jdGlICc1sThVITk/t6AotbhYh2SWQm4qAA=='
+		writer.writeVarint(-5, true); // Encoded as signed varint
+		expect(writer.asBitString()).toBe('010010'); // Example encoding
+	});
+
+	it('should write an array correctly', () => {
+		const writer = new StateWriter();
+		writer.writeArray([1, 2, 3], (value) => writer.writeInteger(value, 3));
+		expect(writer.asBitString()).toBe('000110001010011'); // Example encoding
+	});
+
+	describe('writePoint', () => {
+		it('should write a point correctly', () => {
+			const writer = new StateWriter();
+			writer.writePoint([0, 0]);
+			expect(writer.asBase64()).toBe('AAAAAAAAA');
+		});
+
+		it('should write SW correctly', () => {
+			const writer = new StateWriter();
+			writer.writePoint([-180, -90], -2);
+			expect(writer.asBitString()).toBe('10100110010100110');
+
+			const reader = new StateReader(writer.bits);
+			expect(reader.readInteger(9, true)).toBe(-180);
+			expect(reader.readInteger(8, true)).toBe(-90);
+		});
+
+		it('should write NE correctly', () => {
+			const writer = new StateWriter();
+			writer.writePoint([180, 90], -2);
+			expect(writer.asBitString()).toBe('01011010001011010');
+
+			const reader = new StateReader(writer.bits);
+			expect(reader.readInteger(9, true)).toBe(180);
+			expect(reader.readInteger(8, true)).toBe(90);
+		});
+	});
+
+	it('should write multiple points correctly', () => {
+		const writer = new StateWriter();
+		writer.writePoints([
+			[0, 0],
+			[1, 1]
+		]);
+		expect(writer.asBase64()).toBe('EAABBBIBBBI');
+	});
+
+	it('should write a root object correctly', () => {
+		const writer = new StateWriter();
+		writer.writeRoot({
+			map_zoom: 10,
+			map_center: [1, 2],
+			elements: [
+				{
+					type: 'marker',
+					point: [3, 4],
+					style: { halo: 1.5, opacity: 0.8, color: '#ff0000' }
+				},
+				{
+					type: 'line',
+					points: [
+						[5, 6],
+						[7, 8]
+					],
+					style: { halo: 1.5, opacity: 0.8, color: '#00ff00' }
+				},
+				{
+					type: 'polygon',
+					points: [
+						[9, 10],
+						[11, 12],
+						[13, 14]
+					],
+					style: { halo: 1.5, opacity: 0.8, color: '#0000ff' },
+					strokeStyle: { halo: 1.5, opacity: 0.8, color: '#ffff00' }
+				}
+			]
+		});
+		expect(writer.asBase64()).toBe(
+			'UAAgAAQACAwAABAAAi8UIkf4AAAhAQQaAQQcAQQUAQQUIvFCJAB_gAMYEEEkIEEFEIEEFAEEFAEEFAEEFCLxQiQAAH-CLxQiR__4AA'
 		);
 	});
 
-	it('should expand buffer size correctly when needed', () => {
-		const chunkSize = 70000;
+	it('should write an empty root object correctly', () => {
 		const writer = new StateWriter();
-		for (let i = 0; i < chunkSize + 10; i++) {
-			writer.writeByte(255);
-		}
-		expect(writer.buffer.length).toBeGreaterThan(chunkSize);
+		writer.writeRoot({
+			map_zoom: 0,
+			map_center: [0, 0],
+			elements: []
+		});
+		expect(writer.asBitString()).toBe('000000000000000000000000000000000');
 	});
 
-	describe('writeObject', () => {
-		it('should write an empty object (only the terminating 0)', () => {
+	it('should write a style correctly', () => {
+		const writer = new StateWriter();
+		writer.writeStyle({
+			halo: 1.5,
+			opacity: 0.8,
+			pattern: 3,
+			rotate: -45,
+			size: 2.5,
+			width: 2.3,
+			align: 4,
+			label: 'test',
+			invisible: true,
+			color: '#ff0000'
+		});
+		expect(writer.asBase64()).toBe('F4oRDGTMRcmuciP8AAEkCBHCUA');
+	});
+
+	it('should write a RGB color correctly', () => {
+		const writer = new StateWriter();
+		writer.writeColor('#ff0000');
+		expect(writer.asBase64()).toBe('_wAAA');
+	});
+
+	it('should write a RGBA color correctly', () => {
+		const writer = new StateWriter();
+		writer.writeColor('#ff000080');
+		expect(writer.asBase64()).toBe('_wAAwA');
+	});
+
+	describe('writeString', () => {
+		it('should write a string correctly', () => {
 			const writer = new StateWriter();
-			writer.writeObject({});
-			expect(writer.getBuffer()).toStrictEqual(new Uint8Array([0]));
+			writer.writeString('Teddy: 🧸');
+			expect(writer.asBase64()).toBe('S4CUUmNEA9DtCxfvC');
 		});
 
-		it('should throw error for unknown keys', () => {
-			const writer = new StateWriter();
-			expect(() =>
-				writer.writeObject({ unknownKey: 'someValue' } as unknown as StateObject)
-			).toThrowError(/Invalid state key: unknownKey/);
-		});
+		it('should have to correct bit length', () => {
+			function test(text: string) {
+				const writer = new StateWriter();
+				writer.writeString(text);
+				return writer.bits.length;
+			}
 
-		it('should write nested objects (map, style, strokeStyle)', () => {
-			const writer = new StateWriter();
-			writer.writeObject({ map: { zoom: 3 }, style: {}, strokeStyle: { color: '#123' } });
-			expect(writer.getBuffer()).toStrictEqual(
-				new Uint8Array([10, 76, 60, 0, 11, 0, 12, 40, 17, 34, 51, 0, 0])
-			);
+			expect(test('')).toBe(6);
+			expect(test('T')).toBe(12);
+			expect(test('ä')).toBe(18);
+			expect(test('🧸')).toBe(54);
 		});
+	});
 
-		it('should write "elements" properly (array of objects)', () => {
-			const writer = new StateWriter();
-			writer.writeObject({ elements: [{ type: 'marker' }, { type: 'line' }] });
-			expect(writer.getBuffer()).toStrictEqual(new Uint8Array([20, 2, 50, 0, 0, 50, 1, 0, 0]));
-		});
-
-		it('should write a single point (two coordinates) correctly', () => {
-			const writer = new StateWriter();
-			writer.writeObject({ point: [1.23456, -2.34567] });
-			expect(writer.getBuffer()).toStrictEqual(new Uint8Array([30, 128, 137, 15, 141, 209, 28, 0]));
-		});
-
-		it('should reject invalid "point" (not exactly length 2)', () => {
-			const writer = new StateWriter();
-			expect(() => writer.writeObject({ point: [1, 2, 3] } as unknown as StateObject)).toThrowError(
-				/Invalid point/
-			);
-		});
-
-		it('should write a "points" array with differential encoding', () => {
-			const writer = new StateWriter();
-			writer.writeObject({
-				points: [
-					[0, 0],
-					[1.23456, 2.34567],
-					[2.23456, 3.34567]
-				]
-			});
-			expect(writer.getBuffer()).toStrictEqual(
-				new Uint8Array([31, 3, 0, 128, 137, 15, 192, 154, 12, 0, 142, 209, 28, 192, 154, 12, 0])
-			);
-		});
-
-		it('should write "color" correctly', () => {
-			const writer = new StateWriter();
-			writer.writeObject({ color: 'rgb(12,34,56)' });
-			expect(writer.getBuffer()).toStrictEqual(new Uint8Array([40, 12, 34, 56, 0]));
-		});
-
-		it('should write "type" with allowed values', () => {
-			const writer = new StateWriter();
-			writer.writeObject({ type: 'marker' });
-			expect(writer.getBuffer()).toStrictEqual(new Uint8Array([50, 0, 0]));
-		});
-
-		it('should throw error on invalid "type"', () => {
-			const writer = new StateWriter();
-			expect(() => writer.writeObject({ type: 'circle' } as unknown as StateObject)).toThrowError(
-				/Invalid type/
-			);
-		});
-
-		it('should write a string label', () => {
-			const writer = new StateWriter();
-			writer.writeObject({ label: 'TestLabel' });
-			expect(writer.getBuffer()).toStrictEqual(
-				new Uint8Array([60, 9, 84, 101, 115, 116, 76, 97, 98, 101, 108, 0])
-			);
-		});
-
-		it('should handle numeric fields (halo, opacity, etc.)', () => {
-			const writer = new StateWriter();
-			writer.writeObject({ halo: 5, opacity: 123, rotate: -30 });
-			expect(writer.getBuffer()).toStrictEqual(new Uint8Array([70, 50, 71, 140, 96, 73, 59, 0]));
-		});
-
-		it('should throw error if numeric fields are negative', () => {
-			const writer = new StateWriter();
-			expect(() => writer.writeObject({ halo: -1 } as unknown as StateObject)).toThrow(
-				/Negative Number/
-			);
-		});
-
-		it('should recursively write nested objects and terminate properly', () => {
-			const writer = new StateWriter();
-			writer.writeObject({
-				map: { style: { type: 'polygon', color: '#000000' } },
-				elements: [{ label: 'One', color: '#ffffff' }]
-			});
-			expect(writer.getBuffer()).toStrictEqual(
-				new Uint8Array([
-					10, 11, 50, 2, 40, 0, 0, 0, 0, 0, 20, 1, 60, 3, 79, 110, 101, 40, 255, 255, 255, 0, 0
-				])
-			);
-		});
+	it('should convert bits to Base64 correctly', () => {
+		const writer = new StateWriter();
+		writer.writeInteger(63, 6);
+		expect(writer.asBase64()).toBe('_');
 	});
 });

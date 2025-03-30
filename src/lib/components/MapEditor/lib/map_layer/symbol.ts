@@ -3,7 +3,7 @@ import type { LayerSymbol } from './types.js';
 import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
-import type { StateObject } from '../state/types.js';
+import type { StateStyle } from '../state/types.js';
 import { getSymbol, getSymbolIndexByName } from '../symbols.js';
 import { removeDefaultFields } from '../utils.js';
 
@@ -118,7 +118,7 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 		});
 	}
 
-	getState(): StateObject | undefined {
+	getState(): StateStyle | undefined {
 		return removeDefaultFields(
 			{
 				color: get(this.color),
@@ -133,7 +133,7 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 		);
 	}
 
-	setState(state: StateObject) {
+	setState(state: StateStyle) {
 		if (state.color) this.color.set(state.color);
 		if (state.rotate) this.rotate.set(state.rotate);
 		if (state.size) this.size.set(state.size);

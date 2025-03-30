@@ -8,16 +8,16 @@ export class StateManager {
 		this.geometryManager = geometryManager;
 	}
 
-	public async getHash(): Promise<string> {
+	public getHash(): string {
 		const writer = new StateWriter();
-		writer.writeObject(this.geometryManager.getState());
-		return await writer.getBase64compressed();
+		writer.writeRoot(this.geometryManager.getState());
+		return writer.asBase64();
 	}
 
-	public async setHash(hash: string) {
+	public setHash(hash: string) {
 		if (!hash) return;
 		try {
-			const state = (await StateReader.fromBase64compressed(hash)).readObject();
+			const state = StateReader.fromBase64(hash).readRoot();
 			this.geometryManager.setState(state);
 		} catch (error) {
 			console.error(error);

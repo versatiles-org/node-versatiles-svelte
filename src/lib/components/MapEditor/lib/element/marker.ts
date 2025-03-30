@@ -2,7 +2,7 @@ import { AbstractElement } from './abstract.js';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { ElementPoint, SelectionNode, SelectionNodeUpdater } from './types.js';
 import { MapLayerSymbol } from '../map_layer/symbol.js';
-import type { StateObject } from '../state/types.js';
+import type { StateElementMarker } from '../state/types.js';
 
 export class MarkerElement extends AbstractElement {
 	public readonly layer: MapLayerSymbol;
@@ -54,7 +54,7 @@ export class MarkerElement extends AbstractElement {
 		this.map.removeSource(this.sourceId);
 	}
 
-	getState(): StateObject {
+	getState(): StateElementMarker {
 		return {
 			type: 'marker',
 			point: this.point,
@@ -62,7 +62,7 @@ export class MarkerElement extends AbstractElement {
 		};
 	}
 
-	static fromState(manager: GeometryManager, state: StateObject) {
+	static fromState(manager: GeometryManager, state: StateElementMarker) {
 		const element = new MarkerElement(manager, state.point);
 		if (state.style) element.layer.setState(state.style);
 		return element;

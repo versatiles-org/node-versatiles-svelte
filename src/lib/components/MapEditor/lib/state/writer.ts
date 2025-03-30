@@ -1,206 +1,207 @@
 import { Color } from '@versatiles/style';
-import { compress, uint8ArrayToBase64 } from '../utils.js';
-import type { StateObject } from './types.js';
-
-const chunkSize = 65536;
+import { BASE64_CHARS, CHAR_CODE2VALUE } from './constants.js';
+import { StateReader } from './reader.js';
+import type {
+	StateElementLine,
+	StateElementMarker,
+	StateElementPolygon,
+	StateRoot,
+	StateStyle
+} from './types.js';
 
 export class StateWriter {
-	public buffer = new Uint8Array(chunkSize);
-	public offset = 0;
+	bits: boolean[] = [];
 
 	constructor() {}
 
-	writeByte(num: number) {
-		if (this.offset >= this.buffer.length) {
-			const newBuffer = new Uint8Array(this.buffer.length + chunkSize);
-			newBuffer.set(this.buffer);
-			this.buffer = newBuffer;
+	asBase64(): string {
+		const reader = new StateReader(this.bits);
+		const chars = [];
+		while (!reader.ended()) {
+			chars.push(BASE64_CHARS[reader.read6pack()]);
 		}
-		this.buffer[this.offset++] = num;
+		return chars.join('');
 	}
 
-	writeUnsignedInteger(i: number) {
-		if (!Number.isSafeInteger(i)) {
-			throw new RangeError(`Number out of safe integer range: ${i}`);
+	asBitString(): string {
+		return this.bits.map((bit) => (bit ? '1' : '0')).join('');
+	}
+
+	writeBit(value: boolean) {
+		this.bits.push(value);
+	}
+
+	writeInteger(value: number, bits: number) {
+		if (value % 1 !== 0) throw new Error('value must be an integer');
+		for (let i = bits - 1; i >= 0; i--) {
+			this.bits.push((value & (1 << i)) > 0);
 		}
-		while (i > 0x7f) {
-			this.writeByte((i & 0x7f) | 0x80);
-			i >>>= 7;
+		return value;
+	}
+
+	writeVarint(value: number, signed?: true) {
+		if (value % 1 !== 0) throw new Error('value must be an integer');
+
+		if (signed) {
+			value = value < 0 ? ((-1 - value) << 1) | 1 : value << 1;
+		} else {
+			if (value < 0) throw new Error('Unsigned varint cannot be negative');
 		}
-		this.writeByte(i);
-	}
-
-	writeSignedInteger(i: number) {
-		if (!Number.isSafeInteger(i)) {
-			throw new RangeError(`Number out of safe integer range: ${i}`);
+		while (true) {
+			this.writeInteger(value & 0x1f, 5);
+			value >>= 5;
+			this.writeBit(value >= 1);
+			if (value < 1) break;
 		}
-		this.writeUnsignedInteger(i < 0 ? -i * 2 - 1 : i * 2);
 	}
 
-	writeString(str: string) {
-		const length = str.length;
-		this.writeUnsignedInteger(length);
-		for (let i = 0; i < length; i++) this.writeUnsignedInteger(str.charCodeAt(i));
+	writeArray<T>(array: T[], cb: (v: T) => void) {
+		const length = array.length;
+		this.writeVarint(length);
+		for (let i = 0; i < length; i++) cb(array[i]);
 	}
 
-	writeBoolean(b: boolean) {
-		this.writeByte(b ? 1 : 0);
+	writePoint(point: [number, number], level: number = 14) {
+		const scale = Math.pow(2, level + 2);
+		this.writeInteger(Math.round(point[0] * scale), level + 11);
+		this.writeInteger(Math.round(point[1] * scale), level + 10);
 	}
 
-	getBase64(): string {
-		return uint8ArrayToBase64(this.getBuffer());
+	writePoints(points: [number, number][], level: number = 14) {
+		this.writeVarint(points.length);
+		const scale = Math.pow(2, level + 2);
+		let x = 0;
+		let y = 0;
+		points.forEach((point) => {
+			const xi = Math.round(point[0] * scale);
+			const yi = Math.round(point[1] * scale);
+			this.writeVarint(xi - x, true);
+			this.writeVarint(yi - y, true);
+			x = xi;
+			y = yi;
+		});
 	}
 
-	async getBase64compressed(): Promise<string> {
-		return uint8ArrayToBase64(await compress(this.getBuffer()));
-	}
-
-	getBuffer(): Uint8Array {
-		return this.buffer.slice(0, this.offset);
-	}
-
-	writeObject(state: StateObject) {
-		// eslint-disable-next-line @typescript-eslint/no-this-alias
-		const me = this;
-
-		Object.entries(state).forEach(([key, value]: [string, unknown]) => {
-			if (value == null) return;
-			switch (key) {
-				case 'map':
-					writeObject(10, value);
+	writeRoot(root: StateRoot) {
+		this.writeInteger(Math.round(root.map_zoom * 32), 10);
+		this.writePoint(root.map_center, Math.ceil(root.map_zoom));
+		root.elements.forEach((element) => {
+			switch (element.type) {
+				case 'marker':
+					this.writeInteger(1, 2);
+					this.writeElementMarker(element);
 					break;
-				case 'style':
-					writeObject(11, value);
+				case 'line':
+					this.writeInteger(2, 2);
+					this.writeElementLine(element);
 					break;
-				case 'strokeStyle':
-					writeObject(12, value);
+				case 'polygon':
+					this.writeInteger(3, 2);
+					this.writeElementPolygon(element);
 					break;
-
-				case 'elements':
-					if (!Array.isArray(value)) throw new Error(`Invalid elements: ${value}`);
-					if (value.length === 0) return;
-					this.writeByte(20);
-					this.writeUnsignedInteger(value.length);
-					value.forEach((element: StateObject) => this.writeObject(element));
-					break;
-
-				case 'point':
-					if (!Array.isArray(value) || value.length !== 2)
-						throw new Error(`Invalid point: ${value}`);
-					this.writeByte(30);
-					me.writeSignedInteger(Math.round(value[0] * 1e5));
-					me.writeSignedInteger(Math.round(value[1] * 1e5));
-					break;
-
-				case 'points':
-					if (!Array.isArray(value)) throw new Error(`Invalid points: ${value}`);
-					if (value.length === 0) return;
-					this.writeByte(31);
-					this.writeUnsignedInteger(value.length);
-					this.writeDifferential(value.map((p) => Math.round(p[0] * 1e5)));
-					this.writeDifferential(value.map((p) => Math.round(p[1] * 1e5)));
-					break;
-
-				case 'color':
-					this.writeByte(40);
-					this.writeColor(value);
-					break;
-
-				case 'type':
-					this.writeByte(50);
-					switch (value) {
-						case 'marker':
-							this.writeByte(0);
-							break;
-						case 'line':
-							this.writeByte(1);
-							break;
-						case 'polygon':
-							this.writeByte(2);
-							break;
-						default:
-							throw new Error(`Invalid type: ${value}`);
-					}
-					break;
-
-				case 'label':
-					if (typeof value !== 'string') throw new Error(`Invalid string: ${value}`);
-					this.writeByte(60);
-					this.writeString(value);
-					break;
-
-				case 'halo':
-					writeInteger(70, value, 10);
-					break;
-				case 'opacity':
-					writeInteger(71, value, 100);
-					break;
-				case 'pattern':
-					writeInteger(72, value);
-					break;
-				case 'rotate':
-					writeSignedInteger(73, value);
-					break;
-				case 'size':
-					writeInteger(74, value, 10);
-					break;
-				case 'width':
-					writeInteger(75, value, 10);
-					break;
-				case 'zoom':
-					writeInteger(76, value, 20);
-					break;
-				case 'align':
-					writeInteger(77, value);
-					break;
-
-				case 'visible':
-					if (typeof value !== 'boolean') throw new Error(`Invalid boolean: ${value}`);
-					this.writeByte(90);
-					this.writeBoolean(value);
-					break;
-
-				default:
-					throw new Error(`Invalid state key: ${key}`);
 			}
 		});
-		this.writeByte(0);
+		this.writeInteger(0, 2);
+	}
 
-		function writeObject(id: number, obj: unknown) {
-			if (typeof obj !== 'object' || obj == null) throw new Error(`Invalid object: ${obj}`);
-			me.writeByte(id);
-			me.writeObject(obj as StateObject);
+	writeElementMarker(element: StateElementMarker) {
+		this.writePoint(element.point);
+		if (element.style) {
+			this.writeBit(true);
+			this.writeStyle(element.style);
+		} else {
+			this.writeBit(false);
 		}
+		return element;
+	}
 
-		function writeInteger(id: number, obj: unknown, factor = 1) {
-			if (typeof obj !== 'number') throw new Error(`Invalid number: ${obj}`);
-			const value = Math.round(obj);
-			if (value < 0) throw new Error(`Negative Number: ${obj}`);
-			me.writeByte(id);
-			me.writeUnsignedInteger(value * factor);
+	writeElementLine(element: StateElementLine) {
+		this.writePoints(element.points);
+		if (element.style) {
+			this.writeBit(true);
+			this.writeStyle(element.style);
+		} else {
+			this.writeBit(false);
 		}
+		return element;
+	}
 
-		function writeSignedInteger(id: number, obj: unknown, factor = 1) {
-			if (typeof obj !== 'number') throw new Error(`Invalid number: ${obj}`);
-			const value = Math.round(obj);
-			me.writeByte(id);
-			me.writeSignedInteger(value * factor);
+	writeElementPolygon(element: StateElementPolygon) {
+		this.writePoints(element.points);
+		if (element.style) {
+			this.writeBit(true);
+			this.writeStyle(element.style);
+		} else {
+			this.writeBit(false);
+		}
+		if (element.strokeStyle) {
+			this.writeBit(true);
+			this.writeStyle(element.strokeStyle);
+		} else {
+			this.writeBit(false);
 		}
 	}
 
-	writeColor(color: unknown) {
-		if (typeof color !== 'string') throw new Error(`Invalid color: ${color}`);
-		const c = Color.parse(color).asRGB().round().asArray();
-		this.writeByte(c[0]);
-		this.writeByte(c[1]);
-		this.writeByte(c[2]);
+	writeStyle(style: StateStyle) {
+		if (style.halo != null) {
+			this.writeInteger(1, 4);
+			this.writeVarint(Math.round(style.halo * 10));
+		}
+		if (style.opacity != null) {
+			this.writeInteger(2, 4);
+			this.writeVarint(Math.round(style.opacity * 100));
+		}
+		if (style.pattern != null) {
+			this.writeInteger(3, 4);
+			this.writeVarint(style.pattern);
+		}
+		if (style.rotate != null) {
+			this.writeInteger(4, 4);
+			this.writeVarint(style.rotate, true);
+		}
+		if (style.size != null) {
+			this.writeInteger(5, 4);
+			this.writeVarint(Math.round(style.size * 10));
+		}
+		if (style.width != null) {
+			this.writeInteger(6, 4);
+			this.writeVarint(Math.round(style.width * 10));
+		}
+		if (style.align != null) {
+			this.writeInteger(7, 4);
+			this.writeVarint(style.align);
+		}
+		if (style.color != null) {
+			this.writeInteger(8, 4);
+			this.writeColor(style.color);
+		}
+		if (style.label != null) {
+			this.writeInteger(9, 4);
+			this.writeString(style.label);
+		}
+		if (style.invisible != null) {
+			this.writeInteger(10, 4);
+		}
+		this.writeInteger(0, 4);
 	}
 
-	writeDifferential(values: number[]) {
-		if (values.length === 0) return;
-		this.writeSignedInteger(values[0]);
-		for (let i = 1; i < values.length; i++) {
-			this.writeSignedInteger(values[i] - values[i - 1]);
+	writeColor(color: string) {
+		const rgb = Color.parse(color).toRGB();
+		this.writeInteger(rgb.r, 8);
+		this.writeInteger(rgb.g, 8);
+		this.writeInteger(rgb.b, 8);
+		if (rgb.a == 1) {
+			this.bits.push(false);
+		} else {
+			this.bits.push(true);
+			this.writeInteger(Math.round(rgb.a * 255), 8);
 		}
+	}
+
+	writeString(value: string) {
+		const charCodes = value.split('').map((c) => c.charCodeAt(0));
+		this.writeVarint(charCodes.length);
+		charCodes.forEach((c) => this.writeVarint(c < 128 ? CHAR_CODE2VALUE[c] : c));
+		return value;
 	}
 }

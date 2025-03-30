@@ -1,43 +1,39 @@
-export interface StateObject {
-	[key: string]:
-		| StateObject
-		| StateObject[]
-		| [number, number]
-		| [number, number][]
-		| string
-		| number
-		| boolean
-		| undefined;
+export interface StateRoot {
+	map_zoom: number;
+	map_center: [number, number];
+	elements: StateElement[];
+}
 
-	/*10*/ map?: StateObject;
-	/*11*/ style?: StateObject;
-	/*12*/ strokeStyle?: StateObject;
+export type StateElement = StateElementMarker | StateElementLine | StateElementPolygon;
 
-	/*20*/ elements?: StateObject[];
+export interface StateElementMarker {
+	type: 'marker';
+	point: [number, number];
+	style?: StateStyle;
+}
 
-	//### FLOATS
-	/*30*/ point?: [number, number];
-	/*31*/ points?: [number, number][];
+export interface StateElementLine {
+	type: 'line';
+	points: [number, number][];
+	style?: StateStyle;
+}
 
-	//### COLORS
-	/*40*/ color?: string;
+export interface StateElementPolygon {
+	type: 'polygon';
+	points: [number, number][];
+	style?: StateStyle;
+	strokeStyle?: StateStyle;
+}
 
-	//### LOOKUPS
-	/*50*/ type?: string;
-
-	//### STRINGS
-	/*60*/ label?: string;
-
-	//### INTEGERS
-	/*70*/ halo?: number;
-	/*71*/ opacity?: number;
-	/*72*/ pattern?: number;
-	/*73*/ rotate?: number;
-	/*74*/ size?: number;
-	/*75*/ width?: number;
-	/*76*/ zoom?: number;
-	/*76*/ align?: number;
-
-	//### BOOLEANS
-	/*90*/ visible?: boolean;
+export interface StateStyle {
+	/*1*/ halo?: number;
+	/*2*/ opacity?: number;
+	/*3*/ pattern?: number;
+	/*4*/ rotate?: number;
+	/*5*/ size?: number;
+	/*6*/ width?: number;
+	/*7*/ align?: number;
+	/*8*/ color?: string;
+	/*9*/ label?: string;
+	/*10*/ invisible?: true;
 }

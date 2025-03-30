@@ -2,6 +2,7 @@ import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { AbstractElement } from './abstract.js';
 import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
 import type { GeometryManager } from '../geometry_manager.js';
+import type { StateElementMarker } from '../state/types.js';
 
 class TestElement extends AbstractElement {
 	constructor(manager: GeometryManager) {
@@ -24,8 +25,8 @@ class TestElement extends AbstractElement {
 		return undefined;
 	}
 
-	getState() {
-		return {};
+	getState(): StateElementMarker {
+		return { type: 'marker', point: [0, 1] };
 	}
 }
 

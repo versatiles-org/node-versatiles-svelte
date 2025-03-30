@@ -3,7 +3,7 @@ import type { LayerFill } from './types.js';
 import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
-import type { StateObject } from '../state/types.js';
+import type { StateStyle } from '../state/types.js';
 import { removeDefaultFields } from '../utils.js';
 
 const size = 32;
@@ -77,7 +77,7 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 		this.opacity.subscribe((value) => this.updatePaint('fill-opacity', value));
 	}
 
-	getState(): StateObject | undefined {
+	getState(): StateStyle | undefined {
 		return removeDefaultFields(
 			{
 				color: get(this.color),
@@ -92,7 +92,7 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 		);
 	}
 
-	setState(state: StateObject) {
+	setState(state: StateStyle) {
 		if (state.color) this.color.set(state.color);
 		if (state.opacity) this.opacity.set(state.opacity);
 		if (state.pattern) this.pattern.set(state.pattern);

@@ -6,8 +6,8 @@ import type { SelectionNode } from './element/types.js';
 import { PolygonElement } from './element/polygon.js';
 import { Cursor } from './cursor.js';
 import { SymbolLibrary } from './symbols.js';
-import type { StateObject } from './state/types.js';
 import { StateManager } from './state/manager.js';
+import type { StateRoot } from './state/types.js';
 
 export type ExtendedGeoJSON = GeoJSON.FeatureCollection & {
 	map?: { center: [number, number]; zoom: number };
@@ -112,18 +112,16 @@ export class GeometryManager {
 		});
 	}
 
-	public getState(): StateObject {
+	public getState(): StateRoot {
 		const center = this.map.getCenter();
 		return {
-			map: {
-				point: [center.lng, center.lat],
-				zoom: this.map.getZoom()
-			},
+			map_center: [center.lng, center.lat],
+			map_zoom: this.map.getZoom(),
 			elements: get(this.elements).map((element) => element.getState())
 		};
 	}
 
-	public setState(state: StateObject) {
+	public setState(state: StateRoot) {
 		if (!state) return;
 
 		this.selectElement(undefined);
@@ -132,12 +130,11 @@ export class GeometryManager {
 			return [];
 		});
 
-		if (state.map?.zoom) this.map.setZoom(state.map.zoom);
-		if (state.map?.point)
-			this.map.setCenter({
-				lng: state.map.point[0],
-				lat: state.map.point[1]
-			});
+		this.map.setZoom(state.map_zoom);
+		this.map.setCenter({
+			lng: state.map_center[0],
+			lat: state.map_center[1]
+		});
 
 		if (state.elements) {
 			const elements = state.elements.map((element) => {

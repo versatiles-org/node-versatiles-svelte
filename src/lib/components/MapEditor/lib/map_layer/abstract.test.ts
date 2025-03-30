@@ -1,13 +1,13 @@
 import { MapLayer } from './abstract.js';
 import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
 import type { LayerFill } from './types.js';
-import type { StateObject } from '../state/types.js';
+import type { StateStyle } from '../state/types.js';
 import { describe, expect, it, beforeEach } from 'vitest';
 import type { GeometryManager } from '../geometry_manager.js';
 
 class TestLayer extends MapLayer<LayerFill> {
-	getState(): StateObject | undefined {
-		return { type: 'fill' };
+	getState(): StateStyle {
+		return { halo: 1 };
 	}
 	getProperties(): GeoJSON.GeoJsonProperties {
 		return { 'fill-color': 'red' };
@@ -67,6 +67,6 @@ describe('MapLayer', () => {
 	});
 
 	it('should return state object', () => {
-		expect(layer.getState()).toEqual({ type: 'fill' });
+		expect(layer.getState()).toEqual({ halo: 1 });
 	});
 });

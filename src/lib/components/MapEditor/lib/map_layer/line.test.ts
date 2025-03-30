@@ -84,11 +84,10 @@ describe('MapLayerLine', () => {
 	});
 
 	it('should restore state correctly', () => {
-		layer.setState({ color: '#0000ff', pattern: 2, visible: true, width: 3 });
+		layer.setState({ color: '#0000ff', pattern: 2, width: 3 });
 
 		expect(get(layer.color)).toBe('#0000ff');
 		expect(get(layer.dashed)).toBe(2);
-		expect(get(layer.visible)).toBe(true);
 		expect(get(layer.width)).toBe(3);
 	});
 });

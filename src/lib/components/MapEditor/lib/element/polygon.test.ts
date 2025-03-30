@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { PolygonElement } from './polygon.js';
 import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
 import type { GeometryManager } from '../geometry_manager.js';
-import type { StateObject } from '../state/types.js';
+import type { StateElementPolygon } from '../state/types.js';
 import type { ElementPath } from './types.js';
 import { get } from 'svelte/store';
 
@@ -65,7 +65,7 @@ describe('PolygonElement', () => {
 	});
 
 	it('should restore from state correctly', () => {
-		const state: StateObject = {
+		const state: StateElementPolygon = {
 			type: 'polygon',
 			points: [
 				[0, 0],

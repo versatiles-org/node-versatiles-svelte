@@ -1,6 +1,6 @@
 import type { ElementPoint, SelectionNode, SelectionNodeUpdater } from './types.js';
 import type { GeometryManager } from '../geometry_manager.js';
-import type { StateObject } from '../state/types.js';
+import type { StateElement } from '../state/types.js';
 
 export abstract class AbstractElement {
 	protected readonly canvas: HTMLElement;
@@ -54,5 +54,5 @@ export abstract class AbstractElement {
 	abstract getSelectionNodeUpdater(
 		properties?: Record<string, unknown>
 	): SelectionNodeUpdater | undefined;
-	abstract getState(): StateObject;
+	abstract getState(): StateElement;
 }

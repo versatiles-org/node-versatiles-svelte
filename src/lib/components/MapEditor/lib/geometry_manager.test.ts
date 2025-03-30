@@ -51,9 +51,10 @@ describe('GeometryManager', () => {
 		it('should return correct state', async () => {
 			expect(manager.getState()).toStrictEqual({
 				elements: [],
-				map: { point: [0, 0], zoom: 10 }
+				map_center: [0, 0],
+				map_zoom: 10
 			});
-			expect(await manager.state.getHash()).toBe('45JjYPA5wcjAAAA=');
+			expect(await manager.state.getHash()).toBe('UAAAAAAAA');
 
 			const marker = manager.addNewMarker();
 			marker.point = [12, 34];
@@ -66,13 +67,14 @@ describe('GeometryManager', () => {
 						type: 'marker'
 					}
 				],
-				map: { point: [0, 0], zoom: 10 }
+				map_center: [0, 0],
+				map_zoom: 10
 			});
-			expect(await manager.state.getHash()).toBe('45JjYPA5wcggwmjEINewbxJjQ+t8Zm4blpDU4hIGBgYA');
+			expect(await manager.state.getHash()).toBe('UAAAAAAACDAAAIgAAyRwEcIA');
 		});
 
 		it('should restore from state correctly', async () => {
-			await manager.state.setHash('45JjYPA5wcggwmjEINewbxJjQ+t8Zm4blpDU4hIGBgYA');
+			await manager.state.setHash('UAAAAAAACDAAAIgAAyRwEcIA');
 			const elements = get(manager.elements);
 			expect(elements.length).toBe(1);
 			expect(elements[0].getState()).toStrictEqual({

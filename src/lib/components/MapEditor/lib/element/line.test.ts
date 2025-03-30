@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { LineElement } from './line.js';
 import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
 import type { GeometryManager } from '../geometry_manager.js';
-import type { StateObject } from '../state/types.js';
+import type { StateElementLine } from '../state/types.js';
 import type { ElementPoint } from './types.js';
 
 describe('LineElement', () => {
@@ -59,7 +59,7 @@ describe('LineElement', () => {
 	});
 
 	it('should restore from state correctly', () => {
-		const state: StateObject = {
+		const state: StateElementLine = {
 			type: 'line',
 			points: [
 				[0, 0],

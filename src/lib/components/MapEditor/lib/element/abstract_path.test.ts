@@ -4,7 +4,7 @@ import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
 import type { GeometryManager } from '../geometry_manager.js';
 import { getMiddlePoint } from '../utils.js';
 import type { SelectionNode } from './types.js';
-import type { StateObject } from '../state/types.js';
+import type { StateElement } from '../state/types.js';
 
 class TestPathElement extends AbstractPathElement {
 	constructor(manager: GeometryManager, isLine: boolean) {
@@ -21,8 +21,9 @@ class TestPathElement extends AbstractPathElement {
 			properties: {}
 		};
 	}
-	getState(): StateObject {
+	getState(): StateElement {
 		return {
+			type: 'line',
 			points: [
 				[100, -81],
 				[102, -83]

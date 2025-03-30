@@ -3,7 +3,7 @@ import type { ElementPath } from './types.js';
 import { MapLayerFill } from '../map_layer/fill.js';
 import { MapLayerLine } from '../map_layer/line.js';
 import { AbstractPathElement } from './abstract_path.js';
-import type { StateObject } from '../state/types.js';
+import type { StateElementPolygon } from '../state/types.js';
 
 export class PolygonElement extends AbstractPathElement {
 	public readonly fillLayer: MapLayerFill;
@@ -48,7 +48,7 @@ export class PolygonElement extends AbstractPathElement {
 		this.map.removeSource(this.sourceId);
 	}
 
-	getState(): StateObject {
+	getState(): StateElementPolygon {
 		return {
 			type: 'polygon',
 			points: this.path,
@@ -57,7 +57,7 @@ export class PolygonElement extends AbstractPathElement {
 		};
 	}
 
-	static fromState(manager: GeometryManager, state: StateObject) {
+	static fromState(manager: GeometryManager, state: StateElementPolygon) {
 		const element = new PolygonElement(manager, state.points);
 		if (state.style) element.fillLayer.setState(state.style);
 		if (state.strokeStyle) element.strokeLayer.setState(state.strokeStyle);

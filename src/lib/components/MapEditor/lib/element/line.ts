@@ -2,7 +2,7 @@ import type { GeometryManager } from '../geometry_manager.js';
 import type { ElementPath } from './types.js';
 import { MapLayerLine } from '../map_layer/line.js';
 import { AbstractPathElement } from './abstract_path.js';
-import type { StateObject } from '../state/types.js';
+import type { StateElementLine } from '../state/types.js';
 
 export class LineElement extends AbstractPathElement {
 	public readonly layer: MapLayerLine;
@@ -41,7 +41,7 @@ export class LineElement extends AbstractPathElement {
 		this.map.removeSource(this.sourceId);
 	}
 
-	getState(): StateObject {
+	getState(): StateElementLine {
 		return {
 			type: 'line',
 			points: this.path,
@@ -49,7 +49,7 @@ export class LineElement extends AbstractPathElement {
 		};
 	}
 
-	static fromState(manager: GeometryManager, state: StateObject) {
+	static fromState(manager: GeometryManager, state: StateElementLine) {
 		const element = new LineElement(manager, state.points);
 		if (state.style) element.layer.setState(state.style);
 		return element;

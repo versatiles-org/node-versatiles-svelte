@@ -2,10 +2,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { StateManager } from './manager.js';
 import type { GeometryManager } from '../geometry_manager.js';
 import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
+import type { StateRoot } from './types.js';
 
 describe('StateManager', () => {
 	let geometryManager: MockGeometryManager;
 	let stateManager: StateManager;
+	const mockState: StateRoot = {
+		map_center: [1, 2],
+		map_zoom: 10,
+		elements: [{ type: 'marker', point: [3, 4], style: { label: 'test' } }]
+	};
 
 	beforeEach(() => {
 		geometryManager = new MockGeometryManager();
@@ -13,28 +19,28 @@ describe('StateManager', () => {
 	});
 
 	describe('getHash', () => {
-		it('should return a base64 compressed hash of the geometry manager state', async () => {
-			geometryManager.getState.mockReturnValue({ label: 'test' });
-			const result = await stateManager.getHash();
+		it('should return a base64 compressed hash of the geometry manager state', () => {
+			geometryManager.getState.mockReturnValue(mockState);
+			const result = stateManager.getHash();
 			expect(geometryManager.getState).toHaveBeenCalled();
-			expect(result).toBe('s2EpSS0uYQAA');
+			expect(result).toBe('UAAgAAQACAwAABAAAyQIEcIA');
 		});
 	});
 
 	describe('setHash', () => {
-		it('should set the geometry manager state from a base64 compressed hash', async () => {
-			await stateManager.setHash('s2EpSS0uYQAA');
-			expect(geometryManager.setState).toHaveBeenCalledWith({ label: 'test' });
+		it('should set the geometry manager state from a base64 compressed hash', () => {
+			stateManager.setHash('UAAgAAQACAwAABAAAyQIEcIA');
+			expect(geometryManager.setState).toHaveBeenCalledWith(mockState);
 		});
 
-		it('should not set the state if the hash is empty', async () => {
-			await stateManager.setHash('');
+		it('should not set the state if the hash is empty', () => {
+			stateManager.setHash('');
 			expect(geometryManager.setState).not.toHaveBeenCalled();
 		});
 
-		it('should handle errors gracefully', async () => {
+		it('should handle errors gracefully', () => {
 			const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-			await stateManager.setHash('invalidHash');
+			stateManager.setHash('invalidHash');
 			expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error));
 			consoleErrorSpy.mockRestore();
 		});

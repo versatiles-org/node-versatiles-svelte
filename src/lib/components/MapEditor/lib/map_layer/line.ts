@@ -3,7 +3,7 @@ import type { LayerLine } from './types.js';
 import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
-import type { StateObject } from '../state/types.js';
+import type { StateStyle } from '../state/types.js';
 import { removeDefaultFields } from '../utils.js';
 
 export const dashArrays = new Map<number, { name: string; array: number[] | undefined }>([
@@ -44,7 +44,7 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 		this.width.subscribe((v) => this.updatePaint('line-width', v));
 	}
 
-	getState(): StateObject | undefined {
+	getState(): StateStyle | undefined {
 		return removeDefaultFields(
 			{
 				color: get(this.color),
@@ -61,10 +61,10 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 		);
 	}
 
-	setState(state: StateObject) {
+	setState(state: StateStyle) {
 		if (state.color) this.color.set(state.color);
 		if (state.pattern) this.dashed.set(state.pattern);
-		if (state.visible) this.visible.set(state.visible);
+		if (state.invisible) this.visible.set(false);
 		if (state.width) this.width.set(state.width);
 	}
 
