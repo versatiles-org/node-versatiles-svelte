@@ -44,6 +44,27 @@
 		a.click();
 		URL.revokeObjectURL(url);
 	}
+
+	function getLink() {
+		const url = new URL(window.location.href);
+		url.hash = geometryManager.state.getHash();
+		return url.href;
+	}
+
+	function copyLink() {
+		navigator.clipboard.writeText(getLink()).then(
+			() => alert('Link copied to clipboard!'),
+			() => alert('Failed to copy link. Please try again.')
+		);
+	}
+
+	function copyEmbedCode() {
+		const html = `<iframe style="width:100%; height:60vh" src="${getLink()}"></iframe>`;
+		navigator.clipboard.writeText(html).then(
+			() => alert('Embed code copied to clipboard!'),
+			() => alert('Failed to copy embed code. Please try again.')
+		);
+	}
 </script>
 
 <div class="sidebar" style="--gap: 10px;width: {width}px;">
@@ -51,6 +72,12 @@
 		<div class="row-flex">
 			<input type="button" value="Undo" onclick={() => history.undo()} disabled={!$undoEnabled} />
 			<input type="button" value="Redo" onclick={() => history.redo()} disabled={!$redoEnabled} />
+		</div>
+		<hr />
+		<div class="label">Share this map as:</div>
+		<div class="row-flex">
+			<input type="button" value="Link" onclick={copyLink} />
+			<input type="button" value="Embed Code" onclick={copyEmbedCode} />
 		</div>
 		<hr />
 		<div class="label">GeoJSON:</div>
