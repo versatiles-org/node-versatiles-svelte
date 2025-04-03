@@ -42,7 +42,7 @@ describe('StateManager', () => {
 		});
 
 		it('should handle errors gracefully', () => {
-			const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+			const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 			stateManager.setHash('invalidHash');
 			expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error));
 			consoleErrorSpy.mockRestore();
