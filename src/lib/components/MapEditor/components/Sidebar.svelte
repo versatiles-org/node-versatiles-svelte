@@ -4,6 +4,9 @@
 
 	const { geometryManager, width }: { geometryManager: GeometryManager; width: number } = $props();
 
+	let history = geometryManager.state;
+	let undoEnabled = $state(geometryManager.state.undoEnabled);
+	let redoEnabled = $state(geometryManager.state.redoEnabled);
 	let activeElement = geometryManager.selectedElement;
 
 	function importGeoJSON() {
@@ -45,6 +48,11 @@
 
 <div class="sidebar" style="--gap: 10px;width: {width}px;">
 	<div style="margin-bottom: 36px;">
+		<div class="row-flex">
+			<input type="button" value="Undo" onclick={() => history.undo()} disabled={!$undoEnabled} />
+			<input type="button" value="Redo" onclick={() => history.redo()} disabled={!$redoEnabled} />
+		</div>
+		<hr />
 		<div class="label">GeoJSON:</div>
 		<div class="row-flex">
 			<input type="button" value="Import" onclick={importGeoJSON} />

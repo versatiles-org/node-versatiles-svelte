@@ -24,6 +24,10 @@ export abstract class MapLayer<T extends LayerSpec> {
 		this.id = id;
 	}
 
+	pushState() {
+		this.manager.state.log();
+	}
+
 	addLayer(
 		source: string,
 		type: 'symbol' | 'line' | 'fill',

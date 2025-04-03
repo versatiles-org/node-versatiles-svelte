@@ -96,8 +96,7 @@ describe('StateWriter', () => {
 	it('should write a root object correctly', () => {
 		const writer = new StateWriter();
 		writer.writeRoot({
-			map_zoom: 10,
-			map_center: [1, 2],
+			map: { zoom: 10, center: [1, 2] },
 			elements: [
 				{
 					type: 'marker',
@@ -125,18 +124,20 @@ describe('StateWriter', () => {
 			]
 		});
 		expect(writer.asBase64()).toBe(
-			'UAAgAAQACAwAABAAAi8UIkf4AAAhAQQaAQQcAQQUAQQUIvFCJAB_gAMYEEEkIEEFEIEEFAEEFAEEFAEEFCLxQiQAAH-CLxQiR__4AA'
+			'qAAQAAIABAYAAAgAAReKESP8AAAQgIINAIIOAIIKAIIKEXihEgA_wAGMCCCSECCCiECCCgCCCgCCCgCCChF4oRIAAD_BF4oRI__8AAA'
 		);
 	});
 
 	it('should write an empty root object correctly', () => {
 		const writer = new StateWriter();
 		writer.writeRoot({
-			map_zoom: 0,
-			map_center: [0, 0],
+			map: {
+				zoom: 0,
+				center: [0, 0]
+			},
 			elements: []
 		});
-		expect(writer.asBitString()).toBe('000000000000000000000000000000000');
+		expect(writer.asBitString()).toBe('1000000000000000000000000000000000');
 	});
 
 	it('should write a style correctly', () => {

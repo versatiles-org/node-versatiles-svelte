@@ -20,7 +20,7 @@ export class GeometryManager {
 	public readonly canvas: HTMLElement;
 	public readonly cursor: Cursor;
 	public readonly symbolLibrary: SymbolLibrary;
-	public readonly state = new StateManager(this);
+	public readonly state: StateManager;
 
 	private readonly selectionNodes: maplibregl.GeoJSONSource;
 
@@ -75,7 +75,10 @@ export class GeometryManager {
 				};
 
 				map.on('mousemove', onMove);
-				map.once('mouseup', () => map.off('mousemove', onMove));
+				map.once('mouseup', () => {
+					map.off('mousemove', onMove);
+					this.state.log();
+				});
 			}
 		});
 
@@ -90,6 +93,8 @@ export class GeometryManager {
 			if (!e.originalEvent.shiftKey) this.selectElement(undefined);
 			e.preventDefault();
 		});
+
+		this.state = new StateManager(this);
 	}
 
 	public selectElement(element: AbstractElement | undefined) {
@@ -115,8 +120,10 @@ export class GeometryManager {
 	public getState(): StateRoot {
 		const center = this.map.getCenter();
 		return {
-			map_center: [center.lng, center.lat],
-			map_zoom: this.map.getZoom(),
+			map: {
+				center: [center.lng, center.lat],
+				zoom: this.map.getZoom()
+			},
 			elements: get(this.elements).map((element) => element.getState())
 		};
 	}
@@ -130,11 +137,13 @@ export class GeometryManager {
 			return [];
 		});
 
-		this.map.setZoom(state.map_zoom);
-		this.map.setCenter({
-			lng: state.map_center[0],
-			lat: state.map_center[1]
-		});
+		if (state.map) {
+			if (state.map.zoom) this.map.setZoom(state.map.zoom);
+			if (state.map.center) {
+				const [lng, lat] = state.map.center;
+				this.map.setCenter({ lng, lat });
+			}
+		}
 
 		if (state.elements) {
 			const elements = state.elements.map((element) => {
@@ -177,11 +186,13 @@ export class GeometryManager {
 
 	private appendElement(element: AbstractElement) {
 		this.elements.update((elements) => [...elements, element]);
+		this.state.log();
 	}
 
 	public removeElement(element: AbstractElement) {
 		if (get(this.selectedElement) === element) this.selectElement(undefined);
 		this.elements.update((elements) => elements.filter((e) => e !== element));
+		this.state.log();
 	}
 
 	public getGeoJSON(): GeoJSON.FeatureCollection {

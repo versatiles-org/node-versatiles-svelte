@@ -220,15 +220,15 @@ describe('StateReader', () => {
 		it('should read a root state', () => {
 			const reader = StateReader.fromBitString('000000000000000000000000000000000');
 			const root = reader.readRoot();
-			expect(root).toHaveProperty('map_zoom');
-			expect(root).toHaveProperty('map_center');
-			expect(root).toHaveProperty('elements');
+			expect(root).toStrictEqual({ elements: [] });
 		});
 
 		it('should read a root object correctly', () => {
 			const root: StateRoot = {
-				map_zoom: 10,
-				map_center: [1, 2],
+				map: {
+					zoom: 10,
+					center: [1, 2]
+				},
 				elements: [
 					{
 						type: 'marker',
@@ -253,7 +253,7 @@ describe('StateReader', () => {
 			const writer = new StateWriter();
 			writer.writeRoot(root);
 			expect(writer.asBase64()).toBe(
-				'UAAgAAQACAwAABAAAiwVKkf4AAAhAQQaAQQcAQQUAQQUG1C-_WEiuLKY-V-p-qJeReECF-EiEeMB-EeE8-FgeFiFdCI8CQ_ECM-tF4oRIAAD_sgReKESP__AAA'
+				'qAAQAAIABAYAAAgAARYKlSP8AAAQgIINAIIOAIIKAIIKDahffrCRXFlMfK_U_VEvIvCBC_CRCPGA_CPCefCwPCxCuhEeBIfiBGfWi8UIkAAB_2QIvFCJH__gAA'
 			);
 			const reader = new StateReader(writer.bits);
 			expect(reader.readRoot()).toStrictEqual(root);

@@ -1,6 +1,8 @@
 export interface StateRoot {
-	map_zoom: number;
-	map_center: [number, number];
+	map?: {
+		center: [number, number];
+		zoom: number;
+	};
 	elements: StateElement[];
 }
 

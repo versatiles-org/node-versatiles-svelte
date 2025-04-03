@@ -83,8 +83,13 @@ export class StateWriter {
 	}
 
 	writeRoot(root: StateRoot) {
-		this.writeInteger(Math.round(root.map_zoom * 32), 10);
-		this.writePoint(root.map_center, Math.ceil(root.map_zoom));
+		if (root.map) {
+			this.writeBit(true);
+			this.writeInteger(Math.round(root.map.zoom * 32), 10);
+			this.writePoint(root.map.center, Math.ceil(root.map.zoom));
+		} else {
+			this.writeBit(false);
+		}
 		root.elements.forEach((element) => {
 			switch (element.type) {
 				case 'marker':

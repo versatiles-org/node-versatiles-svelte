@@ -8,8 +8,10 @@ describe('StateManager', () => {
 	let geometryManager: MockGeometryManager;
 	let stateManager: StateManager;
 	const mockState: StateRoot = {
-		map_center: [1, 2],
-		map_zoom: 10,
+		map: {
+			center: [1, 2],
+			zoom: 10
+		},
 		elements: [{ type: 'marker', point: [3, 4], style: { label: 'test' } }]
 	};
 
@@ -23,13 +25,13 @@ describe('StateManager', () => {
 			geometryManager.getState.mockReturnValue(mockState);
 			const result = stateManager.getHash();
 			expect(geometryManager.getState).toHaveBeenCalled();
-			expect(result).toBe('UAAgAAQACAwAABAAAyQIEcIA');
+			expect(result).toBe('qAAQAAIABAYAAAgAAZIECOEA');
 		});
 	});
 
 	describe('setHash', () => {
 		it('should set the geometry manager state from a base64 compressed hash', () => {
-			stateManager.setHash('UAAgAAQACAwAABAAAyQIEcIA');
+			stateManager.setHash('qAAQAAIABAYAAAgAAZIECOEA');
 			expect(geometryManager.setState).toHaveBeenCalledWith(mockState);
 		});
 

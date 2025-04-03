@@ -72,9 +72,18 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 			this.updatePaint('fill-pattern', name);
 		};
 
-		this.color.subscribe(() => updatePattern());
-		this.pattern.subscribe(() => updatePattern());
-		this.opacity.subscribe((value) => this.updatePaint('fill-opacity', value));
+		this.color.subscribe(() => {
+			updatePattern();
+			this.manager.state.log();
+		});
+		this.pattern.subscribe(() => {
+			updatePattern();
+			this.manager.state.log();
+		});
+		this.opacity.subscribe((value) => {
+			this.updatePaint('fill-opacity', value);
+			this.manager.state.log();
+		});
 	}
 
 	getState(): StateStyle | undefined {

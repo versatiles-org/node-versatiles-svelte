@@ -126,8 +126,12 @@ export class StateReader {
 
 	readRoot(): StateRoot {
 		try {
-			const map_zoom = this.readInteger(10) / 32;
-			const map_center = this.readPoint(Math.ceil(map_zoom));
+			let map = undefined;
+			if (this.readBit()) {
+				const zoom = this.readInteger(10) / 32;
+				const center = this.readPoint(Math.ceil(zoom));
+				map = { zoom, center };
+			}
 			const elements: StateElement[] = [];
 
 			while (true) {
@@ -146,11 +150,9 @@ export class StateReader {
 				}
 			}
 
-			return {
-				map_zoom,
-				map_center,
-				elements
-			};
+			const root: StateRoot = { elements };
+			if (map) root.map = map;
+			return root;
 		} catch (cause) {
 			throw new Error(`Error reading root`, { cause });
 		}
