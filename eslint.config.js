@@ -17,17 +17,6 @@ export default [
 				...globals.browser,
 				...globals.node
 			}
-		}
-	},
-	{
-		files: ['**/*.svelte'],
-		languageOptions: {
-			parserOptions: {
-				parser: ts.parser,
-				svelteFeatures: {
-					experimentalGenerics: true
-				}
-			}
 		},
 		rules: {
 			'no-unused-vars': 'off',
@@ -39,6 +28,17 @@ export default [
 					caughtErrorsIgnorePattern: '^_'
 				}
 			]
+		}
+	},
+	{
+		files: ['**/*.svelte'],
+		languageOptions: {
+			parserOptions: {
+				parser: ts.parser,
+				svelteFeatures: {
+					experimentalGenerics: true
+				}
+			}
 		}
 	},
 	{
