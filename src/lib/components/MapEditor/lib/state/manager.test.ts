@@ -20,18 +20,19 @@ describe('StateManager', () => {
 		stateManager = new StateManager(geometryManager as unknown as GeometryManager);
 	});
 
-	describe('getHash', () => {
+	describe('getHash/setHash', () => {
 		it('should return a base64 compressed hash of the geometry manager state', () => {
 			geometryManager.getState.mockReturnValue(mockState);
-			const result = stateManager.getHash();
+			const hash = stateManager.getHash();
 			expect(geometryManager.getState).toHaveBeenCalled();
-			expect(result).toBe('qAAQAAIABAYAAAgAAZIECOEA');
+			expect(hash).toBe('KgAEAACAAQDAAAEAADJAgRwgA');
 		});
-	});
 
-	describe('setHash', () => {
 		it('should set the geometry manager state from a base64 compressed hash', () => {
-			stateManager.setHash('qAAQAAIABAYAAAgAAZIECOEA');
+			geometryManager.getState.mockReturnValue(mockState);
+			const hash = stateManager.getHash();
+
+			stateManager.setHash(hash);
 			expect(geometryManager.setState).toHaveBeenCalledWith(mockState);
 		});
 
@@ -41,7 +42,7 @@ describe('StateManager', () => {
 		});
 
 		it('should handle errors gracefully', () => {
-			const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+			const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
 			stateManager.setHash('invalidHash');
 			expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error));
 			consoleErrorSpy.mockRestore();

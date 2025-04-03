@@ -1,6 +1,5 @@
 import { Color } from '@versatiles/style';
 import type {
-	StateElement,
 	StateElementLine,
 	StateElementMarker,
 	StateElementPolygon,
@@ -126,35 +125,46 @@ export class StateReader {
 
 	readRoot(): StateRoot {
 		try {
-			let map = undefined;
-			if (this.readBit()) {
-				const zoom = this.readInteger(10) / 32;
-				const center = this.readPoint(Math.ceil(zoom));
-				map = { zoom, center };
-			}
-			const elements: StateElement[] = [];
+			const root: StateRoot = { elements: [] };
+			let key: number;
 
 			while (true) {
-				const key = this.readInteger(2);
-				if (key === 0) break;
+				try {
+					key = this.readInteger(3);
+				} catch (_) {
+					key = 0;
+				}
 				switch (key) {
+					case 0:
+						return root;
 					case 1:
-						elements.push(this.readElementMarker());
+						root.map = this.readMap();
 						break;
 					case 2:
-						elements.push(this.readElementLine());
+						root.elements.push(this.readElementMarker());
 						break;
 					case 3:
-						elements.push(this.readElementPolygon());
+						root.elements.push(this.readElementLine());
 						break;
+					case 4:
+						root.elements.push(this.readElementPolygon());
+						break;
+					default:
+						console.warn(`Unknown state key: ${key}`);
 				}
 			}
-
-			const root: StateRoot = { elements };
-			if (map) root.map = map;
-			return root;
 		} catch (cause) {
 			throw new Error(`Error reading root`, { cause });
+		}
+	}
+
+	readMap(): NonNullable<StateRoot['map']> {
+		try {
+			const zoom = this.readInteger(10) / 32;
+			const center = this.readPoint(Math.ceil(zoom));
+			return { zoom, center };
+		} catch (cause) {
+			throw new Error(`Error reading map`, { cause });
 		}
 	}
 

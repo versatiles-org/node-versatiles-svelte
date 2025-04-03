@@ -253,7 +253,7 @@ describe('StateReader', () => {
 			const writer = new StateWriter();
 			writer.writeRoot(root);
 			expect(writer.asBase64()).toBe(
-				'qAAQAAIABAYAAAgAARYKlSP8AAAQgIINAIIOAIIKAIIKDahffrCRXFlMfK_U_VEvIvCBC_CRCPGA_CPCefCwPCxCuhEeBIfiBGfWi8UIkAAB_2QIvFCJH__gAA'
+				'KgAEAACAAQDAAAEAACLBUqR_gAABiAgg0Agg4AggoAggoI1C-_WEiuLKY-V-p-qJeReECF-EiEeMB-EeE8-FgeFiFdCI8CQ_ECM-tF4oRIAAD_sgReKESP__AAA'
 			);
 			const reader = new StateReader(writer.bits);
 			expect(reader.readRoot()).toStrictEqual(root);

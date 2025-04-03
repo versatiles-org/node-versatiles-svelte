@@ -84,29 +84,31 @@ export class StateWriter {
 
 	writeRoot(root: StateRoot) {
 		if (root.map) {
-			this.writeBit(true);
-			this.writeInteger(Math.round(root.map.zoom * 32), 10);
-			this.writePoint(root.map.center, Math.ceil(root.map.zoom));
-		} else {
-			this.writeBit(false);
+			this.writeInteger(1, 3);
+			this.writeMap(root.map);
 		}
+
 		root.elements.forEach((element) => {
 			switch (element.type) {
 				case 'marker':
-					this.writeInteger(1, 2);
+					this.writeInteger(2, 3);
 					this.writeElementMarker(element);
 					break;
 				case 'line':
-					this.writeInteger(2, 2);
+					this.writeInteger(3, 3);
 					this.writeElementLine(element);
 					break;
 				case 'polygon':
-					this.writeInteger(3, 2);
+					this.writeInteger(4, 3);
 					this.writeElementPolygon(element);
 					break;
 			}
 		});
-		this.writeInteger(0, 2);
+	}
+
+	writeMap(map: NonNullable<StateRoot['map']>) {
+		this.writeInteger(Math.round(map.zoom * 32), 10);
+		this.writePoint(map.center, Math.ceil(map.zoom));
 	}
 
 	writeElementMarker(element: StateElementMarker) {
