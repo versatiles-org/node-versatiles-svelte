@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { dashArrays, MapLayerLine } from '../lib/map_layer/line.js';
+	import InputRow from './InputRow.svelte';
 
 	const { layer }: { layer: MapLayerLine } = $props();
 
@@ -8,21 +9,18 @@
 	let dashed = $state(layer.dashed);
 </script>
 
-<div class="row-input">
-	<label for="dashed">Dashed:</label>
+<InputRow id="color" label="Color">
+	<input id="color" type="color" bind:value={$color} />
+</InputRow>
+
+<InputRow id="dashed" label="Dashed">
 	<select id="dashed" bind:value={$dashed}>
 		{#each dashArrays as [index, dash] (index)}
 			<option value={index}>{dash.name}</option>
 		{/each}
 	</select>
-</div>
+</InputRow>
 
-<div class="row-input">
-	<label for="color">Color:</label>
-	<input id="color" type="color" bind:value={$color} />
-</div>
-
-<div class="row-input">
-	<label for="width">Width:</label>
+<InputRow id="width" label="Width">
 	<input id="width" type="range" min="0.5" max="5" step="0.5" bind:value={$width} />
-</div>
+</InputRow>

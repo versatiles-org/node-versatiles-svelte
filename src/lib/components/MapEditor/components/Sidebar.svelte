@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Editor from './Editor.svelte';
 	import type { GeometryManager } from '../lib/geometry_manager.js';
+	import SidebarPanel from './SidebarPanel.svelte';
 
 	const { geometryManager, width }: { geometryManager: GeometryManager; width: number } = $props();
 
@@ -67,49 +68,42 @@
 	}
 </script>
 
-<div class="sidebar" style="--gap: 10px;width: {width}px;">
+<div class="sidebar" style="--gap: 5px;width: {width}px;">
 	<div style="margin-bottom: 36px;">
-		<div class="row-flex">
+		<div class="flex">
 			<input type="button" value="Undo" onclick={() => history.undo()} disabled={!$undoEnabled} />
 			<input type="button" value="Redo" onclick={() => history.redo()} disabled={!$redoEnabled} />
 		</div>
-		<hr />
-		<div class="label">Share this map as:</div>
-		<div class="row-flex">
-			<input type="button" value="Link" onclick={copyLink} />
-			<input type="button" value="Embed Code" onclick={copyEmbedCode} />
-		</div>
-		<hr />
-		<div class="label">GeoJSON:</div>
-		<div class="row-flex">
-			<input type="button" value="Import" onclick={importGeoJSON} />
-			<input type="button" value="Export" onclick={exportGeoJSON} />
-		</div>
-		<hr />
-		<div class="label">Add new:</div>
-		<div class="row-flex">
-			<input
-				type="button"
-				value="Marker"
-				onclick={() => activeElement.set(geometryManager.addNewMarker())}
-			/>
-			<input
-				type="button"
-				value="Line"
-				onclick={() => activeElement.set(geometryManager.addNewLine())}
-			/>
-			<input
-				type="button"
-				value="Polygon"
-				onclick={() => activeElement.set(geometryManager.addNewPolygon())}
-			/>
-		</div>
-		{#if $activeElement != null}
-			<hr />
-			{#key $activeElement}
-				<Editor element={$activeElement} />
-			{/key}
-		{/if}
+		<SidebarPanel title="Share this map" open={false}
+			><div class="flex">
+				<input type="button" value="Link" onclick={copyLink} />
+				<input type="button" value="Embed Code" onclick={copyEmbedCode} />
+			</div>
+		</SidebarPanel>
+		<SidebarPanel title="Import/Export" open={false}>
+			<input type="button" value="Import GeoJSON" onclick={importGeoJSON} />
+			<input type="button" value="Export GeoJSON" onclick={exportGeoJSON} />
+		</SidebarPanel>
+		<SidebarPanel title="Add new">
+			<div class="flex">
+				<input
+					type="button"
+					value="Marker"
+					onclick={() => activeElement.set(geometryManager.addNewMarker())}
+				/>
+				<input
+					type="button"
+					value="Line"
+					onclick={() => activeElement.set(geometryManager.addNewLine())}
+				/>
+				<input
+					type="button"
+					value="Polygon"
+					onclick={() => activeElement.set(geometryManager.addNewPolygon())}
+				/>
+			</div>
+		</SidebarPanel>
+		<Editor element={$activeElement} />
 	</div>
 </div>
 <a
@@ -139,69 +133,16 @@
 		padding: 0.5em var(--gap) 0;
 		border-left: 0.5px solid rgba(0, 0, 0, 0.5);
 
-		hr {
-			border: none;
-			border-top: 0.5px solid rgba(0, 0, 0, 1);
-			margin: var(--gap) 0 var(--gap);
-		}
-
-		:global(h2) {
-			font-size: 0.9em;
-			font-weight: normal;
-			opacity: 0.5;
-			padding-top: var(--gap);
-			border-top: 0.5px solid rgba(0, 0, 0, 1);
-			margin: var(--gap) 0 var(--gap);
-			text-align: center;
-		}
-
-		:global(.row-flex) {
-			margin-bottom: var(--gap);
-			display: flex;
-			justify-content: space-between;
-			column-gap: var(--gap);
-			:global(input) {
-				flex-grow: 0;
-			}
-		}
-
-		:global(.row-input) {
+		.flex {
 			margin: var(--gap) 0 var(--gap);
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			& > :global(label) {
-				flex-grow: 0;
-			}
-			& > :global(button),
-			& > :global(input),
-			& > :global(select) {
-				width: 60%;
-				flex-grow: 0;
-			}
-			& > :global(input[type='checkbox']) {
-				width: auto;
-			}
-		}
+			column-gap: var(--gap);
 
-		:global(label),
-		:global(.label) {
-			opacity: 0.7;
-			font-size: 0.8em;
-		}
-
-		:global(button),
-		:global(input),
-		:global(select) {
-			width: 100%;
-			box-sizing: border-box;
-			margin: 0;
-		}
-
-		:global(p) {
-			font-size: 0.8em;
-			opacity: 0.5;
-			margin: 0.5em 0 1em;
+			input {
+				flex-grow: 1;
+			}
 		}
 	}
 

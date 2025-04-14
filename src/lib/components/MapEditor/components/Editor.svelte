@@ -6,49 +6,60 @@
 	import { LineElement } from '../lib/element/line.js';
 	import { MarkerElement } from '../lib/element/marker.js';
 	import { PolygonElement } from '../lib/element/polygon.js';
+	import InputRow from './InputRow.svelte';
+	import SidebarPanel from './SidebarPanel.svelte';
+	import { writable } from 'svelte/store';
 
-	const { element }: { element: AbstractElement } = $props();
+	const { element }: { element: AbstractElement | undefined } = $props();
 
-	let strokeVisible = $state(false);
-
-	if (element instanceof PolygonElement) {
-		element.strokeLayer.visible.subscribe((value) => (strokeVisible = value));
-	}
+	const noElement = $derived(!element);
+	const strokeVisible = $derived.by(() => {
+		if (element instanceof PolygonElement) return element.strokeLayer.visible;
+		return writable(false);
+	});
 </script>
 
-{#if element instanceof MarkerElement}
-	<h2>Marker</h2>
-	<EditorSymbol layer={element.layer} />
-{/if}
-{#if element instanceof LineElement}
-	<h2>Line Stroke</h2>
-	<EditorStroke layer={element.layer} />
-{/if}
-{#if element instanceof PolygonElement}
-	<h2>Polygon Fill</h2>
-	<EditorFill layer={element.fillLayer} />
-	<h2>Polygon Stroke</h2>
+{#key element}
+	<SidebarPanel title="Style" disabled={noElement}>
+		<div class="style-editor">
+			{#if element instanceof MarkerElement}
+				<EditorSymbol layer={element.layer} />
+			{/if}
+			{#if element instanceof LineElement}
+				<EditorStroke layer={element.layer} />
+			{/if}
+			{#if element instanceof PolygonElement}
+				<EditorFill layer={element.fillLayer} />
+				<hr />
 
-	<div class="row-input">
-		<label for="showStroke">Outline:</label>
-		<input
-			id="showStroke"
-			type="checkbox"
-			bind:checked={
-				() => strokeVisible, (v) => (element as PolygonElement).strokeLayer.visible.set(v)
-			}
-		/>
-	</div>
+				<InputRow id="showStroke" label="Draw Outline">
+					<input id="showStroke" type="checkbox" bind:checked={$strokeVisible} />
+				</InputRow>
 
-	{#if strokeVisible}
-		<EditorStroke layer={element.strokeLayer} />
-	{/if}
-{/if}
-{#if element instanceof PolygonElement || element instanceof LineElement}
-	<h2>Shape</h2>
-	<p>
-		Drag points to move.<br />Drag a midpoint to add.<br />Shift-click to delete a point.
-	</p>
-{/if}
-<h2>Actions</h2>
-<input type="button" value="Delete" onclick={() => element!.delete()} />
+				{#if $strokeVisible}
+					<EditorStroke layer={element.strokeLayer} />
+				{/if}
+			{/if}
+			{#if element instanceof PolygonElement || element instanceof LineElement}
+				<hr />
+				<p>
+					Drag points to move.<br />Drag a midpoint to add.<br />Shift-click to delete a point.
+				</p>
+			{/if}
+		</div>
+	</SidebarPanel>
+
+	<SidebarPanel title="Actions" disabled={noElement}>
+		<input type="button" value="Delete" onclick={() => element!.delete()} />
+	</SidebarPanel>
+{/key}
+
+<style>
+	.style-editor {
+		:global(p) {
+			font-size: 0.8em;
+			opacity: 0.5;
+			margin: 0.5em 0 1em;
+		}
+	}
+</style>

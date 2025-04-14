@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { labelPositions, MapLayerSymbol } from '../lib/map_layer/symbol.js';
+	import InputRow from './InputRow.svelte';
 	import SymbolSelector from './SymbolSelector.svelte';
 
 	const { layer }: { layer: MapLayerSymbol } = $props();
@@ -13,41 +14,34 @@
 	let size = $state(layer.size);
 </script>
 
-<div class="row-input">
-	<div class="label">Symbol:</div>
+<InputRow id="label" label="Symbol">
 	<SymbolSelector bind:symbolIndex={$symbolIndex} symbolLibrary={layer.manager.symbolLibrary} />
-</div>
+</InputRow>
 
-<div class="row-input">
-	<label for="color">Color:</label>
+<InputRow id="color" label="Color">
 	<input id="color" type="color" bind:value={$color} />
-</div>
+</InputRow>
 
-<div class="row-input">
-	<label for="size">Size:</label>
+<InputRow id="size" label="Size">
 	<input id="size" type="range" min="0.5" max="3" step="0.1" bind:value={$size} />
-</div>
+</InputRow>
 
-<div class="row-input">
-	<label for="rotate">Rotation:</label>
+<InputRow id="rotate" label="Rotation">
 	<input id="rotate" type="range" min="-180" max="180" step="15" bind:value={$rotate} />
-</div>
+</InputRow>
 
-<div class="row-input">
-	<label for="halo">Halo:</label>
+<InputRow id="halo" label="Halo">
 	<input id="halo" type="range" min="0" max="3" step="0.5" bind:value={$halo} />
-</div>
+</InputRow>
 
-<div class="row-input">
-	<label for="label">Label:</label>
+<InputRow id="label" label="Label">
 	<input id="label" type="label" bind:value={$label} />
-</div>
+</InputRow>
 
-<div class="row-input">
-	<label for="labelAlign">Align Label:</label>
+<InputRow id="labelAlign" label="Align Label">
 	<select id="labelAlign" bind:value={$labelAlign}>
 		{#each labelPositions as { index, name } (index)}
 			<option value={index}>{name}</option>
 		{/each}
 	</select>
-</div>
+</InputRow>
