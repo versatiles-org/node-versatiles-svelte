@@ -169,18 +169,21 @@ export class GeometryManager {
 	public addNewMarker(): MarkerElement {
 		const element = new MarkerElement(this);
 		this.appendElement(element);
+		this.selectElement(element);
 		return element;
 	}
 
 	public addNewLine(): LineElement {
 		const element = new LineElement(this);
 		this.appendElement(element);
+		this.selectElement(element);
 		return element;
 	}
 
 	public addNewPolygon(): PolygonElement {
 		const element = new PolygonElement(this);
 		this.appendElement(element);
+		this.selectElement(element);
 		return element;
 	}
 
