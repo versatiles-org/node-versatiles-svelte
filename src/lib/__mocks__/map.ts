@@ -2,6 +2,9 @@ import { vi } from 'vitest';
 import maplibre from 'maplibre-gl';
 
 export class MockMap {
+	private zoom = 5;
+	private center = new LngLat(1, 2);
+
 	constructor() {}
 	getCanvasContainer = vi.fn(() => ({ style: { cursor: 'default' } }) as HTMLElement);
 	addSource = vi.fn();
@@ -10,10 +13,10 @@ export class MockMap {
 	addLayer = vi.fn();
 	on = vi.fn();
 	once = vi.fn();
-	setCenter = vi.fn();
-	setZoom = vi.fn();
-	getZoom = vi.fn(() => 10);
-	getCenter = vi.fn(() => new LngLat(0, 0));
+	setZoom = vi.fn((zoom) => (this.zoom = zoom));
+	getZoom = vi.fn(() => this.zoom);
+	setCenter = vi.fn((center: maplibre.LngLat) => (this.center = center));
+	getCenter = vi.fn(() => this.center);
 	queryRenderedFeatures = vi.fn(() => [
 		{ properties: {} }
 	]) as unknown as MaplibreMap['queryRenderedFeatures'];

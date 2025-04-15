@@ -25,7 +25,7 @@ describe('StateManager', () => {
 			geometryManager.getState.mockReturnValue(mockState);
 			const hash = stateManager.getHash();
 			expect(geometryManager.getState).toHaveBeenCalled();
-			expect(hash).toBe('KgAEAACAAQDAAAEAADJAgRwgA');
+			expect(hash).toBe('FQACAABAACAwAABAAAyQIEcIA');
 		});
 
 		it('should set the geometry manager state from a base64 compressed hash', () => {

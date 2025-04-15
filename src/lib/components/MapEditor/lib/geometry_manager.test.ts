@@ -48,38 +48,54 @@ describe('GeometryManager', () => {
 	});
 
 	describe('state', () => {
-		it('should return correct state', async () => {
+		it('should create and restore empty map', async () => {
 			expect(manager.getState()).toStrictEqual({
 				elements: [],
-				map: { center: [0, 0], zoom: 10 }
+				map: { center: [1, 2], zoom: 5 }
 			});
-			expect(manager.state.getHash()).toBe('KgAAAAAAA');
+			expect(manager.state.getHash()).toBe('EoACAAgA');
 
-			const marker = manager.addNewMarker();
-			marker.point = [12, 34];
-			marker.layer.label.set('Test');
+			manager.map.setCenter({ lng: 12, lat: 34 });
+			manager.map.setZoom(5);
+
 			expect(manager.getState()).toStrictEqual({
-				elements: [
-					{
-						point: [12, 34],
-						style: { label: 'Test' },
-						type: 'marker'
-					}
-				],
-				map: { center: [0, 0], zoom: 10 }
+				elements: [],
+				map: { center: [12, 34], zoom: 5 }
 			});
-			expect(manager.state.getHash()).toBe('KgAAAAAAAQMAAAiAADJHARwgA');
+
+			const hash = manager.state.getHash();
+			expect(hash).toBe('EoAYAIgA');
+
+			manager.state.setHash(hash);
+			expect(get(manager.elements).length).toBe(0);
+			const center = manager.map.getCenter();
+			expect(center).toStrictEqual({ lng: 12, lat: 34 });
+			expect(manager.map.getZoom()).toStrictEqual(5);
 		});
 
-		it('should restore from state correctly', async () => {
-			manager.state.setHash('KgAAAAAAAQMAAAiAADJHARwgA');
-			const elements = get(manager.elements);
-			expect(elements.length).toBe(1);
-			expect(elements[0].getState()).toStrictEqual({
-				point: [12, 34],
+		it('should create and restore element', async () => {
+			const element = {
+				point: [12, 34] as [number, number],
 				style: { label: 'Test' },
 				type: 'marker'
+			};
+
+			const marker = manager.addNewMarker();
+			marker.point = element.point;
+			marker.layer.label.set(element.style.label);
+
+			expect(manager.getState()).toStrictEqual({
+				elements: [element],
+				map: { center: [1, 2], zoom: 5 }
 			});
+
+			const hash = manager.state.getHash();
+			expect(hash).toBe('EoACAAgAgwAACIAAMkcBHCA');
+
+			manager.state.setHash(hash);
+			const elements = get(manager.elements);
+			expect(elements.length).toBe(1);
+			expect(elements[0].getState()).toStrictEqual(element);
 		});
 	});
 

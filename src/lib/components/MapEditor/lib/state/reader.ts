@@ -126,9 +126,25 @@ export class StateReader {
 	readRoot(): StateRoot {
 		try {
 			const root: StateRoot = { elements: [] };
-			let key: number;
 
+			const version = this.readInteger(3);
+			if (version != 0) {
+				throw new Error(`Unsupported version: ${version}`);
+			}
+
+			// Read the map element
+			if (this.readBit()) {
+				root.map = this.readMap();
+			}
+
+			// Read the metadata
+			if (this.readBit()) {
+				throw new Error(`Metadata not supported yet`);
+			}
+
+			// Read the elements
 			while (true) {
+				let key: number;
 				try {
 					key = this.readInteger(3);
 				} catch (_) {
@@ -138,15 +154,12 @@ export class StateReader {
 					case 0:
 						return root;
 					case 1:
-						root.map = this.readMap();
-						break;
-					case 2:
 						root.elements.push(this.readElementMarker());
 						break;
-					case 3:
+					case 2:
 						root.elements.push(this.readElementLine());
 						break;
-					case 4:
+					case 3:
 						root.elements.push(this.readElementPolygon());
 						break;
 					default:

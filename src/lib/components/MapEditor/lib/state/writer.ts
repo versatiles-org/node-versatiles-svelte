@@ -83,23 +83,31 @@ export class StateWriter {
 	}
 
 	writeRoot(root: StateRoot) {
+		// Write the version
+		this.writeInteger(0, 3);
+
 		if (root.map) {
-			this.writeInteger(1, 3);
+			this.writeBit(true);
 			this.writeMap(root.map);
+		} else {
+			this.writeBit(false);
 		}
+
+		// metadata is not used yet
+		this.writeBit(false);
 
 		root.elements.forEach((element) => {
 			switch (element.type) {
 				case 'marker':
-					this.writeInteger(2, 3);
+					this.writeInteger(1, 3);
 					this.writeElementMarker(element);
 					break;
 				case 'line':
-					this.writeInteger(3, 3);
+					this.writeInteger(2, 3);
 					this.writeElementLine(element);
 					break;
 				case 'polygon':
-					this.writeInteger(4, 3);
+					this.writeInteger(3, 3);
 					this.writeElementPolygon(element);
 					break;
 			}
