@@ -22,6 +22,7 @@
 					if (!evt.target) return alert('Failed to read file.');
 					const json = JSON.parse(evt.target.result as string);
 					geometryManager.addGeoJSON(json);
+					geometryManager.state.log();
 				} catch (error) {
 					console.error(error);
 					return alert('Failed to import GeoJSON. Please check the file format.');
@@ -97,7 +98,12 @@
 		<Editor element={$activeElement} />
 		<SidebarPanel title="Actions" disabled={!$activeElement}>
 			<div class="flex flex-two">
-				<button onclick={() => $activeElement!.delete()}>Delete</button>
+				<button
+					onclick={() => {
+						$activeElement!.delete();
+						geometryManager.state.log();
+					}}>Delete</button
+				>
 			</div>
 		</SidebarPanel>
 		<SidebarPanel title="Help" open={false}>

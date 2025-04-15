@@ -7,7 +7,9 @@ import type { StateRoot } from './types.js';
 const MAXLENGTH = 100;
 
 export class StateManager {
-	geometryManager: GeometryManager;
+	public geometryManager: GeometryManager;
+	private disableLogging: boolean = false;
+
 	constructor(geometryManager: GeometryManager) {
 		this.geometryManager = geometryManager;
 		this.resetHistory();
@@ -23,8 +25,14 @@ export class StateManager {
 		if (!hash) return;
 		try {
 			const state = StateReader.fromBase64(hash).readRoot();
+
+			this.disableLogging = true;
 			this.geometryManager.setState(state);
-			this.resetHistory();
+			this.disableLogging = false;
+
+			this.history = [{ ...state, map: undefined }];
+			this.historyIndex = 0;
+			this.updateButtons();
 		} catch (error) {
 			console.error(error);
 		}
@@ -48,6 +56,7 @@ export class StateManager {
 	}
 
 	public log() {
+		if (this.disableLogging) return;
 		const state = this.geometryManager.getState();
 		state.map = undefined; // Remove map state from history
 		if (this.historyIndex > 0) {
@@ -67,7 +76,11 @@ export class StateManager {
 		if (this.historyIndex < this.history.length - 1) {
 			this.historyIndex++;
 			const state = this.history[this.historyIndex];
+
+			this.disableLogging = true;
 			this.geometryManager.setState(state);
+			this.disableLogging = false;
+
 			this.updateButtons();
 		}
 	}
@@ -76,7 +89,11 @@ export class StateManager {
 		if (this.historyIndex > 0) {
 			this.historyIndex--;
 			const state = this.history[this.historyIndex];
+
+			this.disableLogging = true;
 			this.geometryManager.setState(state);
+			this.disableLogging = false;
+
 			this.updateButtons();
 		}
 	}

@@ -10,11 +10,30 @@
 </script>
 
 <InputRow label="Color" id="color">
-	<input id="color" type="color" bind:value={$color} />
+	<input
+		id="color"
+		type="color"
+		bind:value={
+			() => $color,
+			(v) => {
+				$color = v;
+				layer.manager.state.log();
+			}
+		}
+	/>
 </InputRow>
 
 <InputRow label="Pattern" id="pattern">
-	<select id="pattern" bind:value={$pattern}>
+	<select
+		id="pattern"
+		bind:value={
+			() => $pattern,
+			(v) => {
+				$pattern = v;
+				layer.manager.state.log();
+			}
+		}
+	>
 		{#each fillPatterns as [index, fill] (index)}
 			<option value={index}>{fill.name}</option>
 		{/each}
@@ -22,5 +41,18 @@
 </InputRow>
 
 <InputRow label="Opacity" id="opacity">
-	<input id="opacity" type="range" min="0" max="1" step="0.02" bind:value={$opacity} />
+	<input
+		id="opacity"
+		type="range"
+		min="0"
+		max="1"
+		step="0.02"
+		bind:value={
+			() => $opacity,
+			(v) => {
+				$opacity = v;
+				layer.manager.state.log();
+			}
+		}
+	/>
 </InputRow>

@@ -10,11 +10,30 @@
 </script>
 
 <InputRow id="color" label="Color">
-	<input id="color" type="color" bind:value={$color} />
+	<input
+		id="color"
+		type="color"
+		bind:value={
+			() => $color,
+			(v) => {
+				$color = v;
+				layer.manager.state.log();
+			}
+		}
+	/>
 </InputRow>
 
 <InputRow id="dashed" label="Dashed">
-	<select id="dashed" bind:value={$dashed}>
+	<select
+		id="dashed"
+		bind:value={
+			() => $dashed,
+			(v) => {
+				$dashed = v;
+				layer.manager.state.log();
+			}
+		}
+	>
 		{#each dashArrays as [index, dash] (index)}
 			<option value={index}>{dash.name}</option>
 		{/each}
@@ -22,5 +41,18 @@
 </InputRow>
 
 <InputRow id="width" label="Width">
-	<input id="width" type="range" min="0.5" max="5" step="0.5" bind:value={$width} />
+	<input
+		id="width"
+		type="range"
+		min="0.5"
+		max="5"
+		step="0.5"
+		bind:value={
+			() => $width,
+			(v) => {
+				$width = v;
+				layer.manager.state.log();
+			}
+		}
+	/>
 </InputRow>

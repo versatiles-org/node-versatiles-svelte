@@ -189,13 +189,11 @@ export class GeometryManager {
 
 	private appendElement(element: AbstractElement) {
 		this.elements.update((elements) => [...elements, element]);
-		this.state.log();
 	}
 
 	public removeElement(element: AbstractElement) {
 		if (get(this.selectedElement) === element) this.selectElement(undefined);
 		this.elements.update((elements) => elements.filter((e) => e !== element));
-		this.state.log();
 	}
 
 	public getGeoJSON(): GeoJSON.FeatureCollection {

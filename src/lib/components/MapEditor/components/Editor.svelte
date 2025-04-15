@@ -33,7 +33,17 @@
 				<hr />
 
 				<InputRow id="showStroke" label="Draw Outline">
-					<input id="showStroke" type="checkbox" bind:checked={$strokeVisible} />
+					<input
+						id="showStroke"
+						type="checkbox"
+						bind:checked={
+							() => $strokeVisible,
+							(visible) => {
+								$strokeVisible = visible;
+								element.manager.state.log();
+							}
+						}
+					/>
 				</InputRow>
 
 				{#if $strokeVisible}

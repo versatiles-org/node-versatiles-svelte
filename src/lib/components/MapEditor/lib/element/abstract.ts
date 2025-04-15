@@ -4,11 +4,12 @@ import type { StateElement } from '../state/types.js';
 
 export abstract class AbstractElement {
 	protected readonly canvas: HTMLElement;
-	protected readonly manager: GeometryManager;
 	protected readonly map: maplibregl.Map;
 	protected readonly source: maplibregl.GeoJSONSource;
 	protected readonly slug = '_' + Math.random().toString(36).slice(2);
 	protected isSelected = false;
+
+	public readonly manager: GeometryManager;
 	public readonly sourceId = 'source' + this.slug;
 
 	constructor(manager: GeometryManager) {
