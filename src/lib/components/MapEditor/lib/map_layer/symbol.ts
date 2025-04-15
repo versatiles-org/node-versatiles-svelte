@@ -21,34 +21,26 @@ export const labelPositions: LabelAlign[] = [
 	{ index: 4, name: 'bottom', anchor: 'top' }
 ];
 
-const defaultStyle: {
-	color: string;
-	rotate: number;
-	size: number;
-	halo: number;
-	pattern: number;
-	label: string;
-	align: LabelAlign['index'];
-} = {
-	color: '#ff0000',
-	rotate: 0,
-	size: 1,
-	halo: 1,
-	pattern: 38,
-	label: '',
-	align: 0
-};
-
 type TextVariableAnchor = LayerSymbol['layout']['text-variable-anchor'];
 
 export class MapLayerSymbol extends MapLayer<LayerSymbol> {
-	color = writable(defaultStyle.color);
-	halo = writable(defaultStyle.halo);
-	rotate = writable(defaultStyle.rotate);
-	size = writable(defaultStyle.size);
-	symbolIndex = writable(defaultStyle.pattern);
-	label = writable(defaultStyle.label);
-	labelAlign = writable<LabelAlign['index']>(defaultStyle.align);
+	static readonly defaultStyle: StateStyle = {
+		color: '#ff0000',
+		rotate: 0,
+		size: 1,
+		halo: 1,
+		pattern: 38,
+		label: '',
+		align: 0
+	};
+
+	color = writable(MapLayerSymbol.defaultStyle.color);
+	halo = writable(MapLayerSymbol.defaultStyle.halo);
+	rotate = writable(MapLayerSymbol.defaultStyle.rotate);
+	size = writable(MapLayerSymbol.defaultStyle.size);
+	symbolIndex = writable(MapLayerSymbol.defaultStyle.pattern);
+	label = writable(MapLayerSymbol.defaultStyle.label);
+	labelAlign = writable(MapLayerSymbol.defaultStyle.align);
 
 	symbolInfo = derived(this.symbolIndex, (index) => getSymbol(index));
 	textAnchor = derived(this.labelAlign, (index) => {
@@ -72,10 +64,10 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 				'icon-image': get(this.symbolInfo).image,
 				'icon-offset': get(this.symbolInfo).offset,
 				'icon-allow-overlap': true,
-				'icon-rotate': defaultStyle.rotate,
-				'icon-size': defaultStyle.size,
+				'icon-rotate': get(this.rotate),
+				'icon-size': get(this.size),
 
-				'text-field': defaultStyle.label,
+				'text-field': get(this.label),
 				'text-font': ['noto_sans_regular'],
 				'text-justify': 'left',
 				'text-overlap': 'always',
@@ -84,14 +76,14 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 				'text-anchor': get(this.textAnchor)
 			},
 			{
-				'icon-color': defaultStyle.color,
+				'icon-color': get(this.color),
 				'icon-halo-blur': 0,
 				'icon-halo-color': '#FFFFFF',
-				'icon-halo-width': defaultStyle.halo,
+				'icon-halo-width': get(this.halo),
 				'icon-opacity': 1,
 				'text-halo-blur': 0,
 				'text-halo-color': '#FFFFFF',
-				'text-halo-width': defaultStyle.halo
+				'text-halo-width': get(this.halo)
 			}
 		);
 
@@ -129,7 +121,7 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 				label: get(this.label),
 				align: get(this.labelAlign)
 			},
-			defaultStyle
+			MapLayerSymbol.defaultStyle
 		);
 	}
 
@@ -171,7 +163,7 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 	}
 }
 
-function lookupLabelAlign(index: number | string | Writable<LabelAlign['index']>): LabelAlign {
+function lookupLabelAlign(index: number | string | Writable<number>): LabelAlign {
 	let pos;
 
 	if (typeof index === 'object') {

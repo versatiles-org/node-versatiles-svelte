@@ -25,6 +25,12 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 	opacity = writable(1);
 	pattern = writable(0);
 
+	static readonly defaultStyle: StateStyle = {
+		color: '#ff0000',
+		opacity: 1,
+		pattern: 0
+	};
+
 	constructor(manager: GeometryManager, id: string, source: string) {
 		super(manager, id);
 
@@ -93,11 +99,7 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 				opacity: get(this.opacity),
 				pattern: get(this.pattern)
 			},
-			{
-				color: '#ff0000',
-				opacity: 1,
-				pattern: 0
-			}
+			MapLayerFill.defaultStyle
 		);
 	}
 

@@ -13,6 +13,11 @@ describe('MapLayerLine', () => {
 		layer = new MapLayerLine(mockManager as unknown as GeometryManager, 'test-layer', 'source');
 	});
 
+	it('should have the correct keys in default style', () => {
+		const keys = Object.keys(MapLayerLine.defaultStyle).sort();
+		expect(keys).toStrictEqual(['color', 'pattern', 'visible', 'width']);
+	});
+
 	it('should initialize layer with default values', () => {
 		expect(layer).toBeDefined();
 		expect(get(layer.color)).toBe('#ff0000');

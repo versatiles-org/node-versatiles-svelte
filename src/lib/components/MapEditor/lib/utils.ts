@@ -1,4 +1,5 @@
 import type { ElementPoint } from './element/types.js';
+import type { StateStyle } from './state/types.js';
 
 export function getMiddlePoint(p0: ElementPoint, p1: ElementPoint): ElementPoint {
 	const y0 = lat2mercator(p0[1]);
@@ -14,15 +15,15 @@ export function mercator2lat(y: number): number {
 	return ((2 * Math.atan(Math.exp(y)) - Math.PI / 2) * 180) / Math.PI;
 }
 
-export function removeDefaultFields<T extends Record<string, unknown>>(
-	value: T,
-	def: T
-): Partial<T> | undefined {
+export function removeDefaultFields(
+	value: StateStyle,
+	def: StateStyle
+): Partial<StateStyle> | undefined {
 	const entries = Object.entries(value).filter(([k, v]) => {
 		if (v === undefined) return false;
-		if (v === def[k]) return false;
+		if (v === (def as Record<string, unknown>)[k]) return false;
 		return true;
 	});
 	if (entries.length === 0) return undefined;
-	return Object.fromEntries(entries) as Partial<T>;
+	return Object.fromEntries(entries);
 }

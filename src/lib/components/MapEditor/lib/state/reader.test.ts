@@ -279,7 +279,7 @@ describe('StateReader', () => {
 				width: 2.3,
 				align: 4,
 				label: 'test',
-				invisible: true,
+				visible: false,
 				color: '#C400FF42'
 			};
 			const writer = new StateWriter();

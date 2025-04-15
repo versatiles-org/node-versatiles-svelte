@@ -13,6 +13,11 @@ describe('MapLayerFill', () => {
 		layer = new MapLayerFill(mockManager as unknown as GeometryManager, 'test-layer', 'source');
 	});
 
+	it('should have the correct keys in default style', () => {
+		const keys = Object.keys(MapLayerFill.defaultStyle).sort();
+		expect(keys).toStrictEqual(['color', 'opacity', 'pattern']);
+	});
+
 	it('should initialize layer with default values', () => {
 		expect(layer).toBeDefined();
 		expect(get(layer.color)).toBe('#ff0000');

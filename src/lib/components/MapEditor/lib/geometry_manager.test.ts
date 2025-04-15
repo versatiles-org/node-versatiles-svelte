@@ -5,6 +5,7 @@ import { LineElement } from './element/line.js';
 import { PolygonElement } from './element/polygon.js';
 import { LngLat, MockMap, type MaplibreMap } from '../../../__mocks__/map.js';
 import { get } from 'svelte/store';
+import type { ElementPath, ElementPoint } from './element/types.js';
 
 describe('GeometryManager', () => {
 	let mockMap: MockMap;
@@ -72,10 +73,12 @@ describe('GeometryManager', () => {
 			expect(center).toStrictEqual({ lng: 12, lat: 34 });
 			expect(manager.map.getZoom()).toStrictEqual(5);
 		});
+	});
 
-		it('should create and restore element', async () => {
+	describe('elements', () => {
+		it('should create and restore marker', async () => {
 			const element = {
-				point: [12, 34] as [number, number],
+				point: [12, 34] as ElementPoint,
 				style: { label: 'Test' },
 				type: 'marker'
 			};
@@ -84,13 +87,62 @@ describe('GeometryManager', () => {
 			marker.point = element.point;
 			marker.layer.label.set(element.style.label);
 
-			expect(manager.getState()).toStrictEqual({
-				elements: [element],
-				map: { center: [1, 2], zoom: 5 }
-			});
+			expect(manager.getState().elements).toStrictEqual([element]);
 
 			const hash = manager.state.getHash();
 			expect(hash).toBe('EoACAAgAgwAACIAAMkcBHCA');
+
+			manager.state.setHash(hash);
+			const elements = get(manager.elements);
+			expect(elements.length).toBe(1);
+			expect(elements[0].getState()).toStrictEqual(element);
+		});
+
+		it('should create and restore line', async () => {
+			const element = {
+				points: [
+					[1, 2],
+					[3, 4]
+				] as ElementPath,
+				style: { color: '#ABCDEF' },
+				type: 'line'
+			};
+
+			const line = manager.addNewLine();
+			line.path = element.points;
+			line.layer.color.set(element.style.color);
+
+			expect(manager.getState().elements).toStrictEqual([element]);
+
+			const hash = manager.state.getHash();
+			expect(hash).toBe('EoACAAgBCAggkAggoAggoAggoYq83vA');
+
+			manager.state.setHash(hash);
+			const elements = get(manager.elements);
+			expect(elements.length).toBe(1);
+			expect(elements[0].getState()).toStrictEqual(element);
+		});
+
+		it('should create and restore polygon', async () => {
+			const element = {
+				points: [
+					[1, 2],
+					[3, 4]
+				] as ElementPath,
+				style: { color: '#ABCDEF' },
+				strokeStyle: { color: '#123456' },
+				type: 'polygon'
+			};
+
+			const polygon = manager.addNewPolygon();
+			polygon.path = element.points;
+			polygon.fillLayer.color.set(element.style.color);
+			polygon.strokeLayer.color.set(element.strokeStyle.color);
+
+			expect(manager.getState().elements).toStrictEqual([element]);
+
+			const hash = manager.state.getHash();
+			expect(hash).toBe('EoACAAgBiAggkAggoAggoAggoYq83vBgSNFYA');
 
 			manager.state.setHash(hash);
 			const elements = get(manager.elements);

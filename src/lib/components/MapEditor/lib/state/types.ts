@@ -37,5 +37,5 @@ export interface StateStyle {
 	/*7*/ align?: number;
 	/*8*/ color?: string;
 	/*9*/ label?: string;
-	/*10*/ invisible?: true;
+	/*10*/ visible?: boolean;
 }

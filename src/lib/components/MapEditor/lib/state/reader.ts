@@ -248,7 +248,7 @@ export class StateReader {
 						style.label = this.readString();
 						break;
 					case 10:
-						style.invisible = true;
+						style.visible = false;
 						break;
 					default:
 						throw new Error(`Invalid state key: ${key}`);

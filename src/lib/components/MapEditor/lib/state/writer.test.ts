@@ -151,7 +151,7 @@ describe('StateWriter', () => {
 			width: 2.3,
 			align: 4,
 			label: 'test',
-			invisible: true,
+			visible: false,
 			color: '#ff0000'
 		});
 		expect(writer.asBase64()).toBe('F4oRDGTMRcmuciP8AAEkCBHCUA');

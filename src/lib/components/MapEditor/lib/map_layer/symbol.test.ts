@@ -13,6 +13,11 @@ describe('MapLayerSymbol', () => {
 		layer = new MapLayerSymbol(mockManager as unknown as GeometryManager, 'test-layer', 'source');
 	});
 
+	it('should have the correct keys in default style', () => {
+		const keys = Object.keys(MapLayerSymbol.defaultStyle).sort();
+		expect(keys).toStrictEqual(['align', 'color', 'halo', 'label', 'pattern', 'rotate', 'size']);
+	});
+
 	it('should initialize layer with default values', () => {
 		expect(layer).toBeDefined();
 		expect(get(layer.color)).toBe('#ff0000');

@@ -6,7 +6,6 @@ import type { StateElementLine } from '../state/types.js';
 
 export class LineElement extends AbstractPathElement {
 	public readonly layer: MapLayerLine;
-	public readonly path: ElementPath;
 
 	constructor(manager: GeometryManager, line?: ElementPath) {
 		super(manager, true);

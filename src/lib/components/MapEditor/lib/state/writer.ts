@@ -194,7 +194,7 @@ export class StateWriter {
 			this.writeInteger(9, 4);
 			this.writeString(style.label);
 		}
-		if (style.invisible != null) {
+		if (style.visible === false) {
 			this.writeInteger(10, 4);
 		}
 		this.writeInteger(0, 4);

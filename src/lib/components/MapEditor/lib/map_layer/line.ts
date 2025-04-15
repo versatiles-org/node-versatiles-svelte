@@ -13,10 +13,17 @@ export const dashArrays = new Map<number, { name: string; array: number[] | unde
 ]);
 
 export class MapLayerLine extends MapLayer<LayerLine> {
-	color = writable('#ff0000');
-	dashed = writable(0);
-	visible = writable(true);
-	width = writable(2);
+	static readonly defaultStyle: StateStyle = {
+		color: '#ff0000',
+		pattern: 0,
+		visible: true,
+		width: 2
+	};
+
+	color = writable(MapLayerLine.defaultStyle.color);
+	dashed = writable(MapLayerLine.defaultStyle.pattern);
+	visible = writable(MapLayerLine.defaultStyle.visible);
+	width = writable(MapLayerLine.defaultStyle.width);
 
 	dashArray = derived(this.dashed, (dashed) => dashArrays.get(dashed)?.array ?? [100]);
 
@@ -64,19 +71,14 @@ export class MapLayerLine extends MapLayer<LayerLine> {
 				visible: get(this.visible),
 				width: get(this.width)
 			},
-			{
-				color: '#ff0000',
-				pattern: 0,
-				visible: true,
-				width: 2
-			}
+			MapLayerLine.defaultStyle
 		);
 	}
 
 	setState(state: StateStyle) {
 		if (state.color) this.color.set(state.color);
 		if (state.pattern) this.dashed.set(state.pattern);
-		if (state.invisible) this.visible.set(false);
+		if (state.visible) this.visible.set(state.visible);
 		if (state.width) this.width.set(state.width);
 	}
 
