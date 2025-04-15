@@ -48,16 +48,11 @@
 			{/if}
 		</div>
 	</SidebarPanel>
-
-	<SidebarPanel title="Actions" disabled={noElement}>
-		<input type="button" value="Delete" onclick={() => element!.delete()} />
-	</SidebarPanel>
 {/key}
 
 <style>
 	.style-editor {
 		:global(p) {
-			font-size: 0.8em;
 			opacity: 0.5;
 			margin: 0.5em 0 1em;
 		}

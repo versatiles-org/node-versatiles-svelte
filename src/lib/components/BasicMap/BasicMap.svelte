@@ -17,8 +17,8 @@
 		styleOptions?: Parameters<typeof getMapStyle>[1];
 		mapOptions?: Partial<MapOptions>;
 		map?: maplibre.Map;
-		onMapInit?: (map: maplibre.Map) => void;
-		onMapLoad?: (map: maplibre.Map) => void;
+		onMapInit?: (map: maplibre.Map, maplibre: typeof import('maplibre-gl')) => void;
+		onMapLoad?: (map: maplibre.Map, maplibre: typeof import('maplibre-gl')) => void;
 	} = $props();
 
 	let container: HTMLDivElement;
@@ -48,10 +48,10 @@
 			...mapOptions
 		});
 
-		if (onMapInit) onMapInit(map);
+		if (onMapInit) onMapInit(map, maplibre);
 
 		map.on('load', () => {
-			if (onMapLoad) onMapLoad(map!);
+			if (onMapLoad) onMapLoad(map!, maplibre);
 		});
 	}
 </script>

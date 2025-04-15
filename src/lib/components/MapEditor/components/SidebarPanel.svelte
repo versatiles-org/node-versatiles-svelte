@@ -11,7 +11,7 @@
 
 <div class={{ panel: true, open, disabled }}>
 	<button class="header" onclick={() => (open = !open)}>
-		{title}
+		<span class="title">{title}</span>
 		<div class="chevron">
 			<svg viewBox="0 0 7 12">
 				<path d="M1,0L7,6L1,12L0,11,L5,6L0,1z" />
@@ -25,29 +25,36 @@
 
 <style>
 	.panel {
-		margin: var(--gap) 0;
+		margin: 1em 0;
+
 		.header {
-			background: #0002;
+			background: none;
 			border: none;
-			color: #000;
+			color: var(--color-text);
 			cursor: pointer;
-			font-size: 0.8em;
+			font-weight: 600;
 			margin: 0;
-			padding: var(--gap);
+			padding: 0;
 			position: relative;
 			text-align: left;
 			width: 100%;
+
+			.title {
+				text-transform: uppercase;
+				opacity: 0.8;
+			}
 			.chevron {
-				display: block;
-				position: absolute;
-				top: var(--gap);
-				right: 0.4em;
-				opacity: 0.7;
-				width: 1em;
-				height: 1em;
-				padding: 0;
 				box-sizing: border-box;
+				display: block;
+				height: 1em;
+				opacity: 0.7;
+				padding: 0;
+				position: absolute;
+				right: 0.4em;
+				top: 0;
+				width: 1em;
 				svg {
+					fill: var(--color-fg);
 					width: 100%;
 					height: 100%;
 					rotate: 0deg;
@@ -57,8 +64,6 @@
 			}
 		}
 		.content {
-			background-color: #0001;
-			margin: 0;
 			height: 0;
 			overflow: hidden;
 			padding: 0;
@@ -66,6 +71,7 @@
 		}
 	}
 	.open {
+		margin-bottom: 2em;
 		.header {
 			.chevron {
 				svg {
@@ -75,16 +81,10 @@
 		}
 		.content {
 			height: auto;
-			padding: var(--gap);
 		}
 	}
 	.disabled {
-		.header {
-			color: #0005;
-			svg {
-				opacity: 0.3;
-			}
-		}
+		opacity: 0.3;
 		.content {
 			display: none;
 		}

@@ -7,17 +7,17 @@
 		symbolLibrary
 	}: { symbolIndex: number; symbolLibrary: SymbolLibrary } = $props();
 
-	let open = $state(false);
-
 	const drawIconHalo: Action<HTMLCanvasElement, number> = (canvas, index) =>
 		symbolLibrary.drawSymbol(canvas, index, true);
 
 	const drawIcon: Action<HTMLCanvasElement, number> = (canvas, index) =>
 		symbolLibrary.drawSymbol(canvas, index);
+
+	let dialog: HTMLDialogElement | null = null;
 </script>
 
 <button
-	onclick={() => (open = !open)}
+	onclick={() => dialog?.showModal()}
 	style="text-align: left; white-space: nowrap; overflow: hidden; padding: 1px"
 >
 	{#key symbolIndex}
@@ -35,28 +35,20 @@
 	{/if}
 </button>
 
-<div class="modal" style="display: {open ? 'block' : 'none'};">
-	<button class="close" onclick={() => (open = false)}>&#x2715;</button>
+<dialog class="modal" bind:this={dialog}>
+	<button class="close" onclick={() => dialog?.close()}>&#x2715;</button>
 	<div class="inner">
 		{#each symbolLibrary.asList() as symbol (symbol.index)}
-			<button
-				class="icon"
-				onclick={() => {
-					symbolIndex = symbol.index;
-					open = false;
-				}}
+			<button class="icon" onclick={() => (symbolIndex = symbol.index)}
 				><canvas width="64" height="64" use:drawIconHalo={symbol.index}></canvas><br
 				/>{symbol.name}</button
 			>
 		{/each}
 	</div>
-</div>
+</dialog>
 
 <style>
 	.modal {
-		position: fixed;
-		top: max(calc(50vh - 250px), 0px);
-		left: max(calc(50vw - 250px), 0px);
 		width: min(500px, 100vw);
 		height: min(500px, 100vh);
 		background-color: rgba(255, 255, 255, 0.5);

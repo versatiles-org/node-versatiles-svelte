@@ -68,98 +68,117 @@
 	}
 </script>
 
-<div class="sidebar" style="--gap: 5px;width: {width}px;">
+<div class="sidebar" style="width: {width}px;">
 	<div style="margin-bottom: 36px;">
-		<div class="flex">
-			<input type="button" value="Undo" onclick={() => history.undo()} disabled={!$undoEnabled} />
-			<input type="button" value="Redo" onclick={() => history.redo()} disabled={!$redoEnabled} />
+		<div class="flex flex-two">
+			<button onclick={() => history.undo()} disabled={!$undoEnabled}>Undo</button>
+			<button onclick={() => history.redo()} disabled={!$redoEnabled}>Redo</button>
 		</div>
-		<SidebarPanel title="Share this map" open={false}
-			><div class="flex">
-				<input type="button" value="Link" onclick={copyLink} />
-				<input type="button" value="Embed Code" onclick={copyEmbedCode} />
+		<SidebarPanel title="Share map" open={false}>
+			<div class="flex flex-one">
+				<button value="Link" onclick={copyLink}>Link</button>
+				<button onclick={copyEmbedCode}>Embed Code</button>
 			</div>
 		</SidebarPanel>
 		<SidebarPanel title="Import/Export" open={false}>
-			<input type="button" value="Import GeoJSON" onclick={importGeoJSON} />
-			<input type="button" value="Export GeoJSON" onclick={exportGeoJSON} />
+			<div class="flex flex-one">
+				<button onclick={importGeoJSON}>Import GeoJSON</button>
+				<button onclick={exportGeoJSON}>Export GeoJSON</button>
+			</div>
 		</SidebarPanel>
 		<SidebarPanel title="Add new">
-			<div class="flex">
-				<input
-					type="button"
-					value="Marker"
-					onclick={() => activeElement.set(geometryManager.addNewMarker())}
-				/>
-				<input
-					type="button"
-					value="Line"
-					onclick={() => activeElement.set(geometryManager.addNewLine())}
-				/>
-				<input
-					type="button"
-					value="Polygon"
-					onclick={() => activeElement.set(geometryManager.addNewPolygon())}
-				/>
+			<div class="flex flex-two">
+				<button onclick={() => activeElement.set(geometryManager.addNewMarker())}>Marker</button>
+				<button onclick={() => activeElement.set(geometryManager.addNewLine())}>Line</button>
+				<button onclick={() => activeElement.set(geometryManager.addNewPolygon())}>Polygon</button>
+				<button disabled>Circle</button>
 			</div>
 		</SidebarPanel>
 		<Editor element={$activeElement} />
+		<SidebarPanel title="Actions" disabled={!$activeElement}>
+			<div class="flex flex-two">
+				<button onclick={() => $activeElement!.delete()}>Delete</button>
+			</div>
+		</SidebarPanel>
+		<SidebarPanel title="Help">
+			<a
+				id="github_link"
+				href="https://github.com/versatiles-org/node-versatiles-svelte/issues"
+				target="_blank"
+				aria-label="Repository on GitHub">Report Bugs and Feature Requests as GitHub Issues</a
+			>
+		</SidebarPanel>
 	</div>
 </div>
-<a
-	id="github_link"
-	href="https://github.com/versatiles-org/node-versatiles-svelte/"
-	target="_blank"
-	aria-label="Repository on GitHub"
-	>Improve on GitHub
-	<svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24"
-		><path
-			fill="currentColor"
-			d="M12 .297c-6.63 0-12 5.373-12 12c0 5.303 3.438 9.8 8.205 11.385c.6.113.82-.258.82-.577c0-.285-.01-1.04-.015-2.04c-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729c1.205.084 1.838 1.236 1.838 1.236c1.07 1.835 2.809 1.305 3.495.998c.108-.776.417-1.305.76-1.605c-2.665-.3-5.466-1.332-5.466-5.93c0-1.31.465-2.38 1.235-3.22c-.135-.303-.54-1.523.105-3.176c0 0 1.005-.322 3.3 1.23c.96-.267 1.98-.399 3-.405c1.02.006 2.04.138 3 .405c2.28-1.552 3.285-1.23 3.285-1.23c.645 1.653.24 2.873.12 3.176c.765.84 1.23 1.91 1.23 3.22c0 4.61-2.805 5.625-5.475 5.92c.42.36.81 1.096.81 2.22c0 1.606-.015 2.896-.015 3.286c0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
-		/></svg
-	>
-</a>
 
 <style>
 	.sidebar {
-		width: 200px;
-		height: 100%;
-		position: absolute;
-		top: 0;
-		right: 0;
-		background-color: #eee;
-		overflow-y: scroll;
+		--color-btn: #336680;
+		--color-bg: #ffffff;
+		--color-text: #000000;
+		--gap: 10px;
+
+		background-color: rgb(from var(--color-bg) r g b/ 0.7);
+		backdrop-filter: blur(10px);
 		box-sizing: border-box;
-		padding: 0.5em var(--gap) 0;
-		border-left: 0.5px solid rgba(0, 0, 0, 0.5);
+		color: var(--color-text);
+		font-size: 0.8em;
+		height: 100%;
+		overflow-y: scroll;
+		padding: var(--gap);
+		position: absolute;
+		right: 0;
+		top: 0;
+		width: 200px;
 
 		.flex {
-			margin: var(--gap) 0 var(--gap);
-			display: flex;
-			justify-content: space-between;
+			--gap: 5px;
 			align-items: center;
-			column-gap: var(--gap);
+			display: flex;
+			flex-wrap: wrap;
+			gap: var(--gap);
+			justify-content: space-between;
+			margin: var(--gap) 0 var(--gap);
+			width: 100%;
+		}
+		.flex-two button {
+			flex-grow: 1;
+			flex-basis: 0;
+			width: 40%;
+		}
 
-			input {
-				flex-grow: 1;
+		.flex-one button {
+			width: 100%;
+		}
+
+		button {
+			background-color: var(--color-btn);
+			border: 2px solid var(--color-btn);
+			border-radius: 0.2em;
+			color: var(--color-bg);
+			cursor: pointer;
+			font-weight: 600;
+			padding: 0.4em 1em;
+			transition:
+				background-color 0.1s ease-in-out,
+				color 0.1s ease-in-out;
+
+			&:not([disabled]):hover {
+				background-color: var(--color-bg);
+				color: var(--color-btn);
+			}
+			&:disabled {
+				cursor: not-allowed;
+				opacity: 0.5;
 			}
 		}
 	}
 
-	#github_link {
-		position: absolute;
-		right: 0.2em;
-		bottom: 0.2em;
-		color: #000;
-		opacity: 0.5;
-		line-height: 0;
+	a {
 		text-decoration: none;
-		font-size: 12px;
+		color: var(--fg-color);
 		&:hover {
-			opacity: 1;
-		}
-		svg {
-			vertical-align: -0.3em;
+			text-decoration: underline;
 		}
 	}
 </style>

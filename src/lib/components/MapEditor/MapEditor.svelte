@@ -15,8 +15,10 @@
 	let map: MaplibreMapType | undefined = $state();
 	let geometryManager: GeometryManager | undefined = $state();
 
-	function onMapInit(_map: MaplibreMapType) {
+	function onMapInit(_map: MaplibreMapType, maplibre: typeof import('maplibre-gl')) {
 		map = _map;
+		map.addControl(new maplibre.AttributionControl({ compact: true }), 'bottom-left');
+
 		map.on('load', async () => {
 			const { GeometryManager } = await import('./lib/geometry_manager.js');
 			geometryManager = new GeometryManager(map!);
@@ -29,14 +31,18 @@
 
 <div class="page">
 	<div class="container">
-		<BasicMap {onMapInit} styleOptions={{ disableDarkMode: true }}></BasicMap>
+		<BasicMap
+			{onMapInit}
+			styleOptions={{ disableDarkMode: true }}
+			mapOptions={{ attributionControl: false }}
+		></BasicMap>
 	</div>
 	{#if showSidebar && geometryManager}
 		<Sidebar {geometryManager} width={200} />
 
 		<style>
 			.page .container {
-				width: calc(100% - 200px);
+				width: 100%;
 				position: absolute;
 				top: 0;
 				left: 0;
@@ -52,5 +58,9 @@
 		height: 100%;
 		position: relative;
 		min-height: 6em;
+	}
+	:global(.maplibregl-ctrl-attrib) {
+		display: flex;
+		align-items: center;
 	}
 </style>

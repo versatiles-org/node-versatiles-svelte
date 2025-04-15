@@ -15,10 +15,10 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		color: var(--fg-color);
 		& > :global(label) {
 			flex-grow: 0;
-			opacity: 0.7;
-			font-size: 0.8em;
+			opacity: 0.5;
 		}
 		& > :global(button),
 		& > :global(input),
