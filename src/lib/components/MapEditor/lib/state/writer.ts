@@ -127,6 +127,7 @@ export class StateWriter {
 		} else {
 			this.writeBit(false);
 		}
+		this.writeBit(false); // tooltip not supported yet
 		return element;
 	}
 
@@ -138,6 +139,7 @@ export class StateWriter {
 		} else {
 			this.writeBit(false);
 		}
+		this.writeBit(false); // tooltip not supported yet
 		return element;
 	}
 
@@ -155,6 +157,7 @@ export class StateWriter {
 		} else {
 			this.writeBit(false);
 		}
+		this.writeBit(false); // tooltip not supported yet
 	}
 
 	writeStyle(style: StateStyle) {

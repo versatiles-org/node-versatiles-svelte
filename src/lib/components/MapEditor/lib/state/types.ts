@@ -3,6 +3,7 @@ export interface StateRoot {
 		center: [number, number];
 		zoom: number;
 	};
+	meta?: StateMetadata;
 	elements: StateElement[];
 }
 
@@ -12,12 +13,14 @@ export interface StateElementMarker {
 	type: 'marker';
 	point: [number, number];
 	style?: StateStyle;
+	tooltip?: StateTooltip;
 }
 
 export interface StateElementLine {
 	type: 'line';
 	points: [number, number][];
 	style?: StateStyle;
+	tooltip?: StateTooltip;
 }
 
 export interface StateElementPolygon {
@@ -25,17 +28,26 @@ export interface StateElementPolygon {
 	points: [number, number][];
 	style?: StateStyle;
 	strokeStyle?: StateStyle;
+	tooltip?: StateTooltip;
 }
 
 export interface StateStyle {
-	/*1*/ halo?: number;
-	/*2*/ opacity?: number;
-	/*3*/ pattern?: number;
-	/*4*/ rotate?: number;
-	/*5*/ size?: number;
-	/*6*/ width?: number;
-	/*7*/ align?: number;
-	/*8*/ color?: string;
-	/*9*/ label?: string;
-	/*10*/ visible?: boolean;
+	halo?: number;
+	opacity?: number;
+	pattern?: number;
+	rotate?: number;
+	size?: number;
+	width?: number;
+	align?: number;
+	color?: string;
+	label?: string;
+	visible?: boolean;
+}
+
+export interface StateMetadata {
+	title?: string;
+}
+
+export interface StateTooltip {
+	text?: string;
 }

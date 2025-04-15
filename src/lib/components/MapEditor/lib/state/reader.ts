@@ -185,6 +185,7 @@ export class StateReader {
 		try {
 			const element: StateElementMarker = { type: 'marker', point: this.readPoint() };
 			if (this.readBit()) element.style = this.readStyle();
+			if (this.readBit()) throw new Error(`Tooltip not supported yet`);
 			return element;
 		} catch (cause) {
 			throw new Error(`Error reading marker element`, { cause });
@@ -195,6 +196,7 @@ export class StateReader {
 		try {
 			const element: StateElementLine = { type: 'line', points: this.readPoints() };
 			if (this.readBit()) element.style = this.readStyle();
+			if (this.readBit()) throw new Error(`Tooltip not supported yet`);
 			return element;
 		} catch (cause) {
 			throw new Error(`Error reading line element`, { cause });
@@ -206,6 +208,7 @@ export class StateReader {
 			const element: StateElementPolygon = { type: 'polygon', points: this.readPoints() };
 			if (this.readBit()) element.style = this.readStyle();
 			if (this.readBit()) element.strokeStyle = this.readStyle();
+			if (this.readBit()) throw new Error(`Tooltip not supported yet`);
 			return element;
 		} catch (cause) {
 			throw new Error(`Error reading polygon element`, { cause });

@@ -253,7 +253,7 @@ describe('StateReader', () => {
 			const writer = new StateWriter();
 			writer.writeRoot(root);
 			expect(writer.asBase64()).toBe(
-				'FQACAABAACAwAABAAAiwVKkf4AAAQgIINAIIOAIIKAIIKBtQvv1hIriymPlfqfqiXkXhAhfhIhHjAfhHhPPhYHhYhXQiPAkPxAjPrReKESAAA_7IEXihEj__wAA'
+				'FQACAABAACAwAABAAAiwVKkf4AAAIQEEGgEEHAEEFAEEFAbUL79YSK4spj5X6n6ol5F4QIX4SIR4wH4R4Tz4WB4WIV0IjwJD8QIz60XihEgAAP-yBF4oRI__8AA'
 			);
 			const reader = new StateReader(writer.bits);
 			expect(reader.readRoot()).toStrictEqual(root);
@@ -338,7 +338,7 @@ describe('StateReader', () => {
 	describe('big hashes', () => {
 		it('should return demo route', () => {
 			const reader = StateReader.fromBase64(
-				'FwAauEhpBq5Ncvv1hOriymXldqFriXkLhIhJieBjBfhDhPLhcPhWhXOiPEkNxSiNrWlCiqAAABBqz6mkDW3EiqAABIz4RCgEGr3waQmVcSKoAAElbCDICAyDd36woUxZTBmSi0AJxFypiRVAAACykVQAAA'
+				'FwAauEhpBq5Ncvv1hOriymXldqFriXkLhIhJieBjBfhDhPLhcPhWhXOiPEkNxSiNrWlCiqAAAAg1Z9TSBrbiRVAAAkZ8IhQBBq98GkJlXEiqAABJWwgyAgGQbu_WFCmLKYMyUWgBOIuVMSKoAAAWUiqAAAA'
 			);
 			expect(reader.readRoot()).toStrictEqual({
 				elements: [
