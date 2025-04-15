@@ -100,12 +100,13 @@
 				<button onclick={() => $activeElement!.delete()}>Delete</button>
 			</div>
 		</SidebarPanel>
-		<SidebarPanel title="Help">
+		<SidebarPanel title="Help" open={false}>
+			Submit bugs and feature requests as
 			<a
 				id="github_link"
 				href="https://github.com/versatiles-org/node-versatiles-svelte/issues"
 				target="_blank"
-				aria-label="Repository on GitHub">Report Bugs and Feature Requests as GitHub Issues</a
+				aria-label="Repository on GitHub">GitHub issues</a
 			>
 		</SidebarPanel>
 	</div>
@@ -175,10 +176,6 @@
 	}
 
 	a {
-		text-decoration: none;
 		color: var(--fg-color);
-		&:hover {
-			text-decoration: underline;
-		}
 	}
 </style>
