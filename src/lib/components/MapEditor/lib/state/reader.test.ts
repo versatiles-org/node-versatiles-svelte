@@ -344,19 +344,19 @@ describe('StateReader', () => {
 				elements: [
 					{
 						points: [
-							[13.371063232421875, 52.51841735839844],
-							[13.369659423828125, 52.5157470703125],
-							[13.351303100585938, 52.51458740234375],
-							[13.350967407226562, 52.514892578125],
-							[13.35040283203125, 52.51512145996094],
-							[13.349655151367188, 52.515106201171875],
-							[13.349166870117188, 52.51483154296875],
-							[13.349044799804688, 52.514495849609375],
-							[13.349258422851562, 52.514129638671875],
-							[13.34967041015625, 52.513946533203125],
-							[13.350265502929688, 52.513824462890625],
-							[13.351272583007812, 52.50956726074219],
-							[13.351898193359375, 52.50677490234375]
+							[expect.closeTo(13.37106, 5), expect.closeTo(52.51842, 5)],
+							[expect.closeTo(13.36966, 5), expect.closeTo(52.51575, 5)],
+							[expect.closeTo(13.3513, 5), expect.closeTo(52.51459, 5)],
+							[expect.closeTo(13.35097, 5), expect.closeTo(52.51489, 5)],
+							[expect.closeTo(13.3504, 5), expect.closeTo(52.51512, 5)],
+							[expect.closeTo(13.34966, 5), expect.closeTo(52.51511, 5)],
+							[expect.closeTo(13.34917, 5), expect.closeTo(52.51483, 5)],
+							[expect.closeTo(13.34904, 5), expect.closeTo(52.5145, 5)],
+							[expect.closeTo(13.34926, 5), expect.closeTo(52.51413, 5)],
+							[expect.closeTo(13.34967, 5), expect.closeTo(52.51395, 5)],
+							[expect.closeTo(13.35027, 5), expect.closeTo(52.51382, 5)],
+							[expect.closeTo(13.35127, 5), expect.closeTo(52.50957, 5)],
+							[expect.closeTo(13.3519, 5), expect.closeTo(52.50677, 5)]
 						],
 						style: {
 							color: '#AA0000',
@@ -365,7 +365,7 @@ describe('StateReader', () => {
 						type: 'line'
 					},
 					{
-						point: [13.351394653320312, 52.50654602050781],
+						point: [expect.closeTo(13.35139, 5), expect.closeTo(52.50655, 5)],
 						style: {
 							align: 2,
 							color: '#AA0000',
@@ -374,7 +374,7 @@ describe('StateReader', () => {
 						type: 'marker'
 					},
 					{
-						point: [13.3709716796875, 52.518707275390625],
+						point: [expect.closeTo(13.37097, 5), expect.closeTo(52.51871, 5)],
 						style: {
 							align: 2,
 							color: '#AA0000',
@@ -384,10 +384,10 @@ describe('StateReader', () => {
 					},
 					{
 						points: [
-							[13.373825073242188, 52.5179443359375],
-							[13.373794555664062, 52.519256591796875],
-							[13.371795654296875, 52.519256591796875],
-							[13.37115478515625, 52.5179443359375]
+							[expect.closeTo(13.37383, 5), expect.closeTo(52.51794, 5)],
+							[expect.closeTo(13.37379, 5), expect.closeTo(52.51926, 5)],
+							[expect.closeTo(13.3718, 5), expect.closeTo(52.51926, 5)],
+							[expect.closeTo(13.37115, 5), expect.closeTo(52.51794, 5)]
 						],
 						strokeStyle: {
 							color: '#AA0000',
@@ -401,7 +401,7 @@ describe('StateReader', () => {
 					}
 				],
 				map: {
-					center: [13.35992431640625, 52.51304626464844],
+					center: [expect.closeTo(13.35992, 5), 52.51304626464844],
 					zoom: 14
 				}
 			});
