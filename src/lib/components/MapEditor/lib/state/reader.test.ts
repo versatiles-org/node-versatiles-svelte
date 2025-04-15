@@ -307,4 +307,105 @@ describe('StateReader', () => {
 			expect(reader.ended()).toBe(true);
 		});
 	});
+
+	describe('readColor', () => {
+		it('should read a color', () => {
+			const reader = StateReader.fromBitString(
+				['00000000', '01111011', '11111111', '1', '00110011'].join('')
+			);
+			const color = reader.readColor();
+			expect(color).toBe('#007BFF33');
+			expect(reader.ended()).toBe(true);
+		});
+		it('should write and read a RGB color', () => {
+			const color = '#123456';
+			const writer = new StateWriter();
+			writer.writeColor(color);
+			const reader = new StateReader(writer.bits);
+			expect(reader.readColor()).toBe(color);
+			expect(reader.ended()).toBe(true);
+		});
+		it('should write and read a RGBA color', () => {
+			const color = '#12345678';
+			const writer = new StateWriter();
+			writer.writeColor(color);
+			const reader = new StateReader(writer.bits);
+			expect(reader.readColor()).toBe(color);
+			expect(reader.ended()).toBe(true);
+		});
+	});
+
+	describe('big hashes', () => {
+		it('should return demo route', () => {
+			const reader = StateReader.fromBase64(
+				'FwAauEhpBq5Ncvv1hOriymXldqFriXkLhIhJieBjBfhDhPLhcPhWhXOiPEkNxSiNrWlCiqAAABBqz6mkDW3EiqAABIz4RCgEGr3waQmVcSKoAAElbCDICAyDd36woUxZTBmSi0AJxFypiRVAAACykVQAAA'
+			);
+			expect(reader.readRoot()).toStrictEqual({
+				elements: [
+					{
+						points: [
+							[13.371063232421875, 52.51841735839844],
+							[13.369659423828125, 52.5157470703125],
+							[13.351303100585938, 52.51458740234375],
+							[13.350967407226562, 52.514892578125],
+							[13.35040283203125, 52.51512145996094],
+							[13.349655151367188, 52.515106201171875],
+							[13.349166870117188, 52.51483154296875],
+							[13.349044799804688, 52.514495849609375],
+							[13.349258422851562, 52.514129638671875],
+							[13.34967041015625, 52.513946533203125],
+							[13.350265502929688, 52.513824462890625],
+							[13.351272583007812, 52.50956726074219],
+							[13.351898193359375, 52.50677490234375]
+						],
+						style: {
+							color: '#AA0000',
+							width: 5
+						},
+						type: 'line'
+					},
+					{
+						point: [13.351394653320312, 52.50654602050781],
+						style: {
+							align: 2,
+							color: '#AA0000',
+							label: 'End'
+						},
+						type: 'marker'
+					},
+					{
+						point: [13.3709716796875, 52.518707275390625],
+						style: {
+							align: 2,
+							color: '#AA0000',
+							label: 'Start'
+						},
+						type: 'marker'
+					},
+					{
+						points: [
+							[13.373825073242188, 52.5179443359375],
+							[13.373794555664062, 52.519256591796875],
+							[13.371795654296875, 52.519256591796875],
+							[13.37115478515625, 52.5179443359375]
+						],
+						strokeStyle: {
+							color: '#AA0000',
+							width: 1
+						},
+						style: {
+							color: '#AA0000',
+							pattern: 2
+						},
+						type: 'polygon'
+					}
+				],
+				map: {
+					center: [13.35992431640625, 52.51304626464844],
+					zoom: 14
+				}
+			});
+			expect(reader.ended()).toBe(true);
+		});
+	});
 });
