@@ -3,7 +3,7 @@ import { getLanguage } from './location.js';
 
 export function getMapStyle(
 	styleOptions: StyleBuilderOptions & {
-		darkMode?: boolean,
+		darkMode?: boolean;
 		transitionDuration?: number;
 	} = {}
 ) {

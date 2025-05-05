@@ -119,10 +119,17 @@ export class GeometryManager {
 
 	public getState(): StateRoot {
 		const center = this.map.getCenter();
+		const bounds = this.map.getBounds();
+		const radiusDegrees =
+			Math.min(
+				bounds.getNorth() - bounds.getSouth(),
+				(bounds.getEast() - bounds.getWest()) * Math.cos((center.lat * Math.PI) / 180)
+			) / 2;
+		const radius = 40074000 * (radiusDegrees / 360);
 		return {
 			map: {
 				center: [center.lng, center.lat],
-				zoom: this.map.getZoom()
+				radius
 			},
 			elements: get(this.elements).map((element) => element.getState())
 		};
@@ -138,11 +145,14 @@ export class GeometryManager {
 		});
 
 		if (state.map) {
-			if (state.map.zoom) this.map.setZoom(state.map.zoom);
-			if (state.map.center) {
-				const [lng, lat] = state.map.center;
-				this.map.setCenter({ lng, lat });
-			}
+			const { center, radius } = state.map;
+			const dy = (radius * 360) / 40074000;
+			const dx = dy / Math.cos((center[1] * Math.PI) / 180);
+			const bounds: [[number, number], [number, number]] = [
+				[center[0] - dx, center[1] - dy],
+				[center[0] + dx, center[1] + dy]
+			];
+			this.map.fitBounds(bounds, { animate: false });
 		}
 
 		if (state.elements) {

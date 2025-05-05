@@ -93,29 +93,28 @@ export class StateReader {
 		}
 	}
 
-	readPoint(level: number = 14): [number, number] {
+	readPoint(resolutionInMeters: number = 1): [number, number] {
+		if (!resolutionInMeters || resolutionInMeters < 1) resolutionInMeters = 1;
+
 		try {
-			const scale = Math.pow(2, level + 2);
-			return [
-				this.readInteger(level + 11, true) / scale,
-				this.readInteger(level + 10, true) / scale
-			];
+			const scale = Math.round(1e5 / resolutionInMeters);
+			return [this.readVarint(true) / scale, this.readVarint(true) / scale];
 		} catch (cause) {
 			throw new Error(`Error reading point`, { cause });
 		}
 	}
 
-	readPoints(level: number = 14): [number, number][] {
+	readPoints(resolutionInMeters: number = 1): [number, number][] {
 		try {
 			const length = this.readVarint();
-			const scale = Math.pow(2, -level - 2);
+			const scale = Math.round(1e5 / resolutionInMeters);
 			let x = 0;
 			let y = 0;
 			const points: [number, number][] = [];
 			for (let i = 0; i < length; i++) {
 				x += this.readVarint(true);
 				y += this.readVarint(true);
-				points[i] = [x * scale, y * scale];
+				points[i] = [x / scale, y / scale];
 			}
 			return points;
 		} catch (cause) {
@@ -173,9 +172,10 @@ export class StateReader {
 
 	readMap(): NonNullable<StateRoot['map']> {
 		try {
-			const zoom = this.readInteger(10) / 32;
-			const center = this.readPoint(Math.ceil(zoom));
-			return { zoom, center };
+			const radius = Math.pow(2, this.readInteger(10) / 40);
+			// effective resolution of coordinates is 1000 times the visible radius
+			const center = this.readPoint(radius / 1e3);
+			return { radius, center };
 		} catch (cause) {
 			throw new Error(`Error reading map`, { cause });
 		}

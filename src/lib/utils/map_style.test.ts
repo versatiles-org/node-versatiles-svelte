@@ -17,11 +17,12 @@ describe('src/lib/utils/map_style.ts', () => {
 	describe('getMapStyle', () => {
 		it('should call styles.colorful with dark mode options', () => {
 			vi.mocked(getLanguage).mockReturnValue('en');
-			getMapStyle(true, {});
+			getMapStyle({ darkMode: true });
 
 			expect(styles.colorful).toHaveBeenCalledWith({
 				baseUrl: 'https://tiles.versatiles.org',
 				language: 'en',
+				darkMode: true,
 				recolor: {
 					invertBrightness: true,
 					gamma: 0.5
@@ -31,10 +32,11 @@ describe('src/lib/utils/map_style.ts', () => {
 
 		it('should call styles.colorful with light mode options', () => {
 			vi.mocked(getLanguage).mockReturnValue('de');
-			getMapStyle(false);
+			getMapStyle({ darkMode: false });
 			expect(styles.colorful).toHaveBeenCalledWith({
 				baseUrl: 'https://tiles.versatiles.org',
 				language: 'de',
+				darkMode: false,
 				recolor: {
 					invertBrightness: false,
 					gamma: 1
@@ -44,10 +46,11 @@ describe('src/lib/utils/map_style.ts', () => {
 
 		it('should handle missing styleOptions gracefully', () => {
 			vi.mocked(getLanguage).mockReturnValue(null);
-			getMapStyle(true);
+			getMapStyle({ darkMode: true });
 			expect(styles.colorful).toHaveBeenCalledWith({
 				baseUrl: 'https://tiles.versatiles.org',
 				language: null,
+				darkMode: true,
 				recolor: {
 					invertBrightness: true,
 					gamma: 0.5

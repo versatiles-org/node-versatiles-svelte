@@ -60,27 +60,27 @@ describe('StateWriter', () => {
 		it('should write a point correctly', () => {
 			const writer = new StateWriter();
 			writer.writePoint([0, 0]);
-			expect(writer.asBase64()).toBe('AAAAAAAAA');
+			expect(writer.asBitString()).toBe('000000000000');
 		});
 
 		it('should write SW correctly', () => {
 			const writer = new StateWriter();
-			writer.writePoint([-180, -90], -2);
-			expect(writer.asBitString()).toBe('10100110010100110');
+			writer.writePoint([-180, -90], 1e5);
+			expect(writer.asBitString()).toBe('001111010110100111001010');
 
 			const reader = new StateReader(writer.bits);
-			expect(reader.readInteger(9, true)).toBe(-180);
-			expect(reader.readInteger(8, true)).toBe(-90);
+			expect(reader.readVarint(true)).toBe(-180);
+			expect(reader.readVarint(true)).toBe(-90);
 		});
 
 		it('should write NE correctly', () => {
 			const writer = new StateWriter();
-			writer.writePoint([180, 90], -2);
-			expect(writer.asBitString()).toBe('01011010001011010');
+			writer.writePoint([180, 90], 1e5);
+			expect(writer.asBitString()).toBe('010001010110101001001010');
 
 			const reader = new StateReader(writer.bits);
-			expect(reader.readInteger(9, true)).toBe(180);
-			expect(reader.readInteger(8, true)).toBe(90);
+			expect(reader.readVarint(true)).toBe(180);
+			expect(reader.readVarint(true)).toBe(90);
 		});
 	});
 
@@ -90,13 +90,13 @@ describe('StateWriter', () => {
 			[0, 0],
 			[1, 1]
 		]);
-		expect(writer.asBase64()).toBe('EAABBBIBBBI');
+		expect(writer.asBase64()).toBe('EAABVHMBVHM');
 	});
 
 	it('should write a root object correctly', () => {
 		const writer = new StateWriter();
 		writer.writeRoot({
-			map: { zoom: 10, center: [1, 2] },
+			map: { radius: 1024, center: [1, 2] },
 			elements: [
 				{
 					type: 'marker',
@@ -124,7 +124,7 @@ describe('StateWriter', () => {
 			]
 		});
 		expect(writer.asBase64()).toBe(
-			'FQACAABAACAwAABAAAi8UIkf4AAAIQEEGgEEHAEEFAEEFCLxQiQAf4AAxgQQSQgQQUQgQQUAQQUAQQUAQQUIvFCJAAAf4IvFCJH__gAA'
+			'FkIb_SgX-1hB9TkBRbwi8UIkf4AAAIQGWHwHmckIGk1gGk1iLxQiQAf4AAxgde7QgSQ-wgaTWAaTWAaTWAaTWIvFCJAAAf4IvFCJH__gAA'
 		);
 	});
 
@@ -132,12 +132,12 @@ describe('StateWriter', () => {
 		const writer = new StateWriter();
 		writer.writeRoot({
 			map: {
-				zoom: 0,
+				radius: 1024,
 				center: [0, 0]
 			},
 			elements: []
 		});
-		expect(writer.asBitString()).toBe('000100000000000000000000000000000000');
+		expect(writer.asBitString()).toBe('000101100100000000000000000');
 	});
 
 	it('should write a style correctly', () => {

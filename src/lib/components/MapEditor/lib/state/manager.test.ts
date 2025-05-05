@@ -11,14 +11,14 @@ describe('StateManager', () => {
 	const state1: StateRoot = {
 		map: {
 			center: [1, 2],
-			zoom: 10
+			radius: 16
 		},
 		elements: [{ type: 'marker', point: [3, 4], style: { label: 'test' } }]
 	};
 	const state2: StateRoot = {
 		map: {
 			center: [3, 4],
-			zoom: 11
+			radius: 1024
 		},
 		elements: [
 			{
@@ -58,7 +58,7 @@ describe('StateManager', () => {
 			geometryManager.setState(state1);
 			const hash = stateManager.getHash();
 			expect(geometryManager.getState).toHaveBeenCalled();
-			expect(hash).toBe('FQACAABAACAwAABAAAyQIEcIA');
+			expect(hash).toBe('G2haCUQhB9TkBRbwyQIEcIA');
 		});
 
 		it('should set the geometry manager state from a base64 compressed hash', () => {

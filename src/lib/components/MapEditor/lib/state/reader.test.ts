@@ -5,19 +5,19 @@ import { StateWriter } from './writer.js';
 
 describe('StateReader', () => {
 	const path: [number, number][] = [
-		[13.3709716796875, 52.51837158203125],
-		[13.36962890625, 52.51568603515625],
-		[13.351318359375, 52.5145263671875],
-		[13.35089111328125, 52.5147705078125],
-		[13.35040283203125, 52.51507568359375],
-		[13.349609375, 52.51507568359375],
-		[13.34912109375, 52.5147705078125],
-		[13.3489990234375, 52.514404296875],
-		[13.34918212890625, 52.51409912109375],
-		[13.349609375, 52.513916015625],
-		[13.3502197265625, 52.5137939453125],
-		[13.3511962890625, 52.509521484375],
-		[13.3519287109375, 52.5067138671875]
+		[13.37097, 52.51837],
+		[13.36962, 52.51568],
+		[13.35131, 52.51452],
+		[13.35089, 52.51477],
+		[13.3504, 52.51507],
+		[13.3496, 52.51507],
+		[13.34912, 52.51477],
+		[13.34899, 52.5144],
+		[13.34918, 52.51409],
+		[13.3496, 52.51391],
+		[13.35021, 52.51379],
+		[13.35119, 52.50952],
+		[13.35192, 52.50671]
 	];
 
 	describe('fromBase64', () => {
@@ -182,11 +182,13 @@ describe('StateReader', () => {
 
 	describe('readPoint', () => {
 		it('should read a point with default level', () => {
-			expect(StateReader.fromBitString('00000000000000000').readPoint(-2)).toStrictEqual([0, 0]);
-			expect(StateReader.fromBitString('10100110010100110').readPoint(-2)).toStrictEqual([
+			expect(StateReader.fromBitString('000000000000').readPoint(1e5)).toStrictEqual([0, 0]);
+			expect(StateReader.fromBitString('001111010110100111001010').readPoint(1e5)).toStrictEqual([
 				-180, -90
 			]);
-			expect(StateReader.fromBitString('01011010001011010').readPoint(-2)).toStrictEqual([180, 90]);
+			expect(StateReader.fromBitString('010001010110101001001010').readPoint(1e5)).toStrictEqual([
+				180, 90
+			]);
 		});
 
 		it('should write and read points correctly', () => {
@@ -198,20 +200,48 @@ describe('StateReader', () => {
 				expect(reader.ended()).toBe(true);
 				return point;
 			}
-			expect(test(-180, -90, -2)).toStrictEqual([-180, -90]);
-			expect(test(180, 90, -2)).toStrictEqual([180, 90]);
+			expect(test(-180, -90, 1e4)).toStrictEqual([-180, -90]);
+			expect(test(180, 90, 1e4)).toStrictEqual([180, 90]);
 
-			expect(test(0.4, 3.1, 1)).toStrictEqual([0.375, 3.125]);
+			expect(test(0.4, 3.1, 1e4)).toStrictEqual([0.4, 3.1]);
 		});
 	});
+
 	describe('readPoints', () => {
 		it('should write and read point arrays correctly', () => {
 			const writer = new StateWriter();
-			writer.writePoints(path, 12);
-			expect(writer.asBase64().length).toBe(41);
+			writer.writePoints(path);
+			expect(writer.asBase64()).toBe('alhnjE1fjBUbQzgblGPOnElCDG5C_IA_E3CyTENC7CpEHC1GuJMr0lIji');
+
 			const reader = new StateReader(writer.bits);
 
-			expect(reader.readPoints(12)).toStrictEqual(path);
+			expect(reader.readPoints()).toStrictEqual(path);
+			expect(reader.ended()).toBe(true);
+		});
+	});
+
+	describe('readMap', () => {
+		it('should write and read a map object 1', () => {
+			const map: StateRoot['map'] = {
+				center: [1.0085728693898135, 2.017145738779627],
+				radius: 10085.53503412156
+			};
+			const writer = new StateWriter();
+			writer.writeMap(map);
+			const reader = new StateReader(writer.bits);
+			expect(reader.readMap()).toStrictEqual(map);
+			expect(reader.ended()).toBe(true);
+		});
+
+		it('should write and read a map object 2', () => {
+			const map: StateRoot['map'] = {
+				center: [-121.013, 82.65],
+				radius: 10.021315508993023
+			};
+			const writer = new StateWriter();
+			writer.writeMap(map);
+			const reader = new StateReader(writer.bits);
+			expect(reader.readMap()).toStrictEqual(map);
 			expect(reader.ended()).toBe(true);
 		});
 	});
@@ -226,7 +256,7 @@ describe('StateReader', () => {
 		it('should read a root object correctly', () => {
 			const root: StateRoot = {
 				map: {
-					zoom: 10,
+					radius: 1024,
 					center: [1, 2]
 				},
 				elements: [
@@ -253,7 +283,7 @@ describe('StateReader', () => {
 			const writer = new StateWriter();
 			writer.writeRoot(root);
 			expect(writer.asBase64()).toBe(
-				'FQACAABAACAwAABAAAiwVKkf4AAAIQEEGgEEHAEEFAEEFAbUL79YSK4spj5X6n6ol5F4QIX4SIR4wH4R4Tz4WB4WIV0IjwJD8QIz60XihEgAAP-yBF4oRI__8AA'
+				'FkIb_SgX-1hB9TkBRbwiwVKkf4AAAIQGWHwHmckIGk1gGk1gbUsM8Ymr8YKjaGcDcox504koQY3IX5AH4m4WSYhoXYVIg4Wo1xJlekpEcUXihEgAAP-yBF4oRI__8AA'
 			);
 			const reader = new StateReader(writer.bits);
 			expect(reader.readRoot()).toStrictEqual(root);
@@ -338,7 +368,7 @@ describe('StateReader', () => {
 	describe('big hashes', () => {
 		it('should return demo route', () => {
 			const reader = StateReader.fromBase64(
-				'FwAauEhpBq5Ncvv1hOriymXldqFriXkLhIhJieBjBfhDhPLhcPhWhXOiPEkNxSiNrWlCiqAAAAg1Z9TSBrbiRVAAAkZ8IhQBBq98GkJlXEiqAABJWwgyAgGQbu_WFCmLKYMyUWgBOIuVMSKoAAAWUiqAAAA'
+				'Foef09wuVSUziaJjnjEJhjBUvQrgvlGPODE5CjGdCnICDGvCyDEZCTElEHCxGyRMj09GfitKFFUAAABNtfjE9LfBUuJFUAACRnwiFAGWGeMT2OMFS4kVQAAJK2EGQEAyHRaYxCW4wVDkUG2AAyD0JiRVAAACykVQAAAA'
 			);
 			expect(reader.readRoot()).toStrictEqual({
 				elements: [
@@ -401,11 +431,10 @@ describe('StateReader', () => {
 					}
 				],
 				map: {
-					center: [expect.closeTo(13.35992, 5), 52.51304626464844],
-					zoom: 14
+					center: [expect.closeTo(13.35992, 5), expect.closeTo(52.51305, 5)],
+					radius: expect.closeTo(1374.79)
 				}
 			});
-			expect(reader.ended()).toBe(true);
 		});
 	});
 });

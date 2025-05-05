@@ -61,15 +61,17 @@ export class StateWriter {
 		for (let i = 0; i < length; i++) cb(array[i]);
 	}
 
-	writePoint(point: [number, number], level: number = 14) {
-		const scale = Math.pow(2, level + 2);
-		this.writeInteger(Math.round(point[0] * scale), level + 11);
-		this.writeInteger(Math.round(point[1] * scale), level + 10);
+	writePoint(point: [number, number], resolutionInMeters: number = 1) {
+		if (!resolutionInMeters || resolutionInMeters < 1) resolutionInMeters = 1;
+
+		const scale = Math.round(1e5 / resolutionInMeters);
+		this.writeVarint(Math.round(point[0] * scale), true);
+		this.writeVarint(Math.round(point[1] * scale), true);
 	}
 
-	writePoints(points: [number, number][], level: number = 14) {
+	writePoints(points: [number, number][], resolutionInMeters: number = 1) {
 		this.writeVarint(points.length);
-		const scale = Math.pow(2, level + 2);
+		const scale = Math.round(1e5 / resolutionInMeters);
 		let x = 0;
 		let y = 0;
 		points.forEach((point) => {
@@ -115,8 +117,11 @@ export class StateWriter {
 	}
 
 	writeMap(map: NonNullable<StateRoot['map']>) {
-		this.writeInteger(Math.round(map.zoom * 32), 10);
-		this.writePoint(map.center, Math.ceil(map.zoom));
+		const value = Math.round(Math.log2(map.radius) * 40);
+		const radius = Math.pow(2, value / 40);
+		this.writeInteger(value, 10);
+		// effective resolution of coordinates is 1000 times the visible radius
+		this.writePoint(map.center, radius / 1e3);
 	}
 
 	writeElementMarker(element: StateElementMarker) {

@@ -19,7 +19,9 @@ export class MockGeometryManager {
 	}
 
 	public setActiveElement = vi.fn();
-	public getState = vi.fn((): StateRoot => ({ map: { center: [0, 0], zoom: 10 }, elements: [] }));
+	public getState = vi.fn(
+		(): StateRoot => ({ map: { center: [0, 0], radius: 1000 }, elements: [] })
+	);
 	public setState = vi.fn();
 	public getElement = vi.fn(
 		(index: number): AbstractElement => ({ index }) as unknown as AbstractElement

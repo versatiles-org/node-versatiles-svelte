@@ -1,7 +1,7 @@
 export interface StateRoot {
 	map?: {
 		center: [number, number];
-		zoom: number;
+		radius: number;
 	};
 	meta?: StateMetadata;
 	elements: StateElement[];

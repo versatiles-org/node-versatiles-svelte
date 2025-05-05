@@ -52,20 +52,20 @@ describe('GeometryManager', () => {
 		it('should create and restore empty map', async () => {
 			expect(manager.getState()).toStrictEqual({
 				elements: [],
-				map: { center: [1, 2], zoom: 5 }
+				map: { center: [1, 2], radius: 312696.8037113758 }
 			});
-			expect(manager.state.getHash()).toBe('EoACAAgA');
+			expect(manager.state.getHash()).toBe('G2haCUQg');
 
 			manager.map.setCenter({ lng: 12, lat: 34 });
 			manager.map.setZoom(5);
 
 			expect(manager.getState()).toStrictEqual({
 				elements: [],
-				map: { center: [12, 34], zoom: 5 }
+				map: { center: [12, 34], radius: 215179.62743964553 }
 			});
 
 			const hash = manager.state.getHash();
-			expect(hash).toBe('EoAYAIgA');
+			expect(hash).toBe('GxYdVMa_A');
 
 			manager.state.setHash(hash);
 			expect(get(manager.elements).length).toBe(0);
@@ -90,7 +90,7 @@ describe('GeometryManager', () => {
 			expect(manager.getState().elements).toStrictEqual([element]);
 
 			const hash = manager.state.getHash();
-			expect(hash).toBe('EoACAAgAgwAACIAAMkcBHCA');
+			expect(hash).toBe('G2haCUQhBxPTEBphfMyRwEcIA');
 
 			manager.state.setHash(hash);
 			const elements = get(manager.elements);
@@ -115,7 +115,7 @@ describe('GeometryManager', () => {
 			expect(manager.getState().elements).toStrictEqual([element]);
 
 			const hash = manager.state.getHash();
-			expect(hash).toBe('EoACAAgBCAggkAggoAggoAggoYq83vA');
+			expect(hash).toBe('G2haCUQiEBVHMBpNYBpNYBpNYxV5veA');
 
 			manager.state.setHash(hash);
 			const elements = get(manager.elements);
@@ -142,7 +142,7 @@ describe('GeometryManager', () => {
 			expect(manager.getState().elements).toStrictEqual([element]);
 
 			const hash = manager.state.getHash();
-			expect(hash).toBe('EoACAAgBiAggkAggoAggoAggoYq83vBgSNFYA');
+			expect(hash).toBe('G2haCUQjEBVHMBpNYBpNYBpNYxV5veDAkaKwA');
 
 			manager.state.setHash(hash);
 			const elements = get(manager.elements);
