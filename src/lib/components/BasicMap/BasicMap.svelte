@@ -33,7 +33,7 @@
 		if (!container) throw Error();
 
 		if (styleOptions.darkMode == null) styleOptions.darkMode = isDarkMode(container);
-		
+
 		container.style.setProperty('--bg-color', styleOptions.darkMode ? '#000' : '#fff');
 		container.style.setProperty('--fg-color', styleOptions.darkMode ? '#fff' : '#000');
 
