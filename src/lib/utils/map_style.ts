@@ -2,13 +2,12 @@ import { styles, type StyleBuilderOptions } from '@versatiles/style';
 import { getLanguage } from './location.js';
 
 export function getMapStyle(
-	darkMode: boolean,
 	styleOptions: StyleBuilderOptions & {
+		darkMode?: boolean,
 		transitionDuration?: number;
-		disableDarkMode?: boolean;
 	} = {}
 ) {
-	darkMode = darkMode && !styleOptions.disableDarkMode;
+	const darkMode = styleOptions.darkMode ?? false;
 	const style = styles.colorful({
 		baseUrl: 'https://tiles.versatiles.org',
 		language: getLanguage(),

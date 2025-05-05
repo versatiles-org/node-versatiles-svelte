@@ -33,7 +33,7 @@
 	<div class="container">
 		<BasicMap
 			{onMapInit}
-			styleOptions={{ disableDarkMode: true }}
+			styleOptions={{ darkMode: false }}
 			mapOptions={{ attributionControl: false }}
 		></BasicMap>
 	</div>

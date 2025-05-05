@@ -14,7 +14,7 @@
 		onMapLoad
 	}: {
 		style?: string;
-		styleOptions?: Parameters<typeof getMapStyle>[1];
+		styleOptions?: Parameters<typeof getMapStyle>[0];
 		mapOptions?: Partial<MapOptions>;
 		map?: maplibre.Map;
 		onMapInit?: (map: maplibre.Map, maplibre: typeof import('maplibre-gl')) => void;
@@ -32,11 +32,11 @@
 
 		if (!container) throw Error();
 
-		const darkMode = isDarkMode(container);
+		const darkMode = styleOptions.darkMode ?? isDarkMode(container);
 		container.style.setProperty('--bg-color', darkMode ? '#000' : '#fff');
 		container.style.setProperty('--fg-color', darkMode ? '#fff' : '#000');
 
-		const style = getMapStyle(darkMode, styleOptions);
+		const style = getMapStyle(styleOptions);
 		style.transition = { duration: 0, delay: 0 };
 		map = new maplibre.Map({
 			container,
