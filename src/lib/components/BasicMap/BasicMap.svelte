@@ -32,9 +32,10 @@
 
 		if (!container) throw Error();
 
-		const darkMode = styleOptions.darkMode ?? isDarkMode(container);
-		container.style.setProperty('--bg-color', darkMode ? '#000' : '#fff');
-		container.style.setProperty('--fg-color', darkMode ? '#fff' : '#000');
+		if (styleOptions.darkMode == null) styleOptions.darkMode = isDarkMode(container);
+		
+		container.style.setProperty('--bg-color', styleOptions.darkMode ? '#000' : '#fff');
+		container.style.setProperty('--fg-color', styleOptions.darkMode ? '#fff' : '#000');
 
 		const style = getMapStyle(styleOptions);
 		style.transition = { duration: 0, delay: 0 };
