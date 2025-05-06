@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { labelPositions, MapLayerSymbol } from '../lib/map_layer/symbol.js';
 	import InputRow from './InputRow.svelte';
-	import SymbolSelector from './SymbolSelector.svelte';
+	import SymbolSelector from './PanelSymbolSelector.svelte';
 
 	const { layer }: { layer: MapLayerSymbol } = $props();
 
