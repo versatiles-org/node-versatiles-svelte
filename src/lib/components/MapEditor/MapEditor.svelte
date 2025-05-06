@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import Sidebar from './components/Sidebar.svelte';
 	import type { GeometryManager } from './lib/geometry_manager.js';
+	import { getCountryBoundingBox } from '$lib/utils/location.js';
 
 	let showSidebar = $state(false);
 
@@ -22,8 +23,15 @@
 		map.on('load', async () => {
 			const { GeometryManager } = await import('./lib/geometry_manager.js');
 			geometryManager = new GeometryManager(map!);
+
 			const hash = location.hash.slice(1);
-			if (hash) geometryManager.state.setHash(hash);
+			if (hash) {
+				geometryManager.state.setHash(hash);
+			} else {
+				const bbox = getCountryBoundingBox();
+				if (bbox) _map.fitBounds(bbox, { padding: 20, animate: false });
+			}
+
 			addEventListener('hashchange', () => geometryManager!.state.setHash(location.hash.slice(1)));
 		});
 	}
