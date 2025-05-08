@@ -1,0 +1,95 @@
+button.btn,
+fieldset.btn {
+	font-size: 0.8rem;
+}
+
+button.btn,
+fieldset.btn > label {
+	background-color: var(--color-btn);
+	border-radius: var(--border-radius);
+	border: 2px solid var(--color-btn);
+	color: var(--color-bg);
+	cursor: pointer;
+	display: inline-block;
+	font-weight: 600;
+	padding: 0.4em 1em;
+	position: relative;
+	transition:
+		background-color 0.1s ease-in-out,
+		color 0.1s ease-in-out;
+	padding-block: 0.4em;
+	padding-inline: 1.2em;
+}
+
+button.btn {
+	&:not([disabled]):hover {
+		background-color: var(--color-bg);
+		color: var(--color-btn);
+	}
+
+	&:disabled {
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
+
+	&.success {
+		&:after {
+			content: '✓';
+			display: block;
+			width: 1.6em;
+			height: 1.6em;
+			line-height: 1.6em;
+			margin-left: 5px;
+			position: absolute;
+			top: -0.8em;
+			right: -0.8em;
+			text-align: center;
+
+			font-size: 1em;
+			background-color: var(--color-green);
+			border-radius: 1em;
+			color: var(--color-bg);
+		}
+	}
+}
+
+fieldset.btn {
+	padding: 0;
+	border-radius: var(--border-radius);
+	border: 2px solid var(--color-btn);
+	display: inline-flex;
+	position: relative;
+
+	& label {
+		margin: 0;
+		border-radius: 0;
+		border: none;
+
+		border-left: 2px solid var(--color-btn);
+		background-color: var(--color-bg);
+		color: var(--color-btn);
+		padding-inline: 0.6em;
+
+		&:first-of-type {
+			border-left: none;
+		}
+	}
+
+	legend {
+		padding-inline: 0;
+		position: absolute;
+		display: block;
+		top: -1.2em;
+		left: 0;
+	}
+
+	input[type='radio'] {
+		display: none;
+	}
+
+	input:checked + label,
+	label:hover {
+		background-color: var(--color-btn);
+		color: var(--color-bg);
+	}
+}

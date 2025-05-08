@@ -1,0 +1,198 @@
+<script lang="ts">
+	import type { StateManager } from '../lib/state/manager.js';
+	import Panel from './Panel.svelte';
+
+	const { state: stateManager = $bindable() }: { state: StateManager } = $props();
+
+	let dialog: Panel | undefined;
+	let textarea: HTMLTextAreaElement | undefined;
+	let iframe: HTMLIFrameElement | undefined;
+	let btnLink: HTMLButtonElement | undefined;
+	let btnEmbed: HTMLButtonElement | undefined;
+	let previewAspectRatio: 'wide' | 'square' | 'tall' = $state('wide');
+
+	const baseUrl = window.location.href.replace(/#.*$/, '');
+
+	let url = $state(baseUrl);
+
+	export function open() {
+		dialog?.open();
+		updateUrl();
+	}
+
+	export function close() {
+		dialog?.close();
+	}
+
+	function updateUrl() {
+		url = baseUrl + '#' + stateManager.getHash();
+		setTimeout(() => iframe && (iframe.src = url), 0);
+	}
+
+	function copyLink() {
+		navigator.clipboard.writeText(url).then(
+			() => flash(btnLink),
+			() => alert('Failed to copy link. Please try again.')
+		);
+	}
+
+	function copyEmbedCode() {
+		navigator.clipboard.writeText(textarea?.value ?? '').then(
+			() => flash(btnEmbed),
+			() => alert('Failed to copy embed code. Please try again.')
+		);
+	}
+
+	function flash(b?: HTMLButtonElement) {
+		if (!b) return;
+		b.classList.add('success');
+		setTimeout(() => b.classList.remove('success'), 2000);
+	}
+
+	function selectPreview(event: Event) {
+		const target = event.target as HTMLInputElement;
+		if (target.checked) {
+			previewAspectRatio = target.value as 'wide' | 'square' | 'tall';
+			setTimeout(() => iframe?.contentWindow?.location.reload(), 0);
+		}
+	}
+</script>
+
+<Panel bind:this={dialog} size="fullscreen">
+	<div class="grid">
+		<div class="head">
+			<p>Share your map with others by copying the link or embed code below.</p>
+		</div>
+		<div class="left">
+			<iframe title="preview" bind:this={iframe} class={'aspect-' + previewAspectRatio}></iframe>
+		</div>
+		<div class="right">
+			<p>
+				<label for="text-link">
+					Link:<br />
+					<input id="text-link" type="text" value={url} readonly />
+				</label><br />
+				<button class="btn" bind:this={btnLink} onclick={copyLink}>Copy Link</button>
+			</p>
+			<p>
+				<label for="text-iframe">
+					Embed Code:<br />
+					<textarea id="text-iframe" rows="3" bind:this={textarea} readonly
+						>{`<iframe src="${url}" style="width:100%; height:60vh"></iframe>`}</textarea
+					>
+				</label>
+				<br />
+				<button class="btn" bind:this={btnEmbed} onclick={copyEmbedCode}>Copy Embed Code</button>
+			</p>
+		</div>
+		<div class="bottom">
+			<button class="btn" onclick={() => iframe?.contentWindow?.location.reload()}>Reload</button>
+			<fieldset class="btn">
+				<legend>Change the aspect ratio of the preview</legend>
+				<input
+					type="radio"
+					id="preview-wide"
+					name="preview-ratio"
+					value="wide"
+					checked
+					onclick={selectPreview}
+				/>
+				<label for="preview-wide">horizontal</label>
+				<input
+					type="radio"
+					id="preview-square"
+					name="preview-ratio"
+					value="square"
+					onclick={selectPreview}
+				/>
+				<label for="preview-square">square</label>
+				<input
+					type="radio"
+					id="preview-tall"
+					name="preview-ratio"
+					value="tall"
+					onclick={selectPreview}
+				/>
+				<label for="preview-tall">vertical</label>
+			</fieldset>
+		</div>
+	</div>
+</Panel>
+
+<style type="text/scss">
+	.grid {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		grid-template-rows: auto 1fr auto;
+		gap: 10px;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+
+		.head {
+			grid-column: 1 / -1;
+			grid-row: 1 / 1;
+			text-align: center;
+			font-size: 1.2em;
+			margin-bottom: 20px;
+		}
+
+		.left {
+			grid-column: 1 / 2;
+			grid-row: 2 / 2;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			overflow: hidden;
+			container-name: myContainer;
+			container-type: size;
+
+			iframe {
+				aspect-ratio: 16 / 9;
+				width: 100%;
+				height: auto;
+				border: 1px solid #000;
+				box-sizing: border-box;
+
+				@container myContainer (min-aspect-ratio: 16 / 9) {
+					& {
+						width: auto;
+						height: 100%;
+					}
+				}
+			}
+
+			iframe.aspect-tall {
+				aspect-ratio: 9 / 16;
+				@container myContainer (min-aspect-ratio: 9 / 16) {
+					& {
+						width: auto;
+						height: 100%;
+					}
+				}
+			}
+
+			iframe.aspect-square {
+				aspect-ratio: 1/1;
+				@container myContainer (min-aspect-ratio: 1/1) {
+					& {
+						width: auto;
+						height: 100%;
+					}
+				}
+			}
+		}
+
+		.right {
+			grid-column: 2 / -1;
+			grid-row: 2 / -1;
+			text-align: left;
+		}
+
+		.bottom {
+			grid-column: 1 / 1;
+			grid-row: 3 / 3;
+			text-align: left;
+		}
+	}
+</style>
