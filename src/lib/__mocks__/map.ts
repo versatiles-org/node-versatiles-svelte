@@ -41,6 +41,8 @@ export class MockMap {
 		return bounds;
 	});
 	fitBounds = vi.fn();
+	setStyle = vi.fn();
+	isStyleLoaded = vi.fn(() => true);
 }
 
 export type MaplibreMap = maplibre.Map;

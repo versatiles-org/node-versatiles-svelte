@@ -18,8 +18,8 @@ describe('GeometryManager', () => {
 
 	it('should initialize correctly', () => {
 		expect(manager).toBeDefined();
-		expect(mockMap.addSource).toHaveBeenCalled();
-		expect(mockMap.addLayer).toHaveBeenCalled();
+		expect(mockMap.getCanvasContainer).toHaveBeenCalled();
+		expect(mockMap.setStyle).toHaveBeenCalled();
 	});
 
 	it('should add a new marker', () => {

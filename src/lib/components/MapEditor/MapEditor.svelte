@@ -3,8 +3,8 @@
 	import BasicMap from '$lib/components/BasicMap/BasicMap.svelte';
 	import { onMount } from 'svelte';
 	import Sidebar from './components/Sidebar.svelte';
-	import type { GeometryManager } from './lib/geometry_manager.js';
 	import { getCountryBoundingBox } from '$lib/utils/location.js';
+	import { GeometryManager } from './lib/geometry_manager.js';
 
 	let showSidebar = $state(false);
 
@@ -13,37 +13,28 @@
 		if (!inIframe) showSidebar = true;
 	});
 
-	let map: MaplibreMapType | undefined = $state();
 	let geometryManager: GeometryManager | undefined = $state();
 
-	function onMapInit(_map: MaplibreMapType, maplibre: typeof import('maplibre-gl')) {
-		map = _map;
+	function onMapInit(map: MaplibreMapType, maplibre: typeof import('maplibre-gl')) {
 		map.addControl(new maplibre.AttributionControl({ compact: true }), 'bottom-left');
 
-		map.on('load', async () => {
-			const { GeometryManager } = await import('./lib/geometry_manager.js');
-			geometryManager = new GeometryManager(map!);
+		geometryManager = new GeometryManager(map);
 
-			const hash = location.hash.slice(1);
-			if (hash) {
-				geometryManager.state.setHash(hash);
-			} else {
-				const bbox = getCountryBoundingBox();
-				if (bbox) _map.fitBounds(bbox, { padding: 20, animate: false });
-			}
+		const hash = location.hash.slice(1);
+		if (hash) {
+			geometryManager.state.setHash(hash);
+		} else {
+			const bbox = getCountryBoundingBox();
+			if (bbox) map.fitBounds(bbox, { padding: 20, animate: false });
+		}
 
-			addEventListener('hashchange', () => geometryManager!.state.setHash(location.hash.slice(1)));
-		});
+		addEventListener('hashchange', () => geometryManager!.state.setHash(location.hash.slice(1)));
 	}
 </script>
 
 <div class="page">
 	<div class="container">
-		<BasicMap
-			{onMapInit}
-			styleOptions={{ darkMode: false }}
-			mapOptions={{ attributionControl: false }}
-		></BasicMap>
+		<BasicMap {onMapInit} emptyStyle={true} mapOptions={{ attributionControl: false }}></BasicMap>
 	</div>
 	{#if showSidebar && geometryManager}
 		<Sidebar {geometryManager} width={200} />

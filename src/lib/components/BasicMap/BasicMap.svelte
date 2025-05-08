@@ -10,6 +10,7 @@
 		styleOptions = { transitionDuration: 0 },
 		mapOptions = {},
 		map = $bindable(),
+		emptyStyle = false,
 		onMapInit,
 		onMapLoad
 	}: {
@@ -17,6 +18,7 @@
 		styleOptions?: Parameters<typeof getMapStyle>[0];
 		mapOptions?: Partial<MapOptions>;
 		map?: maplibre.Map;
+		emptyStyle?: boolean;
 		onMapInit?: (map: maplibre.Map, maplibre: typeof import('maplibre-gl')) => void;
 		onMapLoad?: (map: maplibre.Map, maplibre: typeof import('maplibre-gl')) => void;
 	} = $props();
@@ -37,8 +39,13 @@
 		container.style.setProperty('--bg-color', styleOptions.darkMode ? '#000' : '#fff');
 		container.style.setProperty('--fg-color', styleOptions.darkMode ? '#fff' : '#000');
 
-		const style = getMapStyle(styleOptions);
-		style.transition = { duration: 0, delay: 0 };
+		let style = undefined;
+
+		if (!emptyStyle) {
+			style = getMapStyle(styleOptions);
+			style.transition = { duration: 0, delay: 0 };
+		}
+
 		map = new maplibre.Map({
 			container,
 			style,

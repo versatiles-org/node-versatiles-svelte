@@ -8,6 +8,7 @@ import { Cursor } from './cursor.js';
 import { SymbolLibrary } from './symbols.js';
 import { StateManager } from './state/manager.js';
 import type { StateRoot } from './state/types.js';
+import { getMapStyle } from '../../../utils/map_style.js';
 
 export type ExtendedGeoJSON = GeoJSON.FeatureCollection & {
 	map?: { center: [number, number]; zoom: number };
@@ -22,7 +23,7 @@ export class GeometryManager {
 	public readonly symbolLibrary: SymbolLibrary;
 	public readonly state: StateManager;
 
-	private readonly selectionNodes: maplibregl.GeoJSONSource;
+	private selectionNodes: maplibregl.GeoJSONSource | undefined;
 
 	constructor(map: maplibregl.Map) {
 		this.elements = writable([]);
@@ -31,13 +32,13 @@ export class GeometryManager {
 		this.cursor = new Cursor(this.canvas);
 		this.symbolLibrary = new SymbolLibrary(map);
 
-		map.addSource('selection_nodes', {
+		const style = getMapStyle({ darkMode: false });
+		style.transition = { duration: 0, delay: 0 };
+		style.sources.selection_nodes = {
 			type: 'geojson',
 			data: { type: 'FeatureCollection', features: [] }
-		});
-		this.selectionNodes = map.getSource('selection_nodes')!;
-
-		map.addLayer({
+		};
+		style.layers.push({
 			id: 'selection_nodes',
 			source: 'selection_nodes',
 			type: 'circle',
@@ -51,6 +52,8 @@ export class GeometryManager {
 				'circle-stroke-width': 1
 			}
 		});
+
+		map.setStyle(style);
 
 		map.on('mousedown', 'selection_nodes', (e) => {
 			const element = get(this.selectedElement)!;
@@ -107,7 +110,8 @@ export class GeometryManager {
 
 	public drawSelectionNodes() {
 		const nodes: SelectionNode[] = get(this.selectedElement)?.getSelectionNodes() ?? [];
-		this.selectionNodes.setData({
+		if (!this.selectionNodes) this.selectionNodes = this.map.getSource('selection_nodes')!;
+		this.selectionNodes?.setData({
 			type: 'FeatureCollection',
 			features: nodes.map((n) => ({
 				type: 'Feature',
@@ -135,7 +139,7 @@ export class GeometryManager {
 		};
 	}
 
-	public setState(state: StateRoot) {
+	public async setState(state: StateRoot) {
 		if (!state) return;
 
 		this.selectElement(undefined);
@@ -153,6 +157,10 @@ export class GeometryManager {
 				[center[0] + dx, center[1] + dy]
 			];
 			this.map.fitBounds(bounds, { animate: false });
+		}
+
+		if (!this.map.isStyleLoaded()) {
+			await new Promise((r) => this.map.once('styledata', r));
 		}
 
 		if (state.elements) {
