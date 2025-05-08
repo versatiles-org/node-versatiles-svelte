@@ -228,6 +228,8 @@ describe('StateReader', () => {
 			};
 			const writer = new StateWriter();
 			writer.writeMap(map);
+			expect(writer.asBitString()).toBe('1000010100000001100011100110000001000101001111000010');
+
 			const reader = new StateReader(writer.bits);
 			expect(reader.readMap()).toStrictEqual(map);
 			expect(reader.ended()).toBe(true);
@@ -240,6 +242,10 @@ describe('StateReader', () => {
 			};
 			const writer = new StateWriter();
 			writer.writeMap(map);
+			expect(writer.asBitString()).toBe(
+				'0010000101001111010111100111000101101110100001100101011101110001011110'
+			);
+
 			const reader = new StateReader(writer.bits);
 			expect(reader.readMap()).toStrictEqual(map);
 			expect(reader.ended()).toBe(true);
@@ -251,6 +257,30 @@ describe('StateReader', () => {
 			const reader = StateReader.fromBitString('000000000000000000000000000000000');
 			const root = reader.readRoot();
 			expect(root).toStrictEqual({ elements: [] });
+		});
+
+		it('should read a simple root state', () => {
+			const root = {
+				map: {
+					center: [1, 2],
+					radius: 8192
+				},
+				elements: [
+					{
+						type: 'marker',
+						point: [3, 4]
+					}
+				]
+			} as StateRoot;
+
+			const writer = new StateWriter();
+			writer.writeRoot(root);
+			expect(writer.asBitString()).toBe(
+				'00011000001000111101110101101110111001101011011111000010000100000111110101001110010000000101000101101111000000'
+			);
+
+			const reader = new StateReader(writer.bits);
+			expect(reader.readRoot()).toStrictEqual(root);
 		});
 
 		it('should read a root object correctly', () => {
@@ -314,6 +344,8 @@ describe('StateReader', () => {
 			};
 			const writer = new StateWriter();
 			writer.writeStyle(style);
+			expect(writer.asBase64()).toBe('F4oRDGTMRcmuciMQA_6FJAgRwlA');
+
 			const reader = new StateReader(writer.bits);
 			expect(reader.readStyle()).toStrictEqual(style);
 			expect(reader.ended()).toBe(true);
@@ -332,6 +364,10 @@ describe('StateReader', () => {
 				'Hello, world, 🌍, וועלט, მოსოფელი, دنیا, ܥܠܡܐ, ലോകം, العالم, دنی, 世界, ދުނިޔެ, Sè-kài, ពិភពលោក, ലോകം,';
 			const writer = new StateWriter();
 			writer.writeString(text);
+			expect(writer.asBase64()).toBe(
+				'JGzCCSSMsAqMQSUsA5DtCbxvCsArdCrdCFfC5dCxdCsA3NI7NIDPI7NIJPIpNI1NIxNIsAfjCNlCZtCPjCsALzCBzCDzChxCsAlTGXVGrRGFRGsAPjCJlCzjCPjCJlCLlCsAfjCNlCZtCsAthmZV6sAX5CV7CF5CR7Cp5CZ7CsA2RONCyBOKsAt5Kv7Kv5Kt5K35KJ9KB5KsAlTGXVGrRGFRGs'
+			);
+
 			const reader = new StateReader(writer.bits);
 			expect(reader.readString()).toBe(text);
 			expect(reader.ended()).toBe(true);
@@ -351,6 +387,8 @@ describe('StateReader', () => {
 			const color = '#123456';
 			const writer = new StateWriter();
 			writer.writeColor(color);
+			expect(writer.asBitString()).toBe('0001001000110100010101100');
+
 			const reader = new StateReader(writer.bits);
 			expect(reader.readColor()).toBe(color);
 			expect(reader.ended()).toBe(true);
@@ -359,6 +397,8 @@ describe('StateReader', () => {
 			const color = '#12345678';
 			const writer = new StateWriter();
 			writer.writeColor(color);
+			expect(writer.asBitString()).toBe('000100100011010001010110101111000');
+
 			const reader = new StateReader(writer.bits);
 			expect(reader.readColor()).toBe(color);
 			expect(reader.ended()).toBe(true);
