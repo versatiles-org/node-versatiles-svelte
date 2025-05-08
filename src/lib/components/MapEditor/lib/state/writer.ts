@@ -5,6 +5,7 @@ import type {
 	StateElementLine,
 	StateElementMarker,
 	StateElementPolygon,
+	StateMetadata,
 	StateRoot,
 	StateStyle
 } from './types.js';
@@ -88,15 +89,8 @@ export class StateWriter {
 		// Write the version
 		this.writeInteger(0, 3);
 
-		if (root.map) {
-			this.writeBit(true);
-			this.writeMap(root.map);
-		} else {
-			this.writeBit(false);
-		}
-
-		// metadata is not used yet
-		this.writeBit(false);
+		this.writeMap(root.map);
+		this.writeMetadata(root.meta);
 
 		root.elements.forEach((element) => {
 			switch (element.type) {
@@ -116,12 +110,31 @@ export class StateWriter {
 		});
 	}
 
-	writeMap(map: NonNullable<StateRoot['map']>) {
+	writeMap(map: StateRoot['map']) {
+		if (!map) {
+			return this.writeBit(false);
+		}
+
+		this.writeBit(true);
+
 		const value = Math.round(Math.log2(map.radius) * 40);
 		const radius = Math.pow(2, value / 40);
 		this.writeInteger(value, 10);
 		// effective resolution of coordinates is 1000 times the visible radius
 		this.writePoint(map.center, radius / 1e3);
+	}
+
+	writeMetadata(metadata?: StateMetadata) {
+		if (!metadata || Object.keys(metadata).length === 0) {
+			return this.writeBit(false);
+		}
+
+		this.writeBit(true);
+		if (metadata.heading) {
+			this.writeInteger(1, 6);
+			this.writeString(metadata.heading);
+		}
+		this.writeInteger(0, 6);
 	}
 
 	writeElementMarker(element: StateElementMarker) {

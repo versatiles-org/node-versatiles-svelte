@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { StateReader } from './reader.js';
-import type { StateRoot, StateStyle } from './types.js';
+import type { StateMetadata, StateRoot, StateStyle } from './types.js';
 import { StateWriter } from './writer.js';
 
 describe('StateReader', () => {
@@ -228,7 +228,7 @@ describe('StateReader', () => {
 			};
 			const writer = new StateWriter();
 			writer.writeMap(map);
-			expect(writer.asBitString()).toBe('1000010100000001100011100110000001000101001111000010');
+			expect(writer.asBitString()).toBe('11000010100000001100011100110000001000101001111000010');
 
 			const reader = new StateReader(writer.bits);
 			expect(reader.readMap()).toStrictEqual(map);
@@ -243,12 +243,42 @@ describe('StateReader', () => {
 			const writer = new StateWriter();
 			writer.writeMap(map);
 			expect(writer.asBitString()).toBe(
-				'0010000101001111010111100111000101101110100001100101011101110001011110'
+				'10010000101001111010111100111000101101110100001100101011101110001011110'
 			);
 
 			const reader = new StateReader(writer.bits);
 			expect(reader.readMap()).toStrictEqual(map);
 			expect(reader.ended()).toBe(true);
+		});
+	});
+
+	describe('readMetadata', () => {
+		function test(metadata0: StateMetadata | undefined, expected: string) {
+			const writer = new StateWriter();
+			writer.writeMetadata(metadata0);
+			expect(writer.asBase64()).toBe(expected);
+
+			const reader = new StateReader(writer.bits);
+
+			const metadata1 = reader.readMetadata();
+			if (JSON.stringify(metadata0) == '{}') metadata0 = undefined;
+			expect(metadata1).toStrictEqual(metadata0);
+
+			expect(reader.ended()).toBe(true);
+		}
+		it('should read undefined metadata correctly', () => {
+			test(undefined, 'A');
+		});
+		it('should read empty metadata correctly', () => {
+			test({}, 'A');
+		});
+		it('should read heading correctly', () => {
+			test(
+				{
+					heading: 'AZ'
+				},
+				'giBhIiAA'
+			);
 		});
 	});
 

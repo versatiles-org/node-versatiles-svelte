@@ -45,7 +45,7 @@ export interface StateStyle {
 }
 
 export interface StateMetadata {
-	title?: string;
+	heading?: string;
 }
 
 export interface StateTooltip {

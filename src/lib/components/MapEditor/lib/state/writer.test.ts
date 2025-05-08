@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { StateWriter } from './writer.js';
 import { StateReader } from './reader.js';
+import type { StateMetadata } from './types.js';
 
 describe('StateWriter', () => {
 	it('should initialize with an empty bits array', () => {
@@ -91,6 +92,34 @@ describe('StateWriter', () => {
 			[1, 1]
 		]);
 		expect(writer.asBase64()).toBe('EAABVHMBVHM');
+	});
+
+	it('should write a map object correctly', () => {
+		const writer = new StateWriter();
+		writer.writeMap({
+			radius: 128,
+			center: [5, 6]
+		});
+		expect(writer.asBase64()).toBe('owDLD4DzOSE');
+	});
+
+	describe('writeMetadata', () => {
+		function test(metadata: StateMetadata, expected: string) {
+			const writer = new StateWriter();
+			writer.writeMetadata(metadata);
+			expect(writer.asBase64()).toBe(expected);
+		}
+		it('should write empty metadata correctly', () => {
+			test({}, 'A');
+		});
+		it('should write metadata with heading correctly', () => {
+			test(
+				{
+					heading: 'AZ'
+				},
+				'giBhIiAA'
+			);
+		});
 	});
 
 	it('should write a root object correctly', () => {

@@ -3,6 +3,7 @@ import type {
 	StateElementLine,
 	StateElementMarker,
 	StateElementPolygon,
+	StateMetadata,
 	StateRoot,
 	StateStyle
 } from './types.js';
@@ -132,14 +133,12 @@ export class StateReader {
 			}
 
 			// Read the map element
-			if (this.readBit()) {
-				root.map = this.readMap();
-			}
+			root.map = this.readMap();
+			if (!root.map) delete root.map;
 
 			// Read the metadata
-			if (this.readBit()) {
-				throw new Error(`Metadata not supported yet`);
-			}
+			root.meta = this.readMetadata();
+			if (!root.meta) delete root.meta;
 
 			// Read the elements
 			while (true) {
@@ -170,14 +169,38 @@ export class StateReader {
 		}
 	}
 
-	readMap(): NonNullable<StateRoot['map']> {
+	readMap(): StateRoot['map'] {
 		try {
+			if (!this.readBit()) return undefined;
+
 			const radius = Math.pow(2, this.readInteger(10) / 40);
 			// effective resolution of coordinates is 1000 times the visible radius
 			const center = this.readPoint(radius / 1e3);
 			return { radius, center };
 		} catch (cause) {
 			throw new Error(`Error reading map`, { cause });
+		}
+	}
+
+	readMetadata(): StateMetadata | undefined {
+		try {
+			if (!this.readBit()) return undefined;
+
+			const metadata: StateMetadata = {};
+			while (true) {
+				const key = this.readInteger(6);
+				switch (key) {
+					case 0:
+						return metadata;
+					case 1:
+						metadata.heading = this.readString();
+						break;
+					default:
+						throw new Error(`Invalid state key: ${key}`);
+				}
+			}
+		} catch (cause) {
+			throw new Error(`Error reading metadata`, { cause });
 		}
 	}
 
