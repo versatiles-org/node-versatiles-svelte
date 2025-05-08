@@ -15,10 +15,7 @@ export function mercator2lat(y: number): number {
 	return ((2 * Math.atan(Math.exp(y)) - Math.PI / 2) * 180) / Math.PI;
 }
 
-export function removeDefaultFields(
-	value: StateStyle,
-	def: StateStyle
-): Partial<StateStyle> | undefined {
+export function removeDefaultFields(value: StateStyle, def: StateStyle): Partial<StateStyle> | undefined {
 	const entries = Object.entries(value).filter(([k, v]) => {
 		if (v === undefined) return false;
 		if (v === (def as Record<string, unknown>)[k]) return false;

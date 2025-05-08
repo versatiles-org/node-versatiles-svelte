@@ -82,15 +82,7 @@ export interface LayerSymbol {
 		'text-justify'?: 'auto' | 'left' | 'center' | 'right';
 		'text-radial-offset'?: number;
 		'text-variable-anchor'?: Array<
-			| 'center'
-			| 'left'
-			| 'right'
-			| 'top'
-			| 'bottom'
-			| 'top-left'
-			| 'top-right'
-			| 'bottom-left'
-			| 'bottom-right'
+			'center' | 'left' | 'right' | 'top' | 'bottom' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
 		>;
 		'text-variable-anchor-offset'?: maplibregl.VariableAnchorOffsetCollectionSpecification;
 		'text-anchor'?:

@@ -1,6 +1,4 @@
-export async function loadBBoxes(): Promise<
-	{ key: string; value: [number, number, number, number] }[]
-> {
+export async function loadBBoxes(): Promise<{ key: string; value: [number, number, number, number] }[]> {
 	const data = await import('../../components/BBoxMap/bboxes.json');
 
 	const bboxes = data.default.map((e) => {

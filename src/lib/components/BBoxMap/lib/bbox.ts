@@ -95,10 +95,7 @@ export class BBoxDrawer {
 		const ring = getRing(get(this.bbox));
 		return {
 			type: 'FeatureCollection',
-			features: [
-				this.inverted ? polygon(getRing(worldBBox), ring) : polygon(ring),
-				linestring(ring)
-			]
+			features: [this.inverted ? polygon(getRing(worldBBox), ring) : polygon(ring), linestring(ring)]
 		};
 
 		function getRing(bbox: BBox): geojson.Position[] {

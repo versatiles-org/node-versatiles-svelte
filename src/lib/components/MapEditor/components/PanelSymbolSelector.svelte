@@ -9,22 +9,14 @@
 	const listIconSize = 32;
 	const retina = window.devicePixelRatio || 1;
 
-	let {
-		symbolIndex = $bindable(),
-		symbolLibrary
-	}: { symbolIndex: number; symbolLibrary: SymbolLibrary } = $props();
+	let { symbolIndex = $bindable(), symbolLibrary }: { symbolIndex: number; symbolLibrary: SymbolLibrary } = $props();
 
-	const drawIconHalo: Action<HTMLCanvasElement, number> = (canvas, index) =>
-		symbolLibrary.drawSymbol(canvas, index, 3);
+	const drawIconHalo: Action<HTMLCanvasElement, number> = (canvas, index) => symbolLibrary.drawSymbol(canvas, index, 3);
 
-	const drawIcon: Action<HTMLCanvasElement, number> = (canvas, index) =>
-		symbolLibrary.drawSymbol(canvas, index, 3);
+	const drawIcon: Action<HTMLCanvasElement, number> = (canvas, index) => symbolLibrary.drawSymbol(canvas, index, 3);
 </script>
 
-<button
-	onclick={() => panel?.open()}
-	style="text-align: left; white-space: nowrap; overflow: hidden; padding: 1px"
->
+<button onclick={() => panel?.open()} style="text-align: left; white-space: nowrap; overflow: hidden; padding: 1px">
 	{#key symbolIndex}
 		<canvas
 			width={buttonIconSize * retina}
@@ -44,10 +36,7 @@
 	<div class="list" style="--list-icon-size: {listIconSize}px; --list-item-size: {listItemSize}px">
 		{#each symbolLibrary.asList() as symbol (symbol.index)}
 			<button class="item" onclick={() => (symbolIndex = symbol.index)}
-				><canvas
-					width={listIconSize * retina}
-					height={listIconSize * retina}
-					use:drawIconHalo={symbol.index}
+				><canvas width={listIconSize * retina} height={listIconSize * retina} use:drawIconHalo={symbol.index}
 				></canvas><br />{symbol.name}</button
 			>
 		{/each}

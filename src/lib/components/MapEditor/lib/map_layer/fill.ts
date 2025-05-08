@@ -113,9 +113,7 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 		if (properties['fill-color']) this.color.set(properties['fill-color']);
 		if (properties['fill-opacity']) this.opacity.set(properties['fill-opacity']);
 		if (properties['fill-pattern']) {
-			const pattern = fillPatterns
-				.entries()
-				.find(([, { name }]) => name === properties['fill-pattern']);
+			const pattern = fillPatterns.entries().find(([, { name }]) => name === properties['fill-pattern']);
 			if (pattern) this.pattern.set(pattern[0]);
 		}
 	}

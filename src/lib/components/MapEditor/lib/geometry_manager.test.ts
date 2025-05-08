@@ -209,9 +209,7 @@ describe('GeometryManager', () => {
 				]
 			};
 
-			const spy = vi
-				.spyOn(MarkerElement, 'fromGeoJSON')
-				.mockReturnValue(new MarkerElement(manager));
+			const spy = vi.spyOn(MarkerElement, 'fromGeoJSON').mockReturnValue(new MarkerElement(manager));
 
 			manager.addGeoJSON(geojson);
 
@@ -267,9 +265,7 @@ describe('GeometryManager', () => {
 				]
 			};
 
-			const spy = vi
-				.spyOn(PolygonElement, 'fromGeoJSON')
-				.mockReturnValue(new PolygonElement(manager));
+			const spy = vi.spyOn(PolygonElement, 'fromGeoJSON').mockReturnValue(new PolygonElement(manager));
 
 			manager.addGeoJSON(geojson);
 

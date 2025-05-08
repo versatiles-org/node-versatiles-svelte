@@ -43,20 +43,12 @@ describe('MapLayerFill', () => {
 
 	it('should update fill color correctly', () => {
 		layer.color.set('#00ff00');
-		expect(mockManager.map.setPaintProperty).toHaveBeenCalledWith(
-			'test-layer',
-			'fill-color',
-			'rgb(0,255,0)'
-		);
+		expect(mockManager.map.setPaintProperty).toHaveBeenCalledWith('test-layer', 'fill-color', 'rgb(0,255,0)');
 	});
 
 	it('should update opacity correctly', () => {
 		layer.opacity.set(0.5);
-		expect(mockManager.map.setPaintProperty).toHaveBeenCalledWith(
-			'test-layer',
-			'fill-opacity',
-			0.5
-		);
+		expect(mockManager.map.setPaintProperty).toHaveBeenCalledWith('test-layer', 'fill-opacity', 0.5);
 	});
 
 	it('should update fill pattern correctly', () => {

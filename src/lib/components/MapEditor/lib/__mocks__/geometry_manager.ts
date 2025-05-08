@@ -19,13 +19,9 @@ export class MockGeometryManager {
 	}
 
 	public setActiveElement = vi.fn();
-	public getState = vi.fn(
-		(): StateRoot => ({ map: { center: [0, 0], radius: 1000 }, elements: [] })
-	);
+	public getState = vi.fn((): StateRoot => ({ map: { center: [0, 0], radius: 1000 }, elements: [] }));
 	public setState = vi.fn();
-	public getElement = vi.fn(
-		(index: number): AbstractElement => ({ index }) as unknown as AbstractElement
-	);
+	public getElement = vi.fn((index: number): AbstractElement => ({ index }) as unknown as AbstractElement);
 	public addNewMarker = vi.fn(() => ({}) as AbstractElement);
 	public addNewLine = vi.fn(() => ({}) as AbstractElement);
 	public addNewPolygon = vi.fn(() => ({}) as AbstractElement);

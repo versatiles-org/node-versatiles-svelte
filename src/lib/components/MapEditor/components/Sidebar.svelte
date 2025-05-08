@@ -69,15 +69,9 @@
 		</SidebarPanel>
 		<SidebarPanel title="Add new">
 			<div class="flex flex-two">
-				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewMarker())}
-					>Marker</button
-				>
-				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewLine())}
-					>Line</button
-				>
-				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewPolygon())}
-					>Polygon</button
-				>
+				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewMarker())}>Marker</button>
+				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewLine())}>Line</button>
+				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewPolygon())}>Polygon</button>
 				<button class="btn" disabled>Circle</button>
 			</div>
 		</SidebarPanel>

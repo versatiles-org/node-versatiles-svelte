@@ -45,20 +45,12 @@ describe('MapLayer', () => {
 
 	it('should update paint property', () => {
 		layer.setPaint({ 'fill-color': 'red' });
-		expect(mockManager.map.setPaintProperty).toHaveBeenCalledWith(
-			'test-layer',
-			'fill-color',
-			'red'
-		);
+		expect(mockManager.map.setPaintProperty).toHaveBeenCalledWith('test-layer', 'fill-color', 'red');
 	});
 
 	it('should update layout property', () => {
 		layer.updateLayout({ visibility: 'none' });
-		expect(mockManager.map.setLayoutProperty).toHaveBeenCalledWith(
-			'test-layer',
-			'visibility',
-			'none'
-		);
+		expect(mockManager.map.setLayoutProperty).toHaveBeenCalledWith('test-layer', 'visibility', 'none');
 	});
 
 	it('should remove layer on destroy', () => {

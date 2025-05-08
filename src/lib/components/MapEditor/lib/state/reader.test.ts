@@ -36,9 +36,7 @@ describe('StateReader', () => {
 
 		it('should throw an error for an invalid base64 string', () => {
 			const base64 = '#'; // Invalid character
-			expect(() => StateReader.fromBase64(base64)).toThrowError(
-				'Invalid character in base64 string: #'
-			);
+			expect(() => StateReader.fromBase64(base64)).toThrowError('Invalid character in base64 string: #');
 		});
 	});
 
@@ -183,12 +181,8 @@ describe('StateReader', () => {
 	describe('readPoint', () => {
 		it('should read a point with default level', () => {
 			expect(StateReader.fromBitString('000000000000').readPoint(1e5)).toStrictEqual([0, 0]);
-			expect(StateReader.fromBitString('001111010110100111001010').readPoint(1e5)).toStrictEqual([
-				-180, -90
-			]);
-			expect(StateReader.fromBitString('010001010110101001001010').readPoint(1e5)).toStrictEqual([
-				180, 90
-			]);
+			expect(StateReader.fromBitString('001111010110100111001010').readPoint(1e5)).toStrictEqual([-180, -90]);
+			expect(StateReader.fromBitString('010001010110101001001010').readPoint(1e5)).toStrictEqual([180, 90]);
 		});
 
 		it('should write and read points correctly', () => {
@@ -242,9 +236,7 @@ describe('StateReader', () => {
 			};
 			const writer = new StateWriter();
 			writer.writeMap(map);
-			expect(writer.asBitString()).toBe(
-				'10010000101001111010111100111000101101110100001100101011101110001011110'
-			);
+			expect(writer.asBitString()).toBe('10010000101001111010111100111000101101110100001100101011101110001011110');
 
 			const reader = new StateReader(writer.bits);
 			expect(reader.readMap()).toStrictEqual(map);
@@ -406,9 +398,7 @@ describe('StateReader', () => {
 
 	describe('readColor', () => {
 		it('should read a color', () => {
-			const reader = StateReader.fromBitString(
-				['00000000', '01111011', '11111111', '1', '00110011'].join('')
-			);
+			const reader = StateReader.fromBitString(['00000000', '01111011', '11111111', '1', '00110011'].join(''));
 			const color = reader.readColor();
 			expect(color).toBe('#007BFF33');
 			expect(reader.ended()).toBe(true);

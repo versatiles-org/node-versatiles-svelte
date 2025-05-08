@@ -8,9 +8,7 @@ import { bboxOverlap } from './bboxes.js';
 export class GuessPopulation {
 	private popBuffer: Buffer;
 	constructor() {
-		this.popBuffer = brotliDecompressSync(
-			readFileSync(resolve(import.meta.dirname, 'population.raw.br'))
-		);
+		this.popBuffer = brotliDecompressSync(readFileSync(resolve(import.meta.dirname, 'population.raw.br')));
 	}
 
 	guess(feature: Feature<Polygon | MultiPolygon>): number {

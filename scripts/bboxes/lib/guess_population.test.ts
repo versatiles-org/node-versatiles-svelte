@@ -56,9 +56,7 @@ describe('scripts/bboxes/lib/guess_population.ts', () => {
 					[20, 20]
 				]
 			]);
-			const multiPolygon = turf.union(
-				turf.featureCollection([polygonA, polygonB])
-			) as Feature<MultiPolygon>;
+			const multiPolygon = turf.union(turf.featureCollection([polygonA, polygonB])) as Feature<MultiPolygon>;
 
 			const populationA = guessPopulation.guess(polygonA);
 			const populationB = guessPopulation.guess(polygonB);

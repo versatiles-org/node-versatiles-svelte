@@ -24,22 +24,14 @@ export abstract class MapLayer<T extends LayerSpec> {
 		this.id = id;
 	}
 
-	addLayer(
-		source: string,
-		type: 'symbol' | 'line' | 'fill',
-		layout: T['layout'],
-		paint: T['paint']
-	) {
+	addLayer(source: string, type: 'symbol' | 'line' | 'fill', layout: T['layout'], paint: T['paint']) {
 		layout = cloneClean(layout);
 		paint = cloneClean(paint);
 
 		this.layout = layout;
 		this.paint = paint;
 
-		this.map.addLayer(
-			{ id: this.id, source, type, layout, paint } as maplibregl.LayerSpecification,
-			'selection_nodes'
-		);
+		this.map.addLayer({ id: this.id, source, type, layout, paint } as maplibregl.LayerSpecification, 'selection_nodes');
 
 		this.addEvents();
 
@@ -96,9 +88,7 @@ export abstract class MapLayer<T extends LayerSpec> {
 
 	setPaint(paint: T['paint']) {
 		if (paint === undefined) return;
-		const keys = new Set(
-			Object.keys(paint).concat(Object.keys(this.paint)) as (keyof T['paint'])[]
-		);
+		const keys = new Set(Object.keys(paint).concat(Object.keys(this.paint)) as (keyof T['paint'])[]);
 		for (const key of keys.values()) this.updatePaint(key, (paint as T['paint'])[key]);
 	}
 
@@ -112,10 +102,7 @@ export abstract class MapLayer<T extends LayerSpec> {
 
 	updateLayout(obj: T['layout']): void;
 	updateLayout<K extends keyof T['layout'], V extends T['layout'][K]>(key: K, value: V): void;
-	updateLayout<K extends keyof T['layout'], V extends T['layout'][K]>(
-		arg1: K | T['layout'],
-		arg2?: V
-	) {
+	updateLayout<K extends keyof T['layout'], V extends T['layout'][K]>(arg1: K | T['layout'], arg2?: V) {
 		if (typeof arg1 === 'string') {
 			if (this.layout[arg1] == arg2) return;
 			this.map.setLayoutProperty(this.id, arg1 as string, arg2);

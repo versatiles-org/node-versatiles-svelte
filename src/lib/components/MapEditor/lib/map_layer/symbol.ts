@@ -154,8 +154,7 @@ export class MapLayerSymbol extends MapLayer<LayerSymbol> {
 		if (properties['symbol-rotate']) this.rotate.set(properties['symbol-rotate']);
 		if (properties['symbol-size']) this.size.set(properties['symbol-size']);
 		if (properties['symbol-label']) this.label.set(properties['symbol-label']);
-		if (properties['symbol-label-align'])
-			this.labelAlign.set(lookupLabelAlign(properties['symbol-label-align']).index);
+		if (properties['symbol-label-align']) this.labelAlign.set(lookupLabelAlign(properties['symbol-label-align']).index);
 		if (properties['symbol-pattern']) {
 			const index = getSymbolIndexByName(properties['symbol-pattern']);
 			if (index != null) this.symbolIndex.set(index);

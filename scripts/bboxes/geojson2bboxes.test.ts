@@ -41,10 +41,7 @@ describe('scripts/bboxes/geojson2bboxes.ts', () => {
 
 	const tempDir = mkdtempSync(join(tmpdir(), 'vitest-'));
 
-	function saveAsTempFile(
-		data: string | object,
-		extension: string
-	): { filenameIn: string; filenameOut: string } {
+	function saveAsTempFile(data: string | object, extension: string): { filenameIn: string; filenameOut: string } {
 		const tempFile = resolve(tempDir, Math.random().toString(36).slice(2));
 		const filenameIn = tempFile + '.' + extension;
 		const filenameOut = tempFile + '.jsonl';
@@ -109,8 +106,6 @@ describe('scripts/bboxes/geojson2bboxes.ts', () => {
 			features: [{ type: 'Feature', geometry: { type: 'Point', coordinates: [0, 0] } }]
 		};
 		const { filenameIn } = saveAsTempFile(invalidGeoJSON, 'geojson');
-		await expect(processData(filenameIn, '{name}')).rejects.toThrow(
-			'Feature must be Polygon or MultiPolygon'
-		);
+		await expect(processData(filenameIn, '{name}')).rejects.toThrow('Feature must be Polygon or MultiPolygon');
 	});
 });

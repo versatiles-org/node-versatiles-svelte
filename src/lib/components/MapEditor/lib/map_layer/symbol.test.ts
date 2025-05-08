@@ -65,11 +65,7 @@ describe('MapLayerSymbol', () => {
 
 	it('should update symbol color correctly', () => {
 		layer.color.set('#00ff00');
-		expect(mockManager.map.setPaintProperty).toHaveBeenCalledWith(
-			'test-layer',
-			'icon-color',
-			'rgb(0,255,0)'
-		);
+		expect(mockManager.map.setPaintProperty).toHaveBeenCalledWith('test-layer', 'icon-color', 'rgb(0,255,0)');
 	});
 
 	it('should update symbol size correctly', () => {
@@ -80,11 +76,7 @@ describe('MapLayerSymbol', () => {
 
 	it('should update symbol index correctly', () => {
 		layer.symbolIndex.set(1);
-		expect(mockManager.map.setLayoutProperty).toHaveBeenCalledWith(
-			'test-layer',
-			'icon-image',
-			'basics:icon-airfield'
-		);
+		expect(mockManager.map.setLayoutProperty).toHaveBeenCalledWith('test-layer', 'icon-image', 'basics:icon-airfield');
 	});
 
 	it('should return correct state object', () => {

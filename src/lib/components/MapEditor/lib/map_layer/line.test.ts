@@ -49,11 +49,7 @@ describe('MapLayerLine', () => {
 
 	it('should update line color correctly', () => {
 		layer.color.set('#00ff00');
-		expect(mockManager.map.setPaintProperty).toHaveBeenCalledWith(
-			'test-layer',
-			'line-color',
-			'rgb(0,255,0)'
-		);
+		expect(mockManager.map.setPaintProperty).toHaveBeenCalledWith('test-layer', 'line-color', 'rgb(0,255,0)');
 	});
 
 	it('should update line width correctly', () => {
@@ -63,20 +59,12 @@ describe('MapLayerLine', () => {
 
 	it('should update line visibility correctly', () => {
 		layer.visible.set(false);
-		expect(mockManager.map.setLayoutProperty).toHaveBeenCalledWith(
-			'test-layer',
-			'visibility',
-			'none'
-		);
+		expect(mockManager.map.setLayoutProperty).toHaveBeenCalledWith('test-layer', 'visibility', 'none');
 	});
 
 	it('should update line dash pattern correctly', () => {
 		layer.dashed.set(1);
-		expect(mockManager.map.setPaintProperty).toHaveBeenCalledWith(
-			'test-layer',
-			'line-dasharray',
-			[2, 4]
-		);
+		expect(mockManager.map.setPaintProperty).toHaveBeenCalledWith('test-layer', 'line-dasharray', [2, 4]);
 	});
 
 	it('should return correct state object', () => {

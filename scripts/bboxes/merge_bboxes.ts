@@ -16,10 +16,7 @@ type Entry = {
 
 if (fileURLToPath(import.meta.url) === argv[1]) {
 	const result = mergeBBoxes();
-	writeFileSync(
-		resolve(import.meta.dirname, '../../src/lib/components/BBoxMap/bboxes.json'),
-		result
-	);
+	writeFileSync(resolve(import.meta.dirname, '../../src/lib/components/BBoxMap/bboxes.json'), result);
 }
 
 export function mergeBBoxes() {

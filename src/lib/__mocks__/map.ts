@@ -17,9 +17,7 @@ export class MockMap {
 	getZoom = vi.fn(() => this.zoom);
 	setCenter = vi.fn((center: maplibre.LngLat) => (this.center = center));
 	getCenter = vi.fn(() => this.center);
-	queryRenderedFeatures = vi.fn(() => [
-		{ properties: {} }
-	]) as unknown as MaplibreMap['queryRenderedFeatures'];
+	queryRenderedFeatures = vi.fn(() => [{ properties: {} }]) as unknown as MaplibreMap['queryRenderedFeatures'];
 	setPaintProperty = vi.fn();
 	setLayoutProperty = vi.fn();
 	removeLayer = vi.fn();
