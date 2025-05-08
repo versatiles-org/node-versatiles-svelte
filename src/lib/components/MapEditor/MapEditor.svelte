@@ -20,7 +20,8 @@
 
 		geometryManager = new GeometryManager(map);
 
-		const hash = location.hash.slice(1);
+		let hash = location.hash.slice(1);
+		if (!hash) hash = window.frameElement?.getAttribute('data') ?? '';
 		if (hash) {
 			geometryManager.state.setHash(hash);
 		} else {

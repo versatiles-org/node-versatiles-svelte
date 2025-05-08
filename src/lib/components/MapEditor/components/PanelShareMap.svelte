@@ -11,28 +11,31 @@
 	let previewAspectRatio: 'wide' | 'square' | 'tall' = $state('wide');
 
 	const baseUrl = window.location.href.replace(/#.*$/, '');
+	//const baseUrl = 'https://versatiles.org/node-versatiles-svelte/map-editor';
 
-	let url = $state(baseUrl);
+	let hash = $state('');
+	let linkCode = $derived(`${baseUrl}#${hash}`);
 	let iframeCode = $derived(
-		`<iframe src="${url}" style="width:100%; height:60vh" frameborder="0"></iframe>`
+		`<iframe src="${linkCode}" style="width:100%; height:60vh" frameborder="0"></iframe>`
 	);
 
 	export function open() {
 		dialog?.open();
-		updateUrl();
+
+		hash = stateManager.getHash();
+
+		setTimeout(() => {
+			if (!iframe) return;
+			iframe.src = linkCode;
+		}, 0);
 	}
 
 	export function close() {
 		dialog?.close();
 	}
 
-	function updateUrl() {
-		url = baseUrl + '#' + stateManager.getHash();
-		setTimeout(() => iframe && (iframe.src = url), 0);
-	}
-
 	function copyLink() {
-		navigator.clipboard.writeText(url).then(
+		navigator.clipboard.writeText(linkCode).then(
 			() => flash(btnLink),
 			() => alert('Failed to copy link. Please try again.')
 		);
@@ -73,7 +76,7 @@
 				<label for="text-link">
 					Link:
 					<textarea id="text-link" rows="3" readonly onclick={(e) => e.currentTarget.select()}
-						>{url}</textarea
+						>{linkCode}</textarea
 					>
 				</label>
 				<button class="btn" bind:this={btnLink} onclick={copyLink}>Copy Link</button>
@@ -147,7 +150,6 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			overflow: hidden;
 			container-name: myContainer;
 			container-type: size;
 
