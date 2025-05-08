@@ -40,10 +40,7 @@
 	{/if}
 </button>
 
-<Panel
-	bind:this={panel}
-	style="width: min(100vw,max(80vw,500px)); height: min(100vh,max(80vh,500px))"
->
+<Panel bind:this={panel}>
 	<div class="list" style="--list-icon-size: {listIconSize}px; --list-item-size: {listItemSize}px">
 		{#each symbolLibrary.asList() as symbol (symbol.index)}
 			<button class="item" onclick={() => (symbolIndex = symbol.index)}
