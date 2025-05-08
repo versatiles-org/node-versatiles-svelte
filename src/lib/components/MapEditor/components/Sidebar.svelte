@@ -107,13 +107,6 @@
 
 <style>
 	.sidebar {
-		--color-btn: #368;
-		--color-green: #484;
-		--color-bg: #fff;
-		--color-text: #000;
-		--gap: 10px;
-		--border-radius: 3px;
-
 		background-color: rgb(from var(--color-bg) r g b/ 0.7);
 		backdrop-filter: blur(10px);
 		box-sizing: border-box;

@@ -34,7 +34,12 @@
 
 <div class="page">
 	<div class="container">
-		<BasicMap {onMapInit} emptyStyle={true} mapOptions={{ attributionControl: false }}></BasicMap>
+		<BasicMap
+			{onMapInit}
+			emptyStyle={true}
+			mapOptions={{ attributionControl: false }}
+			styleOptions={{ darkMode: false }}
+		></BasicMap>
 	</div>
 	{#if showSidebar && geometryManager}
 		<Sidebar {geometryManager} width={200} />
@@ -57,6 +62,14 @@
 		height: 100%;
 		position: relative;
 		min-height: 6em;
+	}
+	.page {
+		--color-btn: #368;
+		--color-green: #484;
+		--color-bg: #fff;
+		--color-text: #000;
+		--gap: 10px;
+		--border-radius: 3px;
 	}
 	:global(.maplibregl-ctrl-attrib) {
 		display: flex;

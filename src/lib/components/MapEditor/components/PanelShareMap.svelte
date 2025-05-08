@@ -5,7 +5,6 @@
 	const { state: stateManager = $bindable() }: { state: StateManager } = $props();
 
 	let dialog: Panel | undefined;
-	let textarea: HTMLTextAreaElement | undefined;
 	let iframe: HTMLIFrameElement | undefined;
 	let btnLink: HTMLButtonElement | undefined;
 	let btnEmbed: HTMLButtonElement | undefined;
@@ -14,6 +13,9 @@
 	const baseUrl = window.location.href.replace(/#.*$/, '');
 
 	let url = $state(baseUrl);
+	let iframeCode = $derived(
+		`<iframe src="${url}" style="width:100%; height:60vh" frameborder="0"></iframe>`
+	);
 
 	export function open() {
 		dialog?.open();
@@ -37,7 +39,7 @@
 	}
 
 	function copyEmbedCode() {
-		navigator.clipboard.writeText(textarea?.value ?? '').then(
+		navigator.clipboard.writeText(iframeCode).then(
 			() => flash(btnEmbed),
 			() => alert('Failed to copy embed code. Please try again.')
 		);
@@ -69,26 +71,28 @@
 		<div class="right">
 			<p>
 				<label for="text-link">
-					Link:<br />
-					<input id="text-link" type="text" value={url} readonly />
-				</label><br />
+					Link:
+					<textarea id="text-link" rows="3" readonly onclick={(e) => e.currentTarget.select()}
+						>{url}</textarea
+					>
+				</label>
 				<button class="btn" bind:this={btnLink} onclick={copyLink}>Copy Link</button>
 			</p>
 			<p>
 				<label for="text-iframe">
-					Embed Code:<br />
-					<textarea id="text-iframe" rows="3" bind:this={textarea} readonly
-						>{`<iframe src="${url}" style="width:100%; height:60vh"></iframe>`}</textarea
+					Embed Code:
+					<textarea id="text-iframe" rows="5" readonly onclick={(e) => e.currentTarget.select()}
+						>{iframeCode}</textarea
 					>
 				</label>
-				<br />
+
 				<button class="btn" bind:this={btnEmbed} onclick={copyEmbedCode}>Copy Embed Code</button>
 			</p>
 		</div>
 		<div class="bottom">
 			<button class="btn" onclick={() => iframe?.contentWindow?.location.reload()}>Reload</button>
 			<fieldset class="btn">
-				<legend>Change the aspect ratio of the preview</legend>
+				<legend>Aspect ratio of the preview</legend>
 				<input
 					type="radio"
 					id="preview-wide"
@@ -187,12 +191,24 @@
 			grid-column: 2 / -1;
 			grid-row: 2 / -1;
 			text-align: left;
+
+			textarea {
+				width: 200px;
+				-webkit-user-select: all;
+				user-select: all;
+				margin: 0 0 0.3rem;
+				display: block;
+				font-size: 0.6rem;
+				resize: none;
+				color: color-mix(in srgb, var(--color-text) 60%, transparent);
+			}
 		}
 
 		.bottom {
 			grid-column: 1 / 1;
 			grid-row: 3 / 3;
-			text-align: left;
+			text-align: center;
+			padding-top: 1rem;
 		}
 	}
 </style>
