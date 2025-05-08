@@ -59,7 +59,7 @@
 		</div>
 		<div class="flex flex-one">
 			<button class="btn" onclick={() => panelShareMap?.open()}>Share Map</button>
-			<PanelShareMap bind:this={panelShareMap} bind:state={geometryManager.state} />
+			<PanelShareMap bind:this={panelShareMap} bind:state={() => geometryManager.state, () => {}} />
 		</div>
 		<SidebarPanel title="Import/Export" open={false}>
 			<div class="flex flex-one">
