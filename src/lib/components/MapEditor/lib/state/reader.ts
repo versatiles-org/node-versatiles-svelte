@@ -192,9 +192,9 @@ export class StateReader {
 				switch (key) {
 					case 0:
 						return metadata;
-					case 1:
-						metadata.heading = this.readString();
-						break;
+					//case 1:
+					//	metadata.heading = this.readString();
+					//	break;
 					default:
 						throw new Error(`Invalid state key: ${key}`);
 				}

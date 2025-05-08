@@ -264,14 +264,6 @@ describe('StateReader', () => {
 		it('should read empty metadata correctly', () => {
 			test({}, 'A');
 		});
-		it('should read heading correctly', () => {
-			test(
-				{
-					heading: 'AZ'
-				},
-				'giBhIiAA'
-			);
-		});
 	});
 
 	describe('readRoot', () => {

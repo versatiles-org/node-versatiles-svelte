@@ -13,21 +13,41 @@
 	const baseUrl = window.location.href.replace(/#.*$/, '');
 	//const baseUrl = 'https://versatiles.org/node-versatiles-svelte/map-editor';
 
-	let hash = $state('');
-	let linkCode = $derived(`${baseUrl}#${hash}`);
-	let iframeCode = $derived(
-		`<iframe src="${linkCode}" style="width:100%; height:60vh" frameborder="0"></iframe>`
-	);
+	let timeout: ReturnType<typeof setTimeout> | null = null;
+	let linkCode = $state('');
+	let embedCode = $state('');
 
 	export function open() {
 		dialog?.open();
+		update(1);
+	}
 
-		hash = stateManager.getHash();
+	function getLinkCode() {
+		return `${baseUrl}#${stateManager.getHash()}`;
+	}
 
-		setTimeout(() => {
+	function getEmbedCode() {
+		return `<iframe src="${getLinkCode()}" style="width:100%; height:60vh" frameborder="0"></iframe>`;
+	}
+
+	function update(delay: number = 500) {
+		if (!dialog?.isOpen()) return;
+		console.log('update init');
+		linkCode = getLinkCode();
+		embedCode = getEmbedCode();
+		if (timeout != null) {
+			clearTimeout(timeout);
+			timeout = null;
+		}
+		timeout = setTimeout(() => {
 			if (!iframe) return;
-			iframe.src = linkCode;
-		}, 0);
+			console.log('update run');
+			if (iframe.src === linkCode) {
+				iframe.contentWindow?.location.reload();
+			} else {
+				iframe.src = getLinkCode();
+			}
+		}, delay);
 	}
 
 	export function close() {
@@ -35,14 +55,14 @@
 	}
 
 	function copyLink() {
-		navigator.clipboard.writeText(linkCode).then(
+		navigator.clipboard.writeText(getLinkCode()).then(
 			() => flash(btnLink),
 			() => alert('Failed to copy link. Please try again.')
 		);
 	}
 
 	function copyEmbedCode() {
-		navigator.clipboard.writeText(iframeCode).then(
+		navigator.clipboard.writeText(getEmbedCode()).then(
 			() => flash(btnEmbed),
 			() => alert('Failed to copy embed code. Please try again.')
 		);
@@ -75,51 +95,28 @@
 			<p>
 				<label for="text-link">
 					Link:
-					<textarea id="text-link" rows="3" readonly onclick={(e) => e.currentTarget.select()}
-						>{linkCode}</textarea
-					>
+					<textarea id="text-link" rows="3" readonly onclick={(e) => e.currentTarget.select()}>{linkCode}</textarea>
 				</label>
 				<button class="btn" bind:this={btnLink} onclick={copyLink}>Copy Link</button>
 			</p>
 			<p>
 				<label for="text-iframe">
 					Embed Code:
-					<textarea id="text-iframe" rows="5" readonly onclick={(e) => e.currentTarget.select()}
-						>{iframeCode}</textarea
-					>
+					<textarea id="text-iframe" rows="5" readonly onclick={(e) => e.currentTarget.select()}>{embedCode}</textarea>
 				</label>
 
 				<button class="btn" bind:this={btnEmbed} onclick={copyEmbedCode}>Copy Embed Code</button>
 			</p>
 		</div>
 		<div class="bottom">
-			<button class="btn" onclick={() => iframe?.contentWindow?.location.reload()}>Reload</button>
+			<button class="btn" onclick={() => update(0)}>Reload</button>
 			<fieldset class="btn">
 				<legend>Aspect ratio of the preview</legend>
-				<input
-					type="radio"
-					id="preview-wide"
-					name="preview-ratio"
-					value="wide"
-					checked
-					onclick={selectPreview}
-				/>
+				<input type="radio" id="preview-wide" name="preview-ratio" value="wide" checked onclick={selectPreview} />
 				<label for="preview-wide">horizontal</label>
-				<input
-					type="radio"
-					id="preview-square"
-					name="preview-ratio"
-					value="square"
-					onclick={selectPreview}
-				/>
+				<input type="radio" id="preview-square" name="preview-ratio" value="square" onclick={selectPreview} />
 				<label for="preview-square">square</label>
-				<input
-					type="radio"
-					id="preview-tall"
-					name="preview-ratio"
-					value="tall"
-					onclick={selectPreview}
-				/>
+				<input type="radio" id="preview-tall" name="preview-ratio" value="tall" onclick={selectPreview} />
 				<label for="preview-tall">vertical</label>
 			</fieldset>
 		</div>
@@ -159,6 +156,7 @@
 				height: auto;
 				border: 1px solid #000;
 				box-sizing: border-box;
+				background: #fff;
 
 				@container myContainer (min-aspect-ratio: 16 / 9) {
 					& {
@@ -196,12 +194,15 @@
 
 			textarea {
 				width: 200px;
-				-webkit-user-select: all;
-				user-select: all;
 				margin: 0 0 0.3rem;
 				display: block;
-				font-size: 0.6rem;
 				resize: none;
+			}
+
+			textarea[readonly] {
+				font-size: 0.6rem;
+				-webkit-user-select: all;
+				user-select: all;
 				color: color-mix(in srgb, var(--color-text) 60%, transparent);
 			}
 		}

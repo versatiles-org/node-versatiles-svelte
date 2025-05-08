@@ -2,7 +2,7 @@ import { writable } from 'svelte/store';
 import type { GeometryManager } from '../geometry_manager.js';
 import { StateReader } from './reader.js';
 import { StateWriter } from './writer.js';
-import type { StateRoot } from './types.js';
+import type { StateMetadata, StateRoot } from './types.js';
 
 const MAXLENGTH = 100;
 
@@ -15,9 +15,20 @@ export class StateManager {
 		this.resetHistory();
 	}
 
-	public getHash(): string {
+	public getHash(additionalMeta?: StateMetadata): string {
 		const writer = new StateWriter();
-		writer.writeRoot(this.geometryManager.getState());
+		const state = this.geometryManager.getState();
+
+		if (additionalMeta) {
+			state.meta ??= {};
+			const keys = Object.keys(additionalMeta) as (keyof StateMetadata)[];
+			for (const key of keys) {
+				if (additionalMeta[key] == null) continue;
+				state.meta[key] = additionalMeta[key];
+			}
+		}
+
+		writer.writeRoot(state);
 		return writer.asBase64();
 	}
 

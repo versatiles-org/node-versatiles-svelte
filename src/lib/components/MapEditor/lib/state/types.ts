@@ -44,9 +44,8 @@ export interface StateStyle {
 	visible?: boolean;
 }
 
-export interface StateMetadata {
-	heading?: string;
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface StateMetadata {}
 
 export interface StateTooltip {
 	text?: string;

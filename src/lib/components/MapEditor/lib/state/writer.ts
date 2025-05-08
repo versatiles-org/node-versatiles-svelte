@@ -130,10 +130,10 @@ export class StateWriter {
 		}
 
 		this.writeBit(true);
-		if (metadata.heading) {
-			this.writeInteger(1, 6);
-			this.writeString(metadata.heading);
-		}
+		//if (metadata.heading) {
+		//	this.writeInteger(1, 6);
+		//	this.writeString(metadata.heading);
+		//}
 		this.writeInteger(0, 6);
 	}
 

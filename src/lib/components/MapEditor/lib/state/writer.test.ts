@@ -112,14 +112,6 @@ describe('StateWriter', () => {
 		it('should write empty metadata correctly', () => {
 			test({}, 'A');
 		});
-		it('should write metadata with heading correctly', () => {
-			test(
-				{
-					heading: 'AZ'
-				},
-				'giBhIiAA'
-			);
-		});
 	});
 
 	it('should write a root object correctly', () => {

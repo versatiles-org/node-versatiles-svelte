@@ -1,15 +1,26 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
-	let { children, size }: { children?: Snippet; size?: 'big' | 'fullscreen' } = $props();
+	let {
+		children,
+		size,
+		onopen,
+		onclose
+	}: { children?: Snippet; size?: 'big' | 'fullscreen'; onopen?: () => void; onclose?: () => void } = $props();
 	let dialog: HTMLDialogElement | null = null;
 
 	export function open() {
 		dialog?.showModal();
+		if (onopen) onopen();
 	}
 
 	export function close() {
 		dialog?.close();
+		if (onclose) onclose();
+	}
+
+	export function isOpen(): boolean {
+		return dialog?.open ?? false;
 	}
 </script>
 
