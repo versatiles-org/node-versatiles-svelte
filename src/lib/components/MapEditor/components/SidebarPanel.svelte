@@ -25,7 +25,7 @@
 
 <style>
 	.panel {
-		margin: 1em 0;
+		margin: 0;
 
 		.header {
 			background: none;
@@ -69,15 +69,13 @@
 		.content {
 			box-sizing: border-box;
 			height: 0;
-			margin: var(--gap) 0;
+			margin: 0;
 			overflow: hidden;
 			padding: 0;
 		}
 	}
 
 	.open {
-		margin-bottom: 2em;
-
 		.header {
 			.chevron {
 				svg {

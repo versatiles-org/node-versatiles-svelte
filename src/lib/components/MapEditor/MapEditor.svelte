@@ -43,7 +43,7 @@
 		></BasicMap>
 	</div>
 	{#if showSidebar && geometryManager}
-		<Sidebar {geometryManager} width={200} />
+		<Sidebar {geometryManager} />
 
 		<style>
 			.page .container {
@@ -69,6 +69,7 @@
 		--color-green: #484;
 		--color-bg: #fff;
 		--color-text: #000;
+		--btn-gap: 5px;
 		--gap: 10px;
 		--border-radius: 3px;
 	}

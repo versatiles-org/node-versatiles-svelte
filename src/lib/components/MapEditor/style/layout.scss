@@ -1,0 +1,20 @@
+.grid1,
+.grid2 {
+	display: grid;
+	gap: var(--btn-gap);
+	margin: var(--btn-gap) 0;
+	width: 100%;
+}
+
+.grid1 {
+	grid-template-columns: 1fr;
+}
+
+.grid2 {
+	grid-template-columns: repeat(2, 1fr);
+}
+
+.grid1 button,
+.grid2 button {
+	width: 100%;
+}

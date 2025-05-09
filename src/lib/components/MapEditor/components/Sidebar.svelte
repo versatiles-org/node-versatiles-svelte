@@ -1,11 +1,11 @@
 <script lang="ts">
-	import '../style/button.scss';
+	import '../style/index.scss';
 	import Editor from './Editor.svelte';
 	import type { GeometryManager } from '../lib/geometry_manager.js';
 	import SidebarPanel from './SidebarPanel.svelte';
 	import PanelShareMap from './PanelShareMap.svelte';
 
-	const { geometryManager, width }: { geometryManager: GeometryManager; width: number } = $props();
+	const { geometryManager }: { geometryManager: GeometryManager } = $props();
 
 	let panelShareMap: PanelShareMap | null = null;
 	let history = geometryManager.state;
@@ -51,33 +51,38 @@
 	}
 </script>
 
-<div class="sidebar" style="width: {width}px;">
+<div class="sidebar">
 	<div style="margin-bottom: 36px;">
-		<div class="flex flex-two">
+		<div class="grid2">
 			<button class="btn" onclick={() => history.undo()} disabled={!$undoEnabled}>Undo</button>
 			<button class="btn" onclick={() => history.redo()} disabled={!$redoEnabled}>Redo</button>
 		</div>
-		<div class="flex flex-one">
+		<hr />
+		<SidebarPanel title="Import/Export" open={false}>
+			<div class="grid1">
 			<button class="btn" onclick={() => panelShareMap?.open()}>Share Map</button>
 			<PanelShareMap bind:this={panelShareMap} bind:state={() => geometryManager.state, () => {}} />
 		</div>
-		<SidebarPanel title="Import/Export" open={false}>
-			<div class="flex flex-one">
-				<button class="btn" onclick={importGeoJSON}>Import GeoJSON</button>
-				<button class="btn" onclick={exportGeoJSON}>Export GeoJSON</button>
+			<legend>GeoJSON:</legend>
+			<div class="grid2">
+				<button class="btn" onclick={importGeoJSON}>Import</button>
+				<button class="btn" onclick={exportGeoJSON}>Export</button>
 			</div>
 		</SidebarPanel>
+		<hr />
 		<SidebarPanel title="Add new">
-			<div class="flex flex-two">
+			<div class="grid2">
 				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewMarker())}>Marker</button>
 				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewLine())}>Line</button>
 				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewPolygon())}>Polygon</button>
 				<button class="btn" disabled>Circle</button>
 			</div>
 		</SidebarPanel>
+		<hr />
 		<Editor element={$activeElement} />
+		<hr />
 		<SidebarPanel title="Actions" disabled={!$activeElement}>
-			<div class="flex flex-two">
+			<div class="grid2">
 				<button
 					class="btn"
 					onclick={() => {
@@ -87,14 +92,17 @@
 				>
 			</div>
 		</SidebarPanel>
+		<hr />
 		<SidebarPanel title="Help" open={false}>
+			<p>
 			Submit bugs and feature requests as
 			<a
 				id="github_link"
 				href="https://github.com/versatiles-org/node-versatiles-svelte/issues"
 				target="_blank"
-				aria-label="Repository on GitHub">GitHub issues</a
+					aria-label="Repository on GitHub">GitHub Issues</a
 			>
+			</p>
 		</SidebarPanel>
 	</div>
 </div>
@@ -112,27 +120,7 @@
 		position: absolute;
 		right: 0;
 		top: 0;
-		width: 200px;
-
-		.flex {
-			--gap: 5px;
-			align-items: center;
-			display: flex;
-			flex-wrap: wrap;
-			gap: var(--gap);
-			justify-content: space-between;
-			margin: var(--gap) 0 var(--gap);
-			width: 100%;
-		}
-		.flex-two button {
-			flex-grow: 1;
-			flex-basis: 0;
-			width: 40%;
-		}
-
-		.flex-one button {
-			width: 100%;
-		}
+		width: 250px;
 	}
 
 	a {
