@@ -3,7 +3,7 @@
 	import Editor from './Editor.svelte';
 	import type { GeometryManager } from '../lib/geometry_manager.js';
 	import SidebarPanel from './SidebarPanel.svelte';
-	import PanelShareMap from './PanelShareMap.svelte';
+	import PanelShareMap from './DialogShare.svelte';
 	import File from './File.svelte';
 
 	const { geometryManager }: { geometryManager: GeometryManager } = $props();

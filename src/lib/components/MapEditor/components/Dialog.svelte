@@ -1,69 +1,83 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import { EventHandler } from '../lib/event_handler.js';
-	import Panel from './Panel.svelte';
 
-	let panel: Panel | null = null;
-	let input: HTMLInputElement | null = null;
-	let eventHandler = new EventHandler();
-	let btnDownload: HTMLButtonElement | null = null;
+	let {
+		children,
+		size,
+		onopen,
+		onclose
+	}: { children?: Snippet; size?: 'big' | 'fullscreen' | 'small'; onopen?: () => void; onclose?: () => void } =
+		$props();
+	let dialog: HTMLDialogElement | null = null;
+	export const eventHandler = new EventHandler();
 
-	export async function askDownloadFilename(initialFilename: string): Promise<string | null> {
-		if (!panel) return null;
-		if (!input) return null;
+	export function open() {
+		dialog?.showModal();
+		if (onopen) onopen();
+		eventHandler.emit('open');
+	}
 
-		input.value = initialFilename;
-		panel?.eventHandler.clear();
-		eventHandler.clear();
+	export function close() {
+		dialog?.close();
+		if (onclose) onclose();
+		eventHandler.emit('close');
+	}
 
-		const response = await new Promise<boolean>((resolve) => {
-			if (!panel) return resolve(false);
-			panel.open();
-			btnDownload?.focus();
-
-			panel.eventHandler.on('close', () => resolve(false));
-			eventHandler.on('cancel', () => resolve(false));
-			eventHandler.on('ok', () => resolve(true));
-		});
-
-		panel?.close();
-		panel?.eventHandler.clear();
-		eventHandler.clear();
-
-		if (!response) return null;
-		if (!input) return null;
-		const filename = input.value.trim();
-		if (!filename) return null;
-		return filename;
+	export function isOpen(): boolean {
+		return dialog?.open ?? false;
 	}
 </script>
 
-<Panel bind:this={panel} size="small">
-	<h2>Download File</h2>
-	<p>
-		<label
-			>File name: <input
-				type="text"
-				placeholder="Enter filename"
-				bind:this={input}
-				spellcheck="false"
-				onkeypress={(e) => {
-					if (e.key === 'Enter') eventHandler.emit('ok');
-				}}
-			/></label
-		>
-	</p>
-	<div class="grid2">
-		<button class="btn" onclick={() => eventHandler.emit('cancel')}>Cancel</button>
-		<button class="btn" onclick={() => eventHandler.emit('ok')} bind:this={btnDownload}>Download</button>
-	</div>
-</Panel>
+<dialog bind:this={dialog} class={size}>
+	<button onclick={close}>&#x2715;</button>
+	{@render children?.()}
+</dialog>
 
 <style>
-	h2 {
-		text-align: center;
-		margin-top: 0;
+	dialog {
+		max-width: 100vw;
+		max-height: 100vh;
+		min-width: 300px;
+		min-height: 100px;
+		width: 80vw;
+		height: 80vh;
+
+		background-color: rgba(255, 255, 255, 0.8);
+		backdrop-filter: blur(10px);
+		box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+		z-index: 10000;
+		border: 0.5px solid rgba(0, 0, 0, 0.3);
+		border-radius: 10px;
+		box-sizing: border-box;
+		padding: 20px;
+
+		&.fullscreen {
+			width: calc(100vw - 20px);
+			height: calc(100vh - 20px);
+		}
+
+		&.small {
+			width: fit-content;
+			height: fit-content;
+		}
 	}
-	.grid2 {
-		margin: 0;
+
+	dialog::backdrop {
+		backdrop-filter: blur(2px) brightness(0.9);
+	}
+
+	button {
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		font-size: 20px;
+		cursor: pointer;
+		background: none;
+		border: none;
+		width: 25px;
+		height: 25px;
+		text-align: center;
+		padding: 0;
 	}
 </style>

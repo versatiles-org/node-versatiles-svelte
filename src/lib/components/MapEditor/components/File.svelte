@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { GeometryManager } from '../lib/geometry_manager.js';
-	import Dialog from './Dialog.svelte';
+	import Dialog from './DialogFile.svelte';
 
 	const { manager }: { manager: GeometryManager } = $props();
 

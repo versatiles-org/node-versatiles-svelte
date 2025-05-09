@@ -1,17 +1,16 @@
 <script lang="ts">
 	import type { StateManager } from '../lib/state/manager.js';
-	import Panel from './Panel.svelte';
+	import Dialog from './Dialog.svelte';
 
 	const { state: stateManager = $bindable() }: { state: StateManager } = $props();
 
-	let dialog: Panel | undefined;
+	let dialog: Dialog | undefined;
 	let iframe: HTMLIFrameElement | undefined;
 	let btnLink: HTMLButtonElement | undefined;
 	let btnEmbed: HTMLButtonElement | undefined;
 	let previewAspectRatio: 'wide' | 'square' | 'tall' = $state('wide');
 
 	const baseUrl = window.location.href.replace(/#.*$/, '');
-	//const baseUrl = 'https://versatiles.org/node-versatiles-svelte/map-editor';
 
 	let timeout: ReturnType<typeof setTimeout> | null = null;
 	let linkCode = $state('');
@@ -83,7 +82,7 @@
 	}
 </script>
 
-<Panel bind:this={dialog} size="fullscreen">
+<Dialog bind:this={dialog} size="fullscreen">
 	<div class="grid">
 		<div class="head">
 			<p>Share your map with others by copying the link or embed code below.</p>
@@ -123,7 +122,7 @@
 			</fieldset>
 		</div>
 	</div>
-</Panel>
+</Dialog>
 
 <style type="text/scss">
 	.grid {

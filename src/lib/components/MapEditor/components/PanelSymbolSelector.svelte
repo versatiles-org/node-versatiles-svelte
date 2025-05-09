@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Action } from 'svelte/action';
 	import type { SymbolLibrary } from '../lib/symbols.js';
-	import Panel from './Panel.svelte';
+	import Panel from './Dialog.svelte';
 
 	let panel: Panel;
 	const buttonIconSize = 20;
