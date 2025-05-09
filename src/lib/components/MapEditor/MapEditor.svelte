@@ -65,7 +65,7 @@
 		min-height: 6em;
 	}
 	.page {
-		--color-btn: #368;
+		--color-blue: #368;
 		--color-green: #484;
 		--color-bg: #fff;
 		--color-text: #000;

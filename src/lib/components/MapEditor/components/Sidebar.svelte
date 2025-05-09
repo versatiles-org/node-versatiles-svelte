@@ -4,6 +4,7 @@
 	import type { GeometryManager } from '../lib/geometry_manager.js';
 	import SidebarPanel from './SidebarPanel.svelte';
 	import PanelShareMap from './PanelShareMap.svelte';
+	import File from './File.svelte';
 
 	const { geometryManager }: { geometryManager: GeometryManager } = $props();
 
@@ -58,11 +59,15 @@
 			<button class="btn" onclick={() => history.redo()} disabled={!$redoEnabled}>Redo</button>
 		</div>
 		<hr />
+		<SidebarPanel title="File">
+			<File manager={geometryManager} />
+		</SidebarPanel>
+		<hr />
 		<SidebarPanel title="Import/Export" open={false}>
 			<div class="grid1">
-			<button class="btn" onclick={() => panelShareMap?.open()}>Share Map</button>
-			<PanelShareMap bind:this={panelShareMap} bind:state={() => geometryManager.state, () => {}} />
-		</div>
+				<button class="btn" onclick={() => panelShareMap?.open()}>Share Map</button>
+				<PanelShareMap bind:this={panelShareMap} bind:state={() => geometryManager.state, () => {}} />
+			</div>
 			<legend>GeoJSON:</legend>
 			<div class="grid2">
 				<button class="btn" onclick={importGeoJSON}>Import</button>
@@ -95,13 +100,13 @@
 		<hr />
 		<SidebarPanel title="Help" open={false}>
 			<p>
-			Submit bugs and feature requests as
-			<a
-				id="github_link"
-				href="https://github.com/versatiles-org/node-versatiles-svelte/issues"
-				target="_blank"
+				Submit bugs and feature requests as
+				<a
+					id="github_link"
+					href="https://github.com/versatiles-org/node-versatiles-svelte/issues"
+					target="_blank"
 					aria-label="Repository on GitHub">GitHub Issues</a
-			>
+				>
 			</p>
 		</SidebarPanel>
 	</div>

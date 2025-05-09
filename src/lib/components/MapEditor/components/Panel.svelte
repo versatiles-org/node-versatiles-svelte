@@ -7,7 +7,8 @@
 		size,
 		onopen,
 		onclose
-	}: { children?: Snippet; size?: 'big' | 'fullscreen'; onopen?: () => void; onclose?: () => void } = $props();
+	}: { children?: Snippet; size?: 'big' | 'fullscreen' | 'small'; onopen?: () => void; onclose?: () => void } =
+		$props();
 	let dialog: HTMLDialogElement | null = null;
 	export const eventHandler = new EventHandler();
 
@@ -29,7 +30,7 @@
 </script>
 
 <dialog bind:this={dialog} class={size}>
-	<button onclick={() => dialog?.close()}>&#x2715;</button>
+	<button onclick={close}>&#x2715;</button>
 	{@render children?.()}
 </dialog>
 
@@ -37,16 +38,16 @@
 	dialog {
 		max-width: 100vw;
 		max-height: 100vh;
-		min-width: 500px;
-		min-height: 500px;
+		min-width: 300px;
+		min-height: 100px;
 		width: 80vw;
 		height: 80vh;
 
-		background-color: rgba(255, 255, 255, 0.6);
-		backdrop-filter: blur(8px);
+		background-color: rgba(255, 255, 255, 0.8);
+		backdrop-filter: blur(10px);
 		box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 		z-index: 10000;
-		border: 0.5px solid rgba(0, 0, 0, 0.5);
+		border: 0.5px solid rgba(0, 0, 0, 0.3);
 		border-radius: 10px;
 		box-sizing: border-box;
 		padding: 20px;
@@ -54,6 +55,11 @@
 		&.fullscreen {
 			width: calc(100vw - 20px);
 			height: calc(100vh - 20px);
+		}
+
+		&.small {
+			width: fit-content;
+			height: fit-content;
 		}
 	}
 
