@@ -52,19 +52,10 @@
 			{/if}
 			{#if element instanceof PolygonElement || element instanceof LineElement}
 				<hr />
-				<p>
+				<p class="label" style="margin: 0.5em 0 1em;">
 					Drag points to move.<br />Drag a midpoint to add.<br />Shift-click to delete a point.
 				</p>
 			{/if}
 		</div>
 	</SidebarPanel>
 {/key}
-
-<style>
-	.style-editor {
-		:global(p) {
-			opacity: 0.5;
-			margin: 0.5em 0 1em;
-		}
-	}
-</style>

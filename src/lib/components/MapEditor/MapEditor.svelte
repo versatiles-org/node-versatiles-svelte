@@ -57,6 +57,16 @@
 </div>
 
 <style>
+	.page {
+		--color-blue: #158;
+		--color-green: #1a1;
+		--color-bg: #fff;
+		--color-text: #000;
+		--btn-gap: 5px;
+		--gap: 10px;
+		--border-radius: 1em;
+	}
+
 	.page,
 	.container {
 		width: 100%;
@@ -64,15 +74,7 @@
 		position: relative;
 		min-height: 6em;
 	}
-	.page {
-		--color-blue: #368;
-		--color-green: #484;
-		--color-bg: #fff;
-		--color-text: #000;
-		--btn-gap: 5px;
-		--gap: 10px;
-		--border-radius: 3px;
-	}
+
 	:global(.maplibregl-ctrl-attrib) {
 		display: flex;
 		align-items: center;

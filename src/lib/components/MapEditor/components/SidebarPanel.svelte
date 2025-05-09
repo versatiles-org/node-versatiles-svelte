@@ -45,6 +45,7 @@
 			}
 
 			.chevron {
+				border-radius: 1em;
 				box-sizing: border-box;
 				display: block;
 				height: 1em;
@@ -52,7 +53,7 @@
 				padding: 0;
 				position: absolute;
 				right: 0.4em;
-				top: 0;
+				top: 0.05em;
 				width: 1em;
 
 				svg {
@@ -62,6 +63,14 @@
 					transform-origin: 40% 50%;
 					transition: rotate 0.1s linear;
 					width: 100%;
+				}
+			}
+
+			&:focus {
+				outline: none;
+				.chevron {
+					outline: 1px solid var(--color-blue);
+					outline-offset: 2px;
 				}
 			}
 		}
@@ -86,6 +95,7 @@
 
 		.content {
 			height: auto;
+			overflow: visible;
 		}
 	}
 

@@ -112,12 +112,14 @@
 			<button class="btn" onclick={() => update(0)}>Reload</button>
 			<fieldset class="btn">
 				<legend>Aspect ratio of the preview</legend>
-				<input type="radio" id="preview-wide" name="preview-ratio" value="wide" checked onclick={selectPreview} />
-				<label for="preview-wide">horizontal</label>
-				<input type="radio" id="preview-square" name="preview-ratio" value="square" onclick={selectPreview} />
-				<label for="preview-square">square</label>
-				<input type="radio" id="preview-tall" name="preview-ratio" value="tall" onclick={selectPreview} />
-				<label for="preview-tall">vertical</label>
+				<div>
+					<input type="radio" id="preview-wide" name="preview-ratio" value="wide" onclick={selectPreview} checked />
+					<label for="preview-wide">horizontal</label>
+					<input type="radio" id="preview-square" name="preview-ratio" value="square" onclick={selectPreview} />
+					<label for="preview-square">square</label>
+					<input type="radio" id="preview-tall" name="preview-ratio" value="tall" onclick={selectPreview} />
+					<label for="preview-tall">vertical</label>
+				</div>
 			</fieldset>
 		</div>
 	</div>

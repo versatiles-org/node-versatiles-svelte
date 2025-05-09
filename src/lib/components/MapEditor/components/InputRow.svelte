@@ -5,7 +5,7 @@
 </script>
 
 <div class="row">
-	<label for={id}>{label}</label>
+	<label class="label" for={id}>{label}</label>
 	{@render children()}
 </div>
 
@@ -16,9 +16,8 @@
 		justify-content: space-between;
 		align-items: center;
 		color: var(--fg-color);
-		& > :global(label) {
+		& > label {
 			flex-grow: 0;
-			opacity: 0.5;
 		}
 		& > :global(button),
 		& > :global(input),

@@ -58,23 +58,25 @@
 			<button class="btn" onclick={() => history.undo()} disabled={!$undoEnabled}>Undo</button>
 			<button class="btn" onclick={() => history.redo()} disabled={!$redoEnabled}>Redo</button>
 		</div>
-		<hr />
+		<hr class="thick" />
 		<SidebarPanel title="File">
 			<File manager={geometryManager} />
 		</SidebarPanel>
-		<hr />
+		<hr class="thick" />
 		<SidebarPanel title="Import/Export" open={false}>
 			<div class="grid1">
 				<button class="btn" onclick={() => panelShareMap?.open()}>Share Map</button>
 				<PanelShareMap bind:this={panelShareMap} bind:state={() => geometryManager.state, () => {}} />
 			</div>
-			<legend>GeoJSON:</legend>
-			<div class="grid2">
-				<button class="btn" onclick={importGeoJSON}>Import</button>
-				<button class="btn" onclick={exportGeoJSON}>Export</button>
-			</div>
+			<label
+				>GeoJSON:
+				<div class="grid2">
+					<button class="btn" onclick={importGeoJSON}>Import</button>
+					<button class="btn" onclick={exportGeoJSON}>Export</button>
+				</div>
+			</label>
 		</SidebarPanel>
-		<hr />
+		<hr class="thick" />
 		<SidebarPanel title="Add new">
 			<div class="grid2">
 				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewMarker())}>Marker</button>
@@ -83,9 +85,9 @@
 				<button class="btn" disabled>Circle</button>
 			</div>
 		</SidebarPanel>
-		<hr />
+		<hr class="thick" />
 		<Editor element={$activeElement} />
-		<hr />
+		<hr class="thick" />
 		<SidebarPanel title="Actions" disabled={!$activeElement}>
 			<div class="grid2">
 				<button
@@ -97,7 +99,7 @@
 				>
 			</div>
 		</SidebarPanel>
-		<hr />
+		<hr class="thick" />
 		<SidebarPanel title="Help" open={false}>
 			<p>
 				Submit bugs and feature requests as

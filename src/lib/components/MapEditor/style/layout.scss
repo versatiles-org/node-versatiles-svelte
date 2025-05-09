@@ -14,7 +14,7 @@
 	grid-template-columns: repeat(2, 1fr);
 }
 
-.grid1 button,
-.grid2 button {
+.grid1 > button,
+.grid2 > button {
 	width: 100%;
 }
