@@ -151,7 +151,7 @@ describe('GeometryManager', () => {
 		});
 	});
 
-	describe('JSON', () => {
+	describe('GeoJSON', () => {
 		it('should return correct GeoJSON', () => {
 			const center = new LngLat(10, 20);
 			vi.spyOn(mockMap, 'getCenter').mockReturnValue(center);

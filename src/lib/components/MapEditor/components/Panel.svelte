@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { EventHandler } from '../lib/event_handler.js';
 
 	let {
 		children,
@@ -8,15 +9,18 @@
 		onclose
 	}: { children?: Snippet; size?: 'big' | 'fullscreen'; onopen?: () => void; onclose?: () => void } = $props();
 	let dialog: HTMLDialogElement | null = null;
+	export const eventHandler = new EventHandler();
 
 	export function open() {
 		dialog?.showModal();
 		if (onopen) onopen();
+		eventHandler.emit('open');
 	}
 
 	export function close() {
 		dialog?.close();
 		if (onclose) onclose();
+		eventHandler.emit('close');
 	}
 
 	export function isOpen(): boolean {
