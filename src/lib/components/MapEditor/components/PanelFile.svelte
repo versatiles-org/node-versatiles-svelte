@@ -10,8 +10,8 @@
 	const disabledSave = $state(false);
 
 	async function newFile(): Promise<void> {
-		//if (!await dialog?.askNewFile()) return;
-		//manager.clear();
+		if (!(await dialog?.askCreateNew())) return;
+		manager.clear();
 	}
 
 	async function openFile(): Promise<void> {}

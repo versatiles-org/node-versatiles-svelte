@@ -3,12 +3,12 @@
 	import Editor from './Editor.svelte';
 	import type { GeometryManager } from '../lib/geometry_manager.js';
 	import SidebarPanel from './SidebarPanel.svelte';
-	import PanelShareMap from './DialogShare.svelte';
-	import File from './File.svelte';
+	import DialogShareMap from './DialogShare.svelte';
+	import PanelFile from './PanelFile.svelte';
 
 	const { geometryManager }: { geometryManager: GeometryManager } = $props();
 
-	let panelShareMap: PanelShareMap | null = null;
+	let panelShareMap: DialogShareMap | null = null;
 	let history = geometryManager.state;
 	let undoEnabled = $state(geometryManager.state.undoEnabled);
 	let redoEnabled = $state(geometryManager.state.redoEnabled);
@@ -60,13 +60,13 @@
 		</div>
 		<hr class="thick" />
 		<SidebarPanel title="File">
-			<File manager={geometryManager} />
+			<PanelFile manager={geometryManager} />
 		</SidebarPanel>
 		<hr class="thick" />
 		<SidebarPanel title="Import/Export" open={false}>
 			<div class="grid1">
 				<button class="btn" onclick={() => panelShareMap?.open()}>Share Map</button>
-				<PanelShareMap bind:this={panelShareMap} bind:state={() => geometryManager.state, () => {}} />
+				<DialogShareMap bind:this={panelShareMap} bind:state={() => geometryManager.state, () => {}} />
 			</div>
 			<label
 				>GeoJSON:

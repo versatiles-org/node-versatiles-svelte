@@ -3,7 +3,7 @@
 	import { EventHandler } from '../lib/event_handler.js';
 	import Dialog from './Dialog.svelte';
 
-	type Mode = 'download' | null;
+	type Mode = 'download' | 'new' | null;
 	let mode: Mode = $state(null);
 	let dialog: Dialog | null = null;
 	let input: HTMLInputElement | null = $state(null);
@@ -36,6 +36,13 @@
 		initInput(initialFilename);
 		const { response, value } = await getResponse(true);
 		return (response && value?.trim()) || null;
+	}
+
+	export async function askCreateNew(): Promise<boolean> {
+		if (!dialog) return false;
+		await openDialog('new');
+		const { response } = await getResponse(false);
+		return response;
 	}
 
 	async function getResponse(defaultValue: boolean): Promise<{ response: boolean; value: string | null }> {
@@ -79,6 +86,14 @@
 			<button class="btn" onclick={emitB} data-focus>Download</button>
 		</div>
 	{/if}
+	{#if mode == 'new'}
+		<h2>New Map</h2>
+		<p>Do you want to create a new map?</p>
+		<div class="grid2">
+			<button class="btn" onclick={emitA}>OK</button>
+			<button class="btn" onclick={emitB} data-focus>Cancel</button>
+		</div>
+	{/if}
 </Dialog>
 
 <style>
@@ -89,7 +104,8 @@
 	.grid2 {
 		margin: 0;
 	}
-	label {
+	label,
+	p {
 		display: block;
 		margin-bottom: 10px;
 	}
