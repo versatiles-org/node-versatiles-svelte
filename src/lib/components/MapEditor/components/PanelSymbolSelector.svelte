@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { Action } from 'svelte/action';
 	import type { SymbolLibrary } from '../lib/symbols.js';
-	import Panel from './Dialog.svelte';
+	import Dialog from './Dialog.svelte';
 
-	let panel: Panel;
+	let dialog: Dialog;
 	const buttonIconSize = 20;
 	const listItemSize = 48;
 	const listIconSize = 32;
@@ -16,7 +16,7 @@
 	const drawIcon: Action<HTMLCanvasElement, number> = (canvas, index) => symbolLibrary.drawSymbol(canvas, index, 3);
 </script>
 
-<button onclick={() => panel?.open()} style="text-align: left; white-space: nowrap; overflow: hidden; padding: 1px">
+<button onclick={() => dialog?.open()} style="text-align: left; white-space: nowrap; overflow: hidden; padding: 1px">
 	{#key symbolIndex}
 		<canvas
 			width={buttonIconSize * retina}
@@ -32,7 +32,7 @@
 	{/if}
 </button>
 
-<Panel bind:this={panel}>
+<Dialog bind:this={dialog}>
 	<div class="list" style="--list-icon-size: {listIconSize}px; --list-item-size: {listItemSize}px">
 		{#each symbolLibrary.asList() as symbol (symbol.index)}
 			<button class="item" onclick={() => (symbolIndex = symbol.index)}
@@ -41,7 +41,7 @@
 			>
 		{/each}
 	</div>
-</Panel>
+</Dialog>
 
 <style type="text/scss">
 	.list {

@@ -9,7 +9,10 @@
 	let dialog: Dialog | undefined = undefined;
 	const disabledSave = $state(false);
 
-	async function newFile(): Promise<void> {}
+	async function newFile(): Promise<void> {
+		//if (!await dialog?.askNewFile()) return;
+		//manager.clear();
+	}
 
 	async function openFile(): Promise<void> {}
 	async function saveFile(): Promise<void> {}

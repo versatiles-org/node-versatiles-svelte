@@ -100,6 +100,14 @@ export class GeometryManager {
 		this.state = new StateManager(this);
 	}
 
+	public clear() {
+		this.selectElement(undefined);
+		this.elements.update((elements) => {
+			elements.forEach((e) => e.destroy());
+			return [];
+		});
+	}
+
 	public selectElement(element: AbstractElement | undefined) {
 		if (element == get(this.selectedElement)) return;
 		const elements = get(this.elements);

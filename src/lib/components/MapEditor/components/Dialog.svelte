@@ -3,14 +3,23 @@
 	import { EventHandler } from '../lib/event_handler.js';
 
 	let {
-		children,
+		children = $bindable(),
 		size,
 		onopen,
 		onclose
-	}: { children?: Snippet; size?: 'big' | 'fullscreen' | 'small'; onopen?: () => void; onclose?: () => void } =
-		$props();
+	}: {
+		children?: Snippet;
+		size?: 'big' | 'fullscreen' | 'small';
+		onopen?: () => void;
+		onclose?: () => void;
+	} = $props();
+
 	let dialog: HTMLDialogElement | null = null;
 	export const eventHandler = new EventHandler();
+
+	export function getNode(): HTMLDialogElement {
+		return dialog!;
+	}
 
 	export function open() {
 		dialog?.showModal();

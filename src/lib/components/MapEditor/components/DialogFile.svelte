@@ -1,61 +1,84 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { EventHandler } from '../lib/event_handler.js';
 	import Dialog from './Dialog.svelte';
 
+	type Mode = 'download' | null;
+	let mode: Mode = $state(null);
 	let dialog: Dialog | null = null;
-	let input: HTMLInputElement | null = null;
+	let input: HTMLInputElement | null = $state(null);
 	let eventHandler = new EventHandler();
-	let btnDownload: HTMLButtonElement | null = null;
 
-	export async function askDownloadFilename(initialFilename: string): Promise<string | null> {
-		if (!dialog) return null;
-		if (!input) return null;
+	async function openDialog(newMode: Mode) {
+		if (!dialog) return;
+		mode = newMode;
 
-		input.value = initialFilename;
-		dialog?.eventHandler.clear();
+		dialog.eventHandler.clear();
 		eventHandler.clear();
 
-		const response = await new Promise<boolean>((resolve) => {
-			if (!dialog) return resolve(false);
-			dialog.open();
-			btnDownload?.focus();
+		dialog.open();
+		await tick();
+		dialog.getNode()?.querySelector<HTMLButtonElement>('button[data-focus]')?.focus();
+		return;
+	}
 
-			dialog.eventHandler.on('close', () => resolve(false));
-			eventHandler.on('cancel', () => resolve(false));
-			eventHandler.on('ok', () => resolve(true));
-		});
-
+	async function closeDialog() {
 		dialog?.close();
 		dialog?.eventHandler.clear();
 		eventHandler.clear();
+		mode = null;
+		return tick();
+	}
 
-		if (!response) return null;
-		if (!input) return null;
-		const filename = input.value.trim();
-		if (!filename) return null;
-		return filename;
+	export async function askDownloadFilename(initialFilename: string): Promise<string | null> {
+		if (!dialog) return null;
+		await openDialog('download');
+		initInput(initialFilename);
+		const { response, value } = await getResponse(true);
+		return (response && value?.trim()) || null;
+	}
+
+	async function getResponse(defaultValue: boolean): Promise<{ response: boolean; value: string | null }> {
+		const response = await new Promise<boolean>((resolve) => {
+			if (!dialog) return resolve(false);
+			dialog!.eventHandler.on('close', () => resolve(false));
+			eventHandler.on('A', () => resolve(!defaultValue));
+			eventHandler.on('B', () => resolve(defaultValue));
+		});
+		const value = input?.value ?? null;
+		await closeDialog();
+		return { response, value };
+	}
+
+	function emitA() {
+		eventHandler.emit('A');
+	}
+
+	function emitB() {
+		eventHandler.emit('B');
+	}
+
+	function initInput(value: string) {
+		if (!input) return;
+		input.value = value;
+		input.addEventListener('keypress', (e) => {
+			if (e.key === 'Enter') eventHandler.emit('B');
+		});
 	}
 </script>
 
 <Dialog bind:this={dialog} size="small">
-	<h2>Download File</h2>
-	<p>
-		<label
-			>File name: <input
-				type="text"
-				placeholder="Enter filename"
-				bind:this={input}
-				spellcheck="false"
-				onkeypress={(e) => {
-					if (e.key === 'Enter') eventHandler.emit('ok');
-				}}
-			/></label
-		>
-	</p>
-	<div class="grid2">
-		<button class="btn" onclick={() => eventHandler.emit('cancel')}>Cancel</button>
-		<button class="btn" onclick={() => eventHandler.emit('ok')} bind:this={btnDownload}>Download</button>
-	</div>
+	{#if mode == 'download'}
+		<h2>Download File</h2>
+		<label>
+			File name:
+			<input type="text" bind:this={input} spellcheck="false" />
+		</label>
+		<div class="grid2">
+			<button class="btn" onclick={emitA}>Cancel</button>
+			<button class="btn" onclick={emitB} data-focus>Download</button>
+		</div>
+	{/if}
 </Dialog>
 
 <style>
@@ -65,5 +88,9 @@
 	}
 	.grid2 {
 		margin: 0;
+	}
+	label {
+		display: block;
+		margin-bottom: 10px;
 	}
 </style>
