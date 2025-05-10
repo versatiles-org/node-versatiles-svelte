@@ -12,9 +12,30 @@
 	async function newFile(): Promise<void> {
 		if (!(await dialog?.askCreateNew())) return;
 		manager.clear();
+		filename = 'map.geojson';
 	}
 
-	async function openFile(): Promise<void> {}
+	async function openFile(): Promise<void> {
+		if (!dialog) return;
+
+		const fileInput = document.createElement('input');
+		fileInput.type = 'file';
+		fileInput.accept = '.geojson';
+		fileInput.onchange = async (event: Event) => {
+			const target = event.target as HTMLInputElement;
+			if (!target.files || target.files.length === 0) return;
+			const file = target.files[0];
+			filename = file.name;
+			const reader = new FileReader();
+			reader.onload = () => {
+				manager.clear();
+				manager.addGeoJSON(JSON.parse(reader.result as string));
+			};
+			reader.readAsText(file);
+		};
+		fileInput.click();
+	}
+
 	async function saveFile(): Promise<void> {}
 	async function downloadFile(): Promise<void> {
 		if (!dialog) return;
