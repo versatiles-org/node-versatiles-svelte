@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Action } from 'svelte/action';
-	import type { SymbolLibrary } from '../lib/symbols.js';
+	import type { Map as MaplibreMap } from 'maplibre-gl';
+	import { SymbolLibrary } from '../lib/symbols.js';
 	import Dialog from './Dialog.svelte';
 
 	let dialog: Dialog;
@@ -9,7 +10,9 @@
 	const listIconSize = 32;
 	const retina = window.devicePixelRatio || 1;
 
-	let { symbolIndex = $bindable(), symbolLibrary }: { symbolIndex: number; symbolLibrary: SymbolLibrary } = $props();
+	let { symbolIndex = $bindable(), map }: { symbolIndex: number; map: MaplibreMap } = $props();
+
+	const symbolLibrary = new SymbolLibrary(map);
 
 	const drawIconHalo: Action<HTMLCanvasElement, number> = (canvas, index) => symbolLibrary.drawSymbol(canvas, index, 3);
 

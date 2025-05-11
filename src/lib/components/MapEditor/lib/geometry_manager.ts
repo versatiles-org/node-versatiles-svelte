@@ -5,7 +5,6 @@ import { LineElement } from './element/line.js';
 import type { SelectionNode } from './element/types.js';
 import { PolygonElement } from './element/polygon.js';
 import { Cursor } from './cursor.js';
-import { SymbolLibrary } from './symbols.js';
 import { StateManager } from './state/manager.js';
 import type { StateRoot } from './state/types.js';
 import { getMapStyle } from '../../../utils/map_style.js';
@@ -20,7 +19,6 @@ export class GeometryManager {
 	public readonly selectedElement: Writable<AbstractElement | undefined> = writable(undefined);
 	public readonly canvas: HTMLElement;
 	public readonly cursor: Cursor;
-	public readonly symbolLibrary: SymbolLibrary;
 	public readonly state: StateManager;
 
 	private selectionNodes: maplibregl.GeoJSONSource | undefined;
@@ -30,7 +28,6 @@ export class GeometryManager {
 		this.map = map;
 		this.canvas = this.map.getCanvasContainer();
 		this.cursor = new Cursor(this.canvas);
-		this.symbolLibrary = new SymbolLibrary(map);
 
 		const style = getMapStyle({ darkMode: false });
 		style.transition = { duration: 0, delay: 0 };

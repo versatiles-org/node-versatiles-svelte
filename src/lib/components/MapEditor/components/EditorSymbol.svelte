@@ -23,7 +23,7 @@
 				layer.manager.state.log();
 			}
 		}
-		symbolLibrary={layer.manager.symbolLibrary}
+		map={layer.manager.map}
 	/>
 </InputRow>
 
