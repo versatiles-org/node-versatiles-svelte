@@ -59,15 +59,15 @@
 			<button class="btn" onclick={() => history.redo()} disabled={!$redoEnabled}>Redo</button>
 		</div>
 		<hr class="thick" />
-		<SidebarPanel title="File">
+		<SidebarPanel title="Map">
 			<PanelFile manager={geometryManager} />
+			<div class="grid1">
+				<button class="btn" onclick={() => panelShareMap?.open()}>Share/Embed</button>
+				<DialogShareMap bind:this={panelShareMap} bind:state={() => geometryManager.state, () => {}} />
+			</div>
 		</SidebarPanel>
 		<hr class="thick" />
 		<SidebarPanel title="Import/Export" open={false}>
-			<div class="grid1">
-				<button class="btn" onclick={() => panelShareMap?.open()}>Share Map</button>
-				<DialogShareMap bind:this={panelShareMap} bind:state={() => geometryManager.state, () => {}} />
-			</div>
 			<label
 				>GeoJSON:
 				<div class="grid2">
