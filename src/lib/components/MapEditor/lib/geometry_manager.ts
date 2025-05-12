@@ -144,6 +144,13 @@ export class GeometryManager {
 		};
 	}
 
+	public async loadState(state: StateRoot) {
+		if (!state) return;
+		this.clear();
+		this.setState(state);
+		this.state.resetHistory(state);
+	}
+
 	public async setState(state: StateRoot) {
 		if (!state) return;
 

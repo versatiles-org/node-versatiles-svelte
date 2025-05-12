@@ -58,7 +58,7 @@ export class StateManager {
 	public undoEnabled = writable(false);
 	public redoEnabled = writable(false);
 
-	private resetHistory(state: StateRoot) {
+	public resetHistory(state: StateRoot) {
 		this.history = [];
 		this.historyIndex = 0;
 		this.pushHistory(state);

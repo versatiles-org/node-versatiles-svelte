@@ -4,7 +4,8 @@
 
 	const { manager }: { manager: GeometryManager } = $props();
 
-	let filename = 'map.geojson';
+	const defaultFilename = 'default.mapjson';
+	let filename = defaultFilename;
 	const useFileAPI = false;
 	let dialog: Dialog | undefined = undefined;
 	const disabledSave = $state(false);
@@ -12,7 +13,7 @@
 	async function newFile(): Promise<void> {
 		if (!(await dialog?.askCreateNew())) return;
 		manager.clear();
-		filename = 'map.geojson';
+		filename = defaultFilename;
 	}
 
 	async function openFile(): Promise<void> {
@@ -20,7 +21,7 @@
 
 		const fileInput = document.createElement('input');
 		fileInput.type = 'file';
-		fileInput.accept = '.geojson';
+		fileInput.accept = '.mapjson';
 		fileInput.onchange = async (event: Event) => {
 			const target = event.target as HTMLInputElement;
 			if (!target.files || target.files.length === 0) return;
@@ -28,8 +29,7 @@
 			filename = file.name;
 			const reader = new FileReader();
 			reader.onload = () => {
-				manager.clear();
-				manager.addGeoJSON(JSON.parse(reader.result as string));
+				manager.loadState(JSON.parse(reader.result as string));
 			};
 			reader.readAsText(file);
 		};
@@ -37,14 +37,15 @@
 	}
 
 	async function saveFile(): Promise<void> {}
+
 	async function downloadFile(): Promise<void> {
 		if (!dialog) return;
 		const response = await dialog.askDownloadFilename(filename);
 		if (!response) return;
 		filename = response;
 
-		const geoJSON = manager.getGeoJSON();
-		const blob = new Blob([JSON.stringify(geoJSON)], { type: 'application/geo+json' });
+		const state = manager.getState();
+		const blob = new Blob([JSON.stringify(state)], { type: 'application/json' });
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.setAttribute('href', url);
