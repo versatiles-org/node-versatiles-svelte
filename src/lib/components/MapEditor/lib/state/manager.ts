@@ -12,7 +12,7 @@ export class StateManager {
 
 	constructor(geometryManager: GeometryManager) {
 		this.geometryManager = geometryManager;
-		this.resetHistory();
+		this.resetHistory(geometryManager.getState());
 	}
 
 	public getHash(additionalMeta?: StateMetadata): string {
@@ -41,9 +41,7 @@ export class StateManager {
 			this.geometryManager.setState(state);
 			this.disableLogging = false;
 
-			this.history = [{ ...state, map: undefined }];
-			this.historyIndex = 0;
-			this.updateButtons();
+			this.resetHistory(state);
 		} catch (error) {
 			console.error(error);
 		}
@@ -51,7 +49,7 @@ export class StateManager {
 
 	// History of state hashes
 	// The first element is the most recent state
-	private history: StateRoot[] = [];
+	private history: string[] = [];
 	// The index of the current state in the history
 	// 0 means the most recent state
 	// 1 means the second most recent state
@@ -60,21 +58,19 @@ export class StateManager {
 	public undoEnabled = writable(false);
 	public redoEnabled = writable(false);
 
-	private resetHistory() {
-		this.history = [this.geometryManager.getState()];
+	private resetHistory(state: StateRoot) {
+		this.history = [];
 		this.historyIndex = 0;
-		this.updateButtons();
+		this.pushHistory(state);
 	}
 
-	public log() {
-		if (this.disableLogging) return;
-		const state = this.geometryManager.getState();
+	private pushHistory(state: StateRoot) {
 		state.map = undefined; // Remove map state from history
 		if (this.historyIndex > 0) {
 			this.history.splice(0, this.historyIndex);
 			this.historyIndex = 0;
 		}
-		this.history.unshift(state);
+		this.history.unshift(JSON.stringify(state));
 
 		// Remove old history
 		if (this.history.length > MAXLENGTH) {
@@ -83,29 +79,30 @@ export class StateManager {
 		this.updateButtons();
 	}
 
+	private popHistory() {
+		this.disableLogging = true;
+		const state = this.history[this.historyIndex];
+		this.geometryManager.setState(JSON.parse(state));
+		this.disableLogging = false;
+		this.updateButtons();
+	}
+
+	public log() {
+		if (this.disableLogging) return;
+		this.pushHistory(this.geometryManager.getState());
+	}
+
 	public undo() {
 		if (this.historyIndex < this.history.length - 1) {
 			this.historyIndex++;
-			const state = this.history[this.historyIndex];
-
-			this.disableLogging = true;
-			this.geometryManager.setState(state);
-			this.disableLogging = false;
-
-			this.updateButtons();
+			this.popHistory();
 		}
 	}
 
 	public redo() {
 		if (this.historyIndex > 0) {
 			this.historyIndex--;
-			const state = this.history[this.historyIndex];
-
-			this.disableLogging = true;
-			this.geometryManager.setState(state);
-			this.disableLogging = false;
-
-			this.updateButtons();
+			this.popHistory();
 		}
 	}
 
