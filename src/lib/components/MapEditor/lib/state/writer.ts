@@ -122,6 +122,8 @@ export class StateWriter {
 		this.writeInteger(value, 10);
 		// effective resolution of coordinates is 1000 times the visible radius
 		this.writePoint(map.center, radius / 1e3);
+
+		this.writeBit(false); // additional map data not supported yet
 	}
 
 	writeMetadata(metadata?: StateMetadata) {

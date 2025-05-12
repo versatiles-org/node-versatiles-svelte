@@ -90,7 +90,7 @@ describe('GeometryManager', () => {
 			expect(manager.getState().elements).toStrictEqual([element]);
 
 			const hash = manager.state.getHash();
-			expect(hash).toBe('G2haCUQhBxPTEBphfMyRwEcIA');
+			expect(hash).toBe('G2haCUQgg4npiA0wvmZI4COEA');
 
 			manager.state.setHash(hash);
 			const elements = get(manager.elements);
@@ -115,7 +115,7 @@ describe('GeometryManager', () => {
 			expect(manager.getState().elements).toStrictEqual([element]);
 
 			const hash = manager.state.getHash();
-			expect(hash).toBe('G2haCUQiEBVHMBpNYBpNYBpNYxV5veA');
+			expect(hash).toBe('G2haCUQhCAqjmA0msA0msA0msYq83vA');
 
 			manager.state.setHash(hash);
 			const elements = get(manager.elements);
@@ -142,7 +142,7 @@ describe('GeometryManager', () => {
 			expect(manager.getState().elements).toStrictEqual([element]);
 
 			const hash = manager.state.getHash();
-			expect(hash).toBe('G2haCUQjEBVHMBpNYBpNYBpNYxV5veDAkaKwA');
+			expect(hash).toBe('G2haCUQhiAqjmA0msA0msA0msYq83vBgSNFYA');
 
 			manager.state.setHash(hash);
 			const elements = get(manager.elements);

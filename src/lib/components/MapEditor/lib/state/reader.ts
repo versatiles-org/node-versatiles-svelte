@@ -176,6 +176,10 @@ export class StateReader {
 			const radius = Math.pow(2, this.readInteger(10) / 40);
 			// effective resolution of coordinates is 1000 times the visible radius
 			const center = this.readPoint(radius / 1e3);
+
+			if (this.readBit())
+				throw new Error('Addtional map meta data is not supported yet');
+
 			return { radius, center };
 		} catch (cause) {
 			throw new Error(`Error reading map`, { cause });

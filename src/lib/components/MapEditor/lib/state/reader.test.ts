@@ -222,7 +222,7 @@ describe('StateReader', () => {
 			};
 			const writer = new StateWriter();
 			writer.writeMap(map);
-			expect(writer.asBitString()).toBe('11000010100000001100011100110000001000101001111000010');
+			expect(writer.asBitString()).toBe('110000101000000011000111001100000010001010011110000100');
 
 			const reader = new StateReader(writer.bits);
 			expect(reader.readMap()).toStrictEqual(map);
@@ -236,7 +236,7 @@ describe('StateReader', () => {
 			};
 			const writer = new StateWriter();
 			writer.writeMap(map);
-			expect(writer.asBitString()).toBe('10010000101001111010111100111000101101110100001100101011101110001011110');
+			expect(writer.asBitString()).toBe('100100001010011110101111001110001011011101000011001010111011100010111100');
 
 			const reader = new StateReader(writer.bits);
 			expect(reader.readMap()).toStrictEqual(map);
@@ -290,7 +290,7 @@ describe('StateReader', () => {
 			const writer = new StateWriter();
 			writer.writeRoot(root);
 			expect(writer.asBitString()).toBe(
-				'00011000001000111101110101101110111001101011011111000010000100000111110101001110010000000101000101101111000000'
+				'000110000010001111011101011011101110011010110111110000100000100000111110101001110010000000101000101101111000000'
 			);
 
 			const reader = new StateReader(writer.bits);
@@ -327,7 +327,7 @@ describe('StateReader', () => {
 			const writer = new StateWriter();
 			writer.writeRoot(root);
 			expect(writer.asBase64()).toBe(
-				'FkIb_SgX-1hB9TkBRbwiwVKkf4AAAIQGWHwHmckIGk1gGk1gbUsM8Ymr8YKjaGcDcox504koQY3IX5AH4m4WSYhoXYVIg4Wo1xJlekpEcUXihEgAAP-yBF4oRI__8AA'
+				'FkIb_SgX-1gg-pyAot4RYKlSP8AAAEIDLD4DzOSEDSawDSawNqWGeMTV-MFRtDOBuUY86cSUIMbkL8gD8TcLJMQ0LsKkQcLUa4kyvSUiOKLxQiQAAH_ZAi8UIkf_-AAA'
 			);
 			const reader = new StateReader(writer.bits);
 			expect(reader.readRoot()).toStrictEqual(root);
@@ -420,7 +420,7 @@ describe('StateReader', () => {
 	describe('big hashes', () => {
 		it('should return demo route', () => {
 			const reader = StateReader.fromBase64(
-				'Foef09wuVSUziaJjnjEJhjBUvQrgvlGPODE5CjGdCnICDGvCyDEZCTElEHCxGyRMj09GfitKFFUAAABNtfjE9LfBUuJFUAACRnwiFAGWGeMT2OMFS4kVQAAJK2EGQEAyHRaYxCW4wVDkUG2AAyD0JiRVAAACykVQAAAA'
+				'Fk2UZ1xMayU0hNExzxiEwxgqXoVwXyjHnBichRjOhTkBBjXhZBiMhJiSiDhYjZImR6ejPxWlCiqAAAAm2vxielvgqXEiqAABIz4RCgDLDPGJ7HGCpcSKoAAElbCDICAZDotMYhLcYKhyKDbAAZB6ExIqgAABZSKoAAAA'
 			);
 			expect(reader.readRoot()).toStrictEqual({
 				elements: [
@@ -483,8 +483,8 @@ describe('StateReader', () => {
 					}
 				],
 				map: {
-					center: [expect.closeTo(13.35992, 5), expect.closeTo(52.51305, 5)],
-					radius: expect.closeTo(1374.79)
+					center: [expect.closeTo(13.36075, 5), expect.closeTo(52.51318, 5)],
+					radius: expect.closeTo(1078.64)
 				}
 			});
 		});
