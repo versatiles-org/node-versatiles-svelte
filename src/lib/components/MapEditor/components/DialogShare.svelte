@@ -31,7 +31,6 @@
 
 	function update(delay: number = 500) {
 		if (!dialog?.isOpen()) return;
-		console.log('update init');
 		linkCode = getLinkCode();
 		embedCode = getEmbedCode();
 		if (timeout != null) {
@@ -40,7 +39,6 @@
 		}
 		timeout = setTimeout(() => {
 			if (!iframe) return;
-			console.log('update run');
 			if (iframe.src === linkCode) {
 				iframe.contentWindow?.location.reload();
 			} else {

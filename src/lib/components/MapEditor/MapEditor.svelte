@@ -1,21 +1,24 @@
 <script lang="ts">
 	import type { Map as MaplibreMapType } from 'maplibre-gl';
 	import BasicMap from '$lib/components/BasicMap/BasicMap.svelte';
-	import { onMount } from 'svelte';
 	import Sidebar from './components/Sidebar.svelte';
 	import { getCountryBoundingBox } from '$lib/utils/location.js';
 	import { GeometryManager } from './lib/geometry_manager.js';
 
 	let showSidebar = $state(false);
-
-	onMount(() => {
-		const inIframe = window.self !== window.top;
-		if (!inIframe) showSidebar = true;
-	});
-
 	let geometryManager: GeometryManager | undefined = $state();
 
 	function onMapInit(map: MaplibreMapType, maplibre: typeof import('maplibre-gl')) {
+		showSidebar = window.self === window.top;
+
+		const padding = 10;
+		map.setPadding({
+			top: padding,
+			right: padding + (showSidebar ? 250 : 0),
+			bottom: padding,
+			left: padding
+		});
+
 		map.addControl(new maplibre.AttributionControl({ compact: true }), 'bottom-left');
 
 		geometryManager = new GeometryManager(map);
@@ -26,7 +29,7 @@
 			geometryManager.state.setHash(hash);
 		} else {
 			const bbox = getCountryBoundingBox();
-			if (bbox) map.fitBounds(bbox, { padding: 20, animate: false });
+			if (bbox) map.fitBounds(bbox, { animate: false });
 		}
 
 		addEventListener('hashchange', () => geometryManager!.state.setHash(location.hash.slice(1)));
