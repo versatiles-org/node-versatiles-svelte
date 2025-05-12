@@ -250,7 +250,7 @@ export class GeometryManager {
 				center: [center.lng, center.lat],
 				zoom: this.map.getZoom()
 			},
-			features: get(this.elements).map((element) => element.getFeature(true))
+			features: get(this.elements).map((element) => element.getGeoJSON())
 		} as GeoJSON.FeatureCollection;
 	}
 
@@ -274,22 +274,17 @@ export class GeometryManager {
 
 			switch (feature.geometry.type) {
 				case 'Point':
+					if (p && p.subType == 'Circle' && p.radius != null) {
+						element = CircleElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.Point, { radius: number }>);
+						break;
+					}
 					element = MarkerElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.Point>);
+
 					break;
 				case 'LineString':
 					element = LineElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.LineString>);
 					break;
 				case 'Polygon':
-					if (p && p['circle-center-x'] != null && p['circle-center-y'] != null && p['circle-radius'] != null) {
-						element = CircleElement.fromGeoJSON(
-							this,
-							feature as GeoJSON.Feature<
-								GeoJSON.Polygon,
-								{ 'circle-center-x': number; 'circle-center-y': number; 'circle-radius': number }
-							>
-						);
-						break;
-					}
 					element = PolygonElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.Polygon>);
 					break;
 			}

@@ -86,6 +86,19 @@ export class CircleElement extends AbstractElement {
 		};
 	}
 
+	getGeoJSON(): GeoJSON.Feature<GeoJSON.Point> {
+		return {
+			type: 'Feature',
+			properties: {
+				...this.fillLayer.getGeoJSONProperties(),
+				...this.strokeLayer.getGeoJSONProperties(),
+				subType: 'Circle',
+				radius: this.radius
+			},
+			geometry: { type: 'Point', coordinates: this.point }
+		};
+	}
+
 	destroy(): void {
 		this.fillLayer.destroy();
 		this.strokeLayer.destroy();
@@ -112,17 +125,15 @@ export class CircleElement extends AbstractElement {
 	static fromGeoJSON(
 		manager: GeometryManager,
 		feature: GeoJSON.Feature<
-			GeoJSON.Polygon,
+			GeoJSON.Point,
 			{
-				'circle-center-x': number;
-				'circle-center-y': number;
-				'circle-radius': number;
+				radius: number;
 			}
 		>
 	) {
 		const properties = feature.properties;
-		const center = [properties['circle-center-x'], properties['circle-center-y']] as ElementPoint;
-		const radius = properties['circle-radius'];
+		const center = feature.geometry.coordinates as ElementPoint;
+		const radius = feature.properties.radius;
 
 		const element = new CircleElement(manager, center, radius);
 		element.fillLayer.setGeoJSONProperties(properties);
