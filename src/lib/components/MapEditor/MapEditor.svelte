@@ -21,7 +21,7 @@
 
 		map.addControl(new maplibre.AttributionControl({ compact: true }), 'bottom-left');
 
-		geometryManager = new GeometryManager(map);
+		geometryManager = new GeometryManager(map, showSidebar);
 
 		let hash = location.hash.slice(1);
 		if (!hash) hash = window.frameElement?.getAttribute('data') ?? '';

@@ -23,8 +23,10 @@ export class GeometryManager {
 	public readonly state: StateManager;
 
 	private selectionNodes: maplibregl.GeoJSONSource | undefined;
+	private readonly editMode: boolean;
 
-	constructor(map: maplibregl.Map) {
+	constructor(map: maplibregl.Map, editMode: boolean) {
+		this.editMode = editMode;
 		this.elements = writable([]);
 		this.map = map;
 		this.canvas = this.map.getCanvasContainer();
@@ -32,6 +34,7 @@ export class GeometryManager {
 
 		const style = getMapStyle({ darkMode: false });
 		style.transition = { duration: 0, delay: 0 };
+
 		style.sources.selection_nodes = {
 			type: 'geojson',
 			data: { type: 'FeatureCollection', features: [] }
@@ -51,49 +54,51 @@ export class GeometryManager {
 			}
 		});
 
-		map.setStyle(style);
+		if (this.editMode) {
+			map.on('mousedown', 'selection_nodes', (e) => {
+				const element = get(this.selectedElement)!;
+				if (element == undefined) return;
 
-		map.on('mousedown', 'selection_nodes', (e) => {
-			const element = get(this.selectedElement)!;
-			if (element == undefined) return;
+				const feature = map.queryRenderedFeatures(e.point, { layers: ['selection_nodes'] })[0];
+				const selectedNode = element.getSelectionNodeUpdater(feature.properties);
+				if (selectedNode == undefined) return;
 
-			const feature = map.queryRenderedFeatures(e.point, { layers: ['selection_nodes'] })[0];
-			const selectedNode = element.getSelectionNodeUpdater(feature.properties);
-			if (selectedNode == undefined) return;
+				// @ts-expect-error ensure that the event is ignored by other layers
+				e.ignore = true;
+				e.preventDefault();
 
-			// @ts-expect-error ensure that the event is ignored by other layers
-			e.ignore = true;
-			e.preventDefault();
-
-			if (e.originalEvent.shiftKey) {
-				selectedNode.delete();
-				this.drawSelectionNodes();
-			} else {
-				const onMove = (e: maplibregl.MapMouseEvent) => {
-					e.preventDefault();
-					selectedNode.update(e.lngLat.lng, e.lngLat.lat);
+				if (e.originalEvent.shiftKey) {
+					selectedNode.delete();
 					this.drawSelectionNodes();
-				};
+				} else {
+					const onMove = (e: maplibregl.MapMouseEvent) => {
+						e.preventDefault();
+						selectedNode.update(e.lngLat.lng, e.lngLat.lat);
+						this.drawSelectionNodes();
+					};
 
-				map.on('mousemove', onMove);
-				map.once('mouseup', () => {
-					map.off('mousemove', onMove);
-					this.state.log();
-				});
-			}
-		});
+					map.on('mousemove', onMove);
+					map.once('mouseup', () => {
+						map.off('mousemove', onMove);
+						this.state.log();
+					});
+				}
+			});
 
-		map.on('mouseenter', 'selection_nodes', () => {
-			this.cursor.togglePrecise('selection_nodes');
-		});
-		map.on('mouseleave', 'selection_nodes', () => {
-			this.cursor.togglePrecise('selection_nodes', false);
-		});
+			map.on('mouseenter', 'selection_nodes', () => {
+				this.cursor.togglePrecise('selection_nodes');
+			});
+			map.on('mouseleave', 'selection_nodes', () => {
+				this.cursor.togglePrecise('selection_nodes', false);
+			});
 
-		map.on('click', (e) => {
-			if (!e.originalEvent.shiftKey) this.selectElement(undefined);
-			e.preventDefault();
-		});
+			map.on('click', (e) => {
+				if (!e.originalEvent.shiftKey) this.selectElement(undefined);
+				e.preventDefault();
+			});
+		}
+
+		map.setStyle(style);
 
 		this.state = new StateManager(this);
 	}
@@ -186,7 +191,6 @@ export class GeometryManager {
 					case 'polygon':
 						return PolygonElement.fromState(this, element);
 					case 'circle':
-						console.log('circle', element);
 						return CircleElement.fromState(this, element);
 					default:
 						throw new Error('Unknown element type');

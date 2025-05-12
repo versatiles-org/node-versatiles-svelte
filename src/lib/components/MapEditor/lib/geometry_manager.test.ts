@@ -13,7 +13,7 @@ describe('GeometryManager', () => {
 
 	beforeEach(() => {
 		mockMap = new MockMap();
-		manager = new GeometryManager(mockMap as unknown as MaplibreMap);
+		manager = new GeometryManager(mockMap as unknown as MaplibreMap, true);
 	});
 
 	it('should initialize correctly', () => {

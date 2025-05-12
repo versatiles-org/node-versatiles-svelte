@@ -46,7 +46,7 @@ describe('StateManager', () => {
 	beforeEach(() => {
 		const map = new MockMap();
 
-		geometryManager = new GeometryManager(map as unknown as maplibregl.Map);
+		geometryManager = new GeometryManager(map as unknown as maplibregl.Map, true);
 		vi.spyOn(geometryManager, 'getState');
 		vi.spyOn(geometryManager, 'setState');
 
