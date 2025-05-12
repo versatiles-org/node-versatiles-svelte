@@ -9,6 +9,7 @@ import { StateManager } from './state/manager.js';
 import type { StateRoot } from './state/types.js';
 import { getMapStyle } from '../../../utils/map_style.js';
 import { CircleElement } from './element/circle.js';
+import type { GeoJsonProperties } from 'geojson';
 
 export type ExtendedGeoJSON = GeoJSON.FeatureCollection & {
 	map?: { center: [number, number]; zoom: number };
@@ -266,7 +267,8 @@ export class GeometryManager {
 				}
 			}
 		}
-		for (const feature of geojson.features) {
+
+		for (const feature of flatten(geojson.features)) {
 			let element: AbstractElement;
 			const p = feature.properties;
 
@@ -290,10 +292,59 @@ export class GeometryManager {
 					}
 					element = PolygonElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.Polygon>);
 					break;
-				default:
-					throw new Error(`Unknown geometry type "${feature.geometry.type}"`);
 			}
 			this.appendElement(element);
+		}
+	}
+}
+
+type SimpleGeometry = GeoJSON.Point | GeoJSON.LineString | GeoJSON.Polygon;
+function flatten(features: GeoJSON.Feature[]): GeoJSON.Feature<SimpleGeometry>[] {
+	return features.flatMap((feature) => {
+		if (feature.type !== 'Feature') {
+			throw new Error(`Expected Feature, got ${feature.type}`);
+		}
+		return flattenGeometry(feature.geometry, feature.properties);
+	});
+
+	function flattenGeometry(
+		geometry: GeoJSON.Geometry,
+		properties: GeoJsonProperties
+	): GeoJSON.Feature<SimpleGeometry>[] {
+		switch (geometry.type) {
+			case 'Point':
+			case 'LineString':
+			case 'Polygon':
+				return [
+					{
+						type: 'Feature',
+						properties,
+						geometry
+					}
+				];
+			case 'GeometryCollection':
+				return geometry.geometries.flatMap((g) => flattenGeometry(g, properties));
+			case 'MultiPoint':
+				return geometry.coordinates.map((coordinates) => ({
+					type: 'Feature',
+					properties,
+					geometry: { type: 'Point', coordinates }
+				}));
+			case 'MultiLineString':
+				return geometry.coordinates.map((coordinates) => ({
+					type: 'Feature',
+					properties,
+					geometry: { type: 'LineString', coordinates }
+				}));
+			case 'MultiPolygon':
+				return geometry.coordinates.map((coordinates) => ({
+					type: 'Feature',
+					properties,
+					geometry: { type: 'Polygon', coordinates }
+				}));
+			default:
+				// @ts-expect-error error on unknown geometry type
+				throw new Error(`Unknown geometry type "${geometry?.type}"`);
 		}
 	}
 }
