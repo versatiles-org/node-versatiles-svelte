@@ -2,6 +2,7 @@ import { Color } from '@versatiles/style';
 import { BASE64_CHARS, CHAR_CODE2VALUE } from './constants.js';
 import { StateReader } from './reader.js';
 import type {
+	StateElementCircle,
 	StateElementLine,
 	StateElementMarker,
 	StateElementPolygon,
@@ -106,6 +107,10 @@ export class StateWriter {
 					this.writeInteger(3, 3);
 					this.writeElementPolygon(element);
 					break;
+				case 'circle':
+					this.writeInteger(4, 3);
+					this.writeElementCircle(element);
+					break;
 			}
 		});
 	}
@@ -177,6 +182,27 @@ export class StateWriter {
 		} else {
 			this.writeBit(false);
 		}
+		this.writeBit(false); // tooltip not supported yet
+	}
+
+	writeElementCircle(element: StateElementCircle) {
+		this.writePoint(element.point);
+		this.writeVarint(Math.round(element.radius));
+
+		if (element.style) {
+			this.writeBit(true);
+			this.writeStyle(element.style);
+		} else {
+			this.writeBit(false);
+		}
+
+		if (element.strokeStyle) {
+			this.writeBit(true);
+			this.writeStyle(element.strokeStyle);
+		} else {
+			this.writeBit(false);
+		}
+
 		this.writeBit(false); // tooltip not supported yet
 	}
 

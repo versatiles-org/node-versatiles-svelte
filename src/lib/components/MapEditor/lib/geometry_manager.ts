@@ -8,6 +8,7 @@ import { Cursor } from './cursor.js';
 import { StateManager } from './state/manager.js';
 import type { StateRoot } from './state/types.js';
 import { getMapStyle } from '../../../utils/map_style.js';
+import { CircleElement } from './element/circle.js';
 
 export type ExtendedGeoJSON = GeoJSON.FeatureCollection & {
 	map?: { center: [number, number]; zoom: number };
@@ -184,6 +185,9 @@ export class GeometryManager {
 						return LineElement.fromState(this, element);
 					case 'polygon':
 						return PolygonElement.fromState(this, element);
+					case 'circle':
+						console.log('circle', element);
+						return CircleElement.fromState(this, element);
 					default:
 						throw new Error('Unknown element type');
 				}
@@ -212,6 +216,13 @@ export class GeometryManager {
 
 	public addNewPolygon(): PolygonElement {
 		const element = new PolygonElement(this);
+		this.appendElement(element);
+		this.selectElement(element);
+		return element;
+	}
+
+	public addNewCircle(): CircleElement {
+		const element = new CircleElement(this);
 		this.appendElement(element);
 		this.selectElement(element);
 		return element;
@@ -253,6 +264,8 @@ export class GeometryManager {
 		}
 		for (const feature of geojson.features) {
 			let element: AbstractElement;
+			const p = feature.properties;
+
 			switch (feature.geometry.type) {
 				case 'Point':
 					element = MarkerElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.Point>);
@@ -261,6 +274,16 @@ export class GeometryManager {
 					element = LineElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.LineString>);
 					break;
 				case 'Polygon':
+					if (p && p['circle-center-x'] != null && p['circle-center-y'] != null && p['circle-radius'] != null) {
+						element = CircleElement.fromGeoJSON(
+							this,
+							feature as GeoJSON.Feature<
+								GeoJSON.Polygon,
+								{ 'circle-center-x': number; 'circle-center-y': number; 'circle-radius': number }
+							>
+						);
+						break;
+					}
 					element = PolygonElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.Polygon>);
 					break;
 				default:

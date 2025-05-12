@@ -82,7 +82,7 @@
 				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewMarker())}>Marker</button>
 				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewLine())}>Line</button>
 				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewPolygon())}>Polygon</button>
-				<button class="btn" disabled>Circle</button>
+				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewCircle())}>Circle</button>
 			</div>
 		</SidebarPanel>
 		<hr class="thick" />

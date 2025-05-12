@@ -7,7 +7,7 @@ import type { StateElementMarker } from '../state/types.js';
 export class MarkerElement extends AbstractElement {
 	public readonly layer: MapLayerSymbol;
 
-	public point: ElementPoint = [0, 0];
+	public point: ElementPoint;
 
 	constructor(manager: GeometryManager, point?: ElementPoint) {
 		super(manager);

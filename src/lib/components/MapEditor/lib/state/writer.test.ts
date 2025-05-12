@@ -141,11 +141,18 @@ describe('StateWriter', () => {
 					],
 					style: { halo: 1.5, opacity: 0.8, color: '#0000ff' },
 					strokeStyle: { halo: 1.5, opacity: 0.8, color: '#ffff00' }
+				},
+				{
+					type: 'circle',
+					point: [15, 16],
+					radius: 17,
+					style: { opacity: 0.1 },
+					strokeStyle: { opacity: 0.2 }
 				}
 			]
 		});
 		expect(writer.asBase64()).toBe(
-			'FkIb_SgX-1gg-pyAot4ReKESP8AAAEIDLD4DzOSEDSawDSaxF4oRIAP8AAYwOvdoQJIfYQNJrANJrANJrANJrEXihEgAAP8EXihEj__wAA'
+			'FkIb_SgX-1gg-pyAot4ReKESP8AAAEIDLD4DzOSEDSawDSaxF4oRIAP8AAYwOvdoQJIfYQNJrANJrANJrANJrEXihEgAAP8EXihEj__wACA2x7iAg1hjRSUCVAA'
 		);
 	});
 

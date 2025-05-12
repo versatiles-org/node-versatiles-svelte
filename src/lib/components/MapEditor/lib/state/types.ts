@@ -7,7 +7,7 @@ export interface StateRoot {
 	elements: StateElement[];
 }
 
-export type StateElement = StateElementMarker | StateElementLine | StateElementPolygon;
+export type StateElement = StateElementMarker | StateElementLine | StateElementPolygon | StateElementCircle;
 
 export interface StateElementMarker {
 	type: 'marker';
@@ -26,6 +26,15 @@ export interface StateElementLine {
 export interface StateElementPolygon {
 	type: 'polygon';
 	points: [number, number][];
+	style?: StateStyle;
+	strokeStyle?: StateStyle;
+	tooltip?: StateTooltip;
+}
+
+export interface StateElementCircle {
+	type: 'circle';
+	point: [number, number];
+	radius: number;
 	style?: StateStyle;
 	strokeStyle?: StateStyle;
 	tooltip?: StateTooltip;

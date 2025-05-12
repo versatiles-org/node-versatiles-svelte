@@ -321,13 +321,20 @@ describe('StateReader', () => {
 						points: path,
 						style: { halo: 1.5, opacity: 0.8, color: '#0000FF64' },
 						strokeStyle: { halo: 1.5, opacity: 0.8, color: '#FFFF00' }
+					},
+					{
+						type: 'circle',
+						point: [9, 10],
+						radius: 12345,
+						style: { color: '#111111' },
+						strokeStyle: { color: '#222222' }
 					}
 				]
 			};
 			const writer = new StateWriter();
 			writer.writeRoot(root);
 			expect(writer.asBase64()).toBe(
-				'FkIb_SgX-1gg-pyAot4RYKlSP8AAAEIDLD4DzOSEDSawDSawNqWGeMTV-MFRtDOBuUY86cSUIMbkL8gD8TcLJMQ0LsKkQcLUa4kyvSUiOKLxQiQAAH_ZAi8UIkf_-AAA'
+				'FkIb_SgX-1gg-pyAot4RYKlSP8AAAEIDLD4DzOSEDSawDSawNqWGeMTV-MFRtDOBuUY86cSUIMbkL8gD8TcLJMQ0LsKkQcLUa4kyvSUiOKLxQiQAAH_ZAi8UIkf_-AAQHXu0IEkPsLMNjAiIiIMERERAA'
 			);
 			const reader = new StateReader(writer.bits);
 			expect(reader.readRoot()).toStrictEqual(root);

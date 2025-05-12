@@ -30,11 +30,11 @@ export abstract class AbstractElement {
 
 	protected randomPositions(length: number): ElementPoint[] {
 		const points: ElementPoint[] = [];
+		const bounds = this.map.getBounds();
+
 		for (let i = 0; i < length; i++) {
 			const xr = Math.random() * 0.5 + 0.25;
 			const yr = Math.random() * 0.5 + 0.25;
-
-			const bounds = this.map.getBounds();
 			points.push([
 				(1 - xr) * bounds.getWest() + xr * bounds.getEast(),
 				(1 - yr) * bounds.getSouth() + yr * bounds.getNorth()
@@ -42,6 +42,13 @@ export abstract class AbstractElement {
 		}
 
 		return points;
+	}
+
+	protected randomRadius(): number {
+		const bounds = this.map.getBounds();
+		const width = bounds.getEast() - bounds.getWest();
+		const height = bounds.getNorth() - bounds.getSouth();
+		return Math.sqrt(width * height) * 10000;
 	}
 
 	public delete() {

@@ -9,12 +9,13 @@
 	import InputRow from './InputRow.svelte';
 	import SidebarPanel from './SidebarPanel.svelte';
 	import { writable } from 'svelte/store';
+	import { CircleElement } from '../lib/element/circle.js';
 
 	const { element }: { element: AbstractElement | undefined } = $props();
 
 	const noElement = $derived(!element);
 	const strokeVisible = $derived.by(() => {
-		if (element instanceof PolygonElement) return element.strokeLayer.visible;
+		if (element instanceof PolygonElement || element instanceof CircleElement) return element.strokeLayer.visible;
 		return writable(false);
 	});
 </script>
@@ -28,7 +29,7 @@
 			{#if element instanceof LineElement}
 				<EditorStroke layer={element.layer} />
 			{/if}
-			{#if element instanceof PolygonElement}
+			{#if element instanceof PolygonElement || element instanceof CircleElement}
 				<EditorFill layer={element.fillLayer} />
 				<hr />
 
@@ -50,7 +51,7 @@
 					<EditorStroke layer={element.strokeLayer} />
 				{/if}
 			{/if}
-			{#if element instanceof PolygonElement || element instanceof LineElement}
+			{#if element instanceof LineElement || element instanceof PolygonElement || element instanceof CircleElement}
 				<hr />
 				<p class="label" style="margin: 0.5em 0 1em;">
 					Drag points to move.<br />Drag a midpoint to add.<br />Shift-click to delete a point.

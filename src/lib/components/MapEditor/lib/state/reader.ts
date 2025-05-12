@@ -1,5 +1,6 @@
 import { Color } from '@versatiles/style';
 import type {
+	StateElementCircle,
 	StateElementLine,
 	StateElementMarker,
 	StateElementPolygon,
@@ -160,6 +161,9 @@ export class StateReader {
 					case 3:
 						root.elements.push(this.readElementPolygon());
 						break;
+					case 4:
+						root.elements.push(this.readElementCircle());
+						break;
 					default:
 						console.warn(`Unknown state key: ${key}`);
 				}
@@ -238,6 +242,20 @@ export class StateReader {
 			return element;
 		} catch (cause) {
 			throw new Error(`Error reading polygon element`, { cause });
+		}
+	}
+
+	readElementCircle(): StateElementCircle {
+		try {
+			const point = this.readPoint();
+			const radius = this.readVarint();
+			const element: StateElementCircle = { type: 'circle', point, radius };
+			if (this.readBit()) element.style = this.readStyle();
+			if (this.readBit()) element.strokeStyle = this.readStyle();
+			if (this.readBit()) throw new Error(`Tooltip not supported yet`);
+			return element;
+		} catch (cause) {
+			throw new Error(`Error reading circle element`, { cause });
 		}
 	}
 
