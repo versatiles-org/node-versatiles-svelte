@@ -10,8 +10,8 @@
 
 	let panelShareMap: DialogShareMap | null = null;
 	let history = geometryManager.state;
-	let undoEnabled = $state(geometryManager.state.undoEnabled);
-	let redoEnabled = $state(geometryManager.state.redoEnabled);
+	let undoEnabled = $state(geometryManager.state.history.undoEnabled);
+	let redoEnabled = $state(geometryManager.state.history.redoEnabled);
 	let activeElement = geometryManager.selectedElement;
 
 	function importGeoJSON() {

@@ -155,7 +155,7 @@ export class GeometryManager {
 		if (!state) return;
 		this.clear();
 		this.setState(state);
-		this.state.resetHistory(state);
+		this.state.history.reset(state);
 	}
 
 	public async setState(state: StateRoot) {

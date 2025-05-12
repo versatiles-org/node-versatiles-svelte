@@ -1,18 +1,17 @@
-import { writable } from 'svelte/store';
 import type { GeometryManager } from '../geometry_manager.js';
 import { StateReader } from './reader.js';
 import { StateWriter } from './writer.js';
-import type { StateMetadata, StateRoot } from './types.js';
-
-const MAXLENGTH = 100;
+import type { StateMetadata } from './types.js';
+import { StateHistory } from './history.js';
 
 export class StateManager {
 	public geometryManager: GeometryManager;
 	private disableLogging: boolean = false;
+	public readonly history: StateHistory;
 
 	constructor(geometryManager: GeometryManager) {
 		this.geometryManager = geometryManager;
-		this.resetHistory(geometryManager.getState());
+		this.history = new StateHistory(geometryManager.getState());
 	}
 
 	public getHash(additionalMeta?: StateMetadata): string {
@@ -41,73 +40,22 @@ export class StateManager {
 			this.geometryManager.setState(state);
 			this.disableLogging = false;
 
-			this.resetHistory(state);
+			this.history.reset(state);
 		} catch (error) {
 			console.error(error);
 		}
 	}
 
-	// History of state hashes
-	// The first element is the most recent state
-	private history: string[] = [];
-	// The index of the current state in the history
-	// 0 means the most recent state
-	// 1 means the second most recent state
-	private historyIndex: number = 0;
-
-	public undoEnabled = writable(false);
-	public redoEnabled = writable(false);
-
-	public resetHistory(state: StateRoot) {
-		this.history = [];
-		this.historyIndex = 0;
-		this.pushHistory(state);
-	}
-
-	private pushHistory(state: StateRoot) {
-		state.map = undefined; // Remove map state from history
-		if (this.historyIndex > 0) {
-			this.history.splice(0, this.historyIndex);
-			this.historyIndex = 0;
-		}
-		this.history.unshift(JSON.stringify(state));
-
-		// Remove old history
-		if (this.history.length > MAXLENGTH) {
-			this.history.length = MAXLENGTH;
-		}
-		this.updateButtons();
-	}
-
-	private popHistory() {
-		this.disableLogging = true;
-		const state = this.history[this.historyIndex];
-		this.geometryManager.setState(JSON.parse(state));
-		this.disableLogging = false;
-		this.updateButtons();
-	}
-
 	public log() {
 		if (this.disableLogging) return;
-		this.pushHistory(this.geometryManager.getState());
+		this.history.push(this.geometryManager.getState());
 	}
 
 	public undo() {
-		if (this.historyIndex < this.history.length - 1) {
-			this.historyIndex++;
-			this.popHistory();
-		}
+		this.geometryManager.setState(this.history.undo());
 	}
 
 	public redo() {
-		if (this.historyIndex > 0) {
-			this.historyIndex--;
-			this.popHistory();
-		}
-	}
-
-	private updateButtons() {
-		this.undoEnabled.set(this.historyIndex < this.history.length - 1);
-		this.redoEnabled.set(this.historyIndex > 0);
+		this.geometryManager.setState(this.history.redo());
 	}
 }

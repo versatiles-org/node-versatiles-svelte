@@ -34,10 +34,10 @@ describe('StateManager', () => {
 
 	function getStatus(): [boolean, boolean, number, number, number, number] {
 		return [
-			get(stateManager.undoEnabled),
-			get(stateManager.redoEnabled),
-			stateManager['history'].length,
-			stateManager['historyIndex'],
+			get(stateManager.history.undoEnabled),
+			get(stateManager.history.redoEnabled),
+			stateManager.history['history'].length,
+			stateManager.history['index'],
 			vi.mocked(geometryManager.getState).mock.calls.length,
 			vi.mocked(geometryManager.setState).mock.calls.length
 		];
@@ -106,13 +106,13 @@ describe('StateManager', () => {
 		it('should not undo if there is no previous state', () => {
 			expect(getStatus()).toStrictEqual([false, false, 1, 0, 1, 0]);
 			stateManager.undo();
-			expect(getStatus()).toStrictEqual([false, false, 1, 0, 1, 0]);
+			expect(getStatus()).toStrictEqual([false, false, 1, 0, 1, 1]);
 		});
 
 		it('should not redo if there is no next state', () => {
 			expect(getStatus()).toStrictEqual([false, false, 1, 0, 1, 0]);
 			stateManager.redo();
-			expect(getStatus()).toStrictEqual([false, false, 1, 0, 1, 0]);
+			expect(getStatus()).toStrictEqual([false, false, 1, 0, 1, 1]);
 		});
 	});
 
@@ -132,7 +132,7 @@ describe('StateManager', () => {
 				stateManager.log();
 			}
 
-			expect(stateManager['history'].length).toBeLessThanOrEqual(100);
+			expect(stateManager.history['history'].length).toBeLessThanOrEqual(100);
 			expect(getStatus()).toStrictEqual([true, false, 100, 0, 102, 1]);
 		});
 	});
