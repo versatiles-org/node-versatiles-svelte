@@ -20,7 +20,7 @@
 			() => $symbolIndex,
 			(v) => {
 				$symbolIndex = v;
-				layer.manager.state.log();
+				layer.manager.state?.log();
 			}
 		}
 		map={layer.manager.map}
@@ -35,7 +35,7 @@
 			() => $color,
 			(v) => {
 				$color = v;
-				layer.manager.state.log();
+				layer.manager.state?.log();
 			}
 		}
 	/>
@@ -52,7 +52,7 @@
 			() => $size,
 			(v) => {
 				$size = v;
-				layer.manager.state.log();
+				layer.manager.state?.log();
 			}
 		}
 	/>
@@ -69,7 +69,7 @@
 			() => $rotate,
 			(v) => {
 				$rotate = v;
-				layer.manager.state.log();
+				layer.manager.state?.log();
 			}
 		}
 	/>
@@ -86,7 +86,7 @@
 			() => $halo,
 			(v) => {
 				$halo = v;
-				layer.manager.state.log();
+				layer.manager.state?.log();
 			}
 		}
 	/>
@@ -100,7 +100,7 @@
 			() => $label,
 			(v) => {
 				$label = v;
-				layer.manager.state.log();
+				layer.manager.state?.log();
 			}
 		}
 	/>
@@ -113,7 +113,7 @@
 			() => $labelAlign,
 			(v) => {
 				$labelAlign = v;
-				layer.manager.state.log();
+				layer.manager.state?.log();
 			}
 		}
 	>

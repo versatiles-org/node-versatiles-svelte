@@ -19,10 +19,10 @@ export class CircleElement extends AbstractElement {
 		this.radius = radius ?? this.randomRadius();
 
 		this.fillLayer = new MapLayerFill(manager, 'fill' + this.slug, this.sourceId);
-		this.fillLayer.on('click', () => this.manager.selectElement(this));
+		this.fillLayer.on('click', () => this.manager.selection?.selectElement(this));
 
 		this.strokeLayer = new MapLayerLine(manager, 'line' + this.slug, this.sourceId);
-		this.strokeLayer.on('click', () => this.manager.selectElement(this));
+		this.strokeLayer.on('click', () => this.manager.selection?.selectElement(this));
 
 		this.source.setData(this.getFeature());
 	}

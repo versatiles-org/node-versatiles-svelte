@@ -41,7 +41,7 @@
 							() => $strokeVisible,
 							(visible) => {
 								$strokeVisible = visible;
-								element.manager.state.log();
+								element.manager.state?.log();
 							}
 						}
 					/>

@@ -2,6 +2,7 @@ import type { SelectionNode, SelectionNodeUpdater } from './types.js';
 import type { GeoPoint } from '../utils/types.js';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { StateElement } from '../state/types.js';
+import type { GeometryManagerInteractive } from '../geometry_manager_interactive.js';
 
 export abstract class AbstractElement {
 	protected readonly canvas: HTMLElement;
@@ -10,10 +11,10 @@ export abstract class AbstractElement {
 	protected readonly slug = '_' + Math.random().toString(36).slice(2);
 	protected isSelected = false;
 
-	public readonly manager: GeometryManager;
+	public readonly manager: GeometryManager | GeometryManagerInteractive;
 	public readonly sourceId = 'source' + this.slug;
 
-	constructor(manager: GeometryManager) {
+	constructor(manager: GeometryManager | GeometryManagerInteractive) {
 		this.manager = manager;
 		this.map = manager.map;
 		this.canvas = this.map.getCanvasContainer();

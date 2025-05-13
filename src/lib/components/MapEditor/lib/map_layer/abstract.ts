@@ -2,6 +2,7 @@ import type { LayerFill, LayerLine, LayerSymbol } from './types.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { StateStyle } from '../state/types.js';
+import type { GeometryManagerInteractive } from '../geometry_manager_interactive.js';
 
 type LayerSpec = LayerFill | LayerLine | LayerSymbol;
 type Events = 'click' | 'mousedown' | 'mousemove' | 'mouseup';
@@ -12,7 +13,7 @@ export abstract class MapLayer<T extends LayerSpec> {
 	private paint = {} as T['paint'];
 
 	protected readonly id: string;
-	public readonly manager: GeometryManager;
+	public readonly manager: GeometryManager | GeometryManagerInteractive;
 	protected readonly map: maplibregl.Map;
 
 	public eventHandlers = new Map<Events, MouseEventHandler[]>();
@@ -64,24 +65,27 @@ export abstract class MapLayer<T extends LayerSpec> {
 	}
 
 	private addEvents() {
-		this.map.on('mouseenter', this.id, () => {
-			if (this.isSelected) this.manager.cursor.toggleGrab(this.id);
-			this.manager.cursor.toggleHover(this.id);
-		});
-		this.map.on('mouseleave', this.id, () => {
-			if (this.isSelected) this.manager.cursor.toggleGrab(this.id, false);
-			this.manager.cursor.toggleHover(this.id, false);
-		});
-		this.map.on('click', this.id, (e) => {
-			this.dispatchEvent('click', e);
-			if (this.isSelected) this.manager.cursor.toggleGrab(this.id);
-			this.manager.cursor.toggleHover(this.id);
-			e.preventDefault();
-		});
-		this.map.on('mousedown', this.id, (e) => {
-			if (this.manager.cursor.isPrecise()) return;
-			this.dispatchEvent('mousedown', e);
-		});
+		const manager = this.manager;
+		if (manager.isInteractive()) {
+			this.map.on('mouseenter', this.id, () => {
+				if (this.isSelected) manager.cursor.toggleGrab(this.id);
+				manager.cursor.toggleHover(this.id);
+			});
+			this.map.on('mouseleave', this.id, () => {
+				if (this.isSelected) manager.cursor.toggleGrab(this.id, false);
+				manager.cursor.toggleHover(this.id, false);
+			});
+			this.map.on('click', this.id, (e) => {
+				this.dispatchEvent('click', e);
+				if (this.isSelected) manager.cursor.toggleGrab(this.id);
+				manager.cursor.toggleHover(this.id);
+				e.preventDefault();
+			});
+			this.map.on('mousedown', this.id, (e) => {
+				if (manager.cursor.isPrecise()) return;
+				this.dispatchEvent('mousedown', e);
+			});
+		}
 		this.map.on('mouseup', this.id, (e) => this.dispatchEvent('mouseup', e));
 		this.map.on('mousemove', this.id, (e) => this.dispatchEvent('mousemove', e));
 	}

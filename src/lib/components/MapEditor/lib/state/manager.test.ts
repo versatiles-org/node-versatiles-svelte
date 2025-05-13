@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { StateManager } from './manager.js';
-import { GeometryManager } from '../geometry_manager.js';
+import { GeometryManagerInteractive } from '../geometry_manager_interactive.js';
 import type { StateRoot } from './types.js';
 import { get } from 'svelte/store';
 import { MockMap } from '../../../../__mocks__/map.js';
 
 describe('StateManager', () => {
-	let geometryManager: GeometryManager;
+	let geometryManager: GeometryManagerInteractive;
 	let stateManager: StateManager;
 	const state1: StateRoot = {
 		map: {
@@ -46,11 +46,11 @@ describe('StateManager', () => {
 	beforeEach(() => {
 		const map = new MockMap();
 
-		geometryManager = new GeometryManager(map as unknown as maplibregl.Map, true);
+		geometryManager = new GeometryManagerInteractive(map as unknown as maplibregl.Map);
 		vi.spyOn(geometryManager, 'getState');
 		vi.spyOn(geometryManager, 'setState');
 
-		stateManager = new StateManager(geometryManager as unknown as GeometryManager);
+		stateManager = new StateManager(geometryManager as unknown as GeometryManagerInteractive);
 	});
 
 	describe('getHash/setHash', () => {

@@ -1,3 +1,4 @@
+import type { GeoJsonProperties } from 'geojson';
 import type { GeoPath, GeoPoint } from './types.js';
 
 export const EARTH_RADIUS = 6371008.8; // Radius of the Earth in meters
@@ -58,4 +59,55 @@ export function circle(center: GeoPoint, radius: number, steps: number): GeoPath
 		result.push([radiansToDegrees(lng2), radiansToDegrees(lat2)]);
 	}
 	return result;
+}
+
+type SimpleGeometry = GeoJSON.Point | GeoJSON.LineString | GeoJSON.Polygon;
+export function flatten(features: GeoJSON.Feature[]): GeoJSON.Feature<SimpleGeometry>[] {
+	return features.flatMap((feature) => {
+		if (feature.type !== 'Feature') {
+			throw new Error(`Expected Feature, got ${feature.type}`);
+		}
+		return flattenGeometry(feature.geometry, feature.properties);
+	});
+
+	function flattenGeometry(
+		geometry: GeoJSON.Geometry,
+		properties: GeoJsonProperties
+	): GeoJSON.Feature<SimpleGeometry>[] {
+		switch (geometry.type) {
+			case 'Point':
+			case 'LineString':
+			case 'Polygon':
+				return [
+					{
+						type: 'Feature',
+						properties,
+						geometry
+					}
+				];
+			case 'GeometryCollection':
+				return geometry.geometries.flatMap((g) => flattenGeometry(g, properties));
+			case 'MultiPoint':
+				return geometry.coordinates.map((coordinates) => ({
+					type: 'Feature',
+					properties,
+					geometry: { type: 'Point', coordinates }
+				}));
+			case 'MultiLineString':
+				return geometry.coordinates.map((coordinates) => ({
+					type: 'Feature',
+					properties,
+					geometry: { type: 'LineString', coordinates }
+				}));
+			case 'MultiPolygon':
+				return geometry.coordinates.map((coordinates) => ({
+					type: 'Feature',
+					properties,
+					geometry: { type: 'Polygon', coordinates }
+				}));
+			default:
+				// @ts-expect-error error on unknown geometry type
+				throw new Error(`Unknown geometry type "${geometry?.type}"`);
+		}
+	}
 }

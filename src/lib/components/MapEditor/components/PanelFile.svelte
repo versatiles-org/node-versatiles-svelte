@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { GeometryManager } from '../lib/geometry_manager.js';
+	import type { GeometryManagerInteractive } from '../lib/geometry_manager_interactive.js';
 	import Dialog from './DialogFile.svelte';
 
-	const { manager }: { manager: GeometryManager } = $props();
+	const { manager }: { manager: GeometryManagerInteractive } = $props();
 
 	const defaultFilename = 'default.mapjson';
 	let filename = defaultFilename;

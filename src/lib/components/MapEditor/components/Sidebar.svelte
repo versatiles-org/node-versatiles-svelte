@@ -1,18 +1,18 @@
 <script lang="ts">
 	import '../style/index.scss';
 	import Editor from './Editor.svelte';
-	import type { GeometryManager } from '../lib/geometry_manager.js';
 	import SidebarPanel from './SidebarPanel.svelte';
 	import DialogShareMap from './DialogShare.svelte';
 	import PanelFile from './PanelFile.svelte';
+	import type { GeometryManagerInteractive } from '../lib/geometry_manager_interactive.js';
 
-	const { geometryManager }: { geometryManager: GeometryManager } = $props();
+	const { geometryManager }: { geometryManager: GeometryManagerInteractive } = $props();
 
 	let panelShareMap: DialogShareMap | null = null;
 	let history = geometryManager.state;
 	let undoEnabled = $state(geometryManager.state.history.undoEnabled);
 	let redoEnabled = $state(geometryManager.state.history.redoEnabled);
-	let activeElement = geometryManager.selectedElement;
+	let activeElement = geometryManager.selection.selectedElement;
 
 	function importGeoJSON() {
 		const input = document.createElement('input');

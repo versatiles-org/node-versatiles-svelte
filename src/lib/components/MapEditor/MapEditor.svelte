@@ -4,9 +4,11 @@
 	import Sidebar from './components/Sidebar.svelte';
 	import { getCountryBoundingBox } from '$lib/utils/location.js';
 	import { GeometryManager } from './lib/geometry_manager.js';
+	import { GeometryManagerInteractive } from './lib/geometry_manager_interactive.js';
+	import { StateReader } from './lib/state/reader.js';
 
 	let showSidebar = $state(false);
-	let geometryManager: GeometryManager | undefined = $state();
+	let geometryManager: GeometryManager | GeometryManagerInteractive | undefined = $state();
 
 	function onMapInit(map: MaplibreMapType, maplibre: typeof import('maplibre-gl')) {
 		showSidebar = window.self === window.top;
@@ -21,18 +23,28 @@
 
 		map.addControl(new maplibre.AttributionControl({ compact: true }), 'bottom-left');
 
-		geometryManager = new GeometryManager(map, showSidebar);
+		if (showSidebar) {
+			geometryManager = new GeometryManagerInteractive(map);
+		} else {
+			geometryManager = new GeometryManager(map);
+		}
 
 		let hash = location.hash.slice(1);
 		if (!hash) hash = window.frameElement?.getAttribute('data') ?? '';
 		if (hash) {
-			geometryManager.state.setHash(hash);
+			readHash(hash);
 		} else {
 			const bbox = getCountryBoundingBox();
 			if (bbox) map.fitBounds(bbox, { animate: false });
 		}
 
-		addEventListener('hashchange', () => geometryManager!.state.setHash(location.hash.slice(1)));
+		addEventListener('hashchange', () => readHash(location.hash.slice(1)));
+
+		function readHash(hash: string) {
+			if (!geometryManager) return;
+			const stateReader = StateReader.fromBase64(hash);
+			geometryManager.loadState(stateReader.readRoot());
+		}
 	}
 </script>
 
@@ -45,7 +57,7 @@
 			styleOptions={{ darkMode: false }}
 		></BasicMap>
 	</div>
-	{#if showSidebar && geometryManager}
+	{#if showSidebar && geometryManager && geometryManager.isInteractive()}
 		<Sidebar {geometryManager} />
 
 		<style>

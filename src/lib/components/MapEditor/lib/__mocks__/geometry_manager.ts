@@ -1,11 +1,11 @@
-import { writable, type Writable } from 'svelte/store';
 import type { AbstractElement } from '../element/abstract.js';
 import type { StateRoot } from '../state/types.js';
+import type { GeometryManagerInteractive } from '../geometry_manager_interactive.js';
+import { writable, type Writable } from 'svelte/store';
 import { vi } from 'vitest';
 import { MockMap } from '../../../../__mocks__/map.js';
 import { MockCursor } from './cursor.js';
 import { StateManager } from '../state/manager.js';
-import type { GeometryManager } from '../geometry_manager.js';
 
 export class MockGeometryManager {
 	public readonly elements: Writable<AbstractElement[]> = writable([]);
@@ -15,7 +15,7 @@ export class MockGeometryManager {
 	public readonly state;
 
 	constructor() {
-		this.state = new StateManager(this as unknown as GeometryManager);
+		this.state = new StateManager(this as unknown as GeometryManagerInteractive);
 	}
 
 	public setActiveElement = vi.fn();
@@ -27,4 +27,5 @@ export class MockGeometryManager {
 	public addNewPolygon = vi.fn(() => ({}) as AbstractElement);
 	public removeElement = vi.fn();
 	public updateSelectionNodes = vi.fn();
+	public isInteractive = vi.fn(() => true);
 }

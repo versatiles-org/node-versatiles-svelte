@@ -1,15 +1,15 @@
-import type { GeometryManager } from '../geometry_manager.js';
+import type { GeometryManagerInteractive } from '../geometry_manager_interactive.js';
 import { StateReader } from './reader.js';
 import { StateWriter } from './writer.js';
 import type { StateMetadata } from './types.js';
 import { StateHistory } from './history.js';
 
 export class StateManager {
-	public geometryManager: GeometryManager;
+	public geometryManager: GeometryManagerInteractive;
 	private disableLogging: boolean = false;
 	public readonly history: StateHistory;
 
-	constructor(geometryManager: GeometryManager) {
+	constructor(geometryManager: GeometryManagerInteractive) {
 		this.geometryManager = geometryManager;
 		this.history = new StateHistory(geometryManager.getState());
 	}

@@ -12,7 +12,7 @@ export class LineElement extends AbstractPathElement {
 		this.path = line ?? this.randomPositions(2);
 
 		this.layer = new MapLayerLine(manager, 'line' + this.slug, this.sourceId);
-		this.layer.on('click', () => this.manager.selectElement(this));
+		this.layer.on('click', () => this.manager.selection?.selectElement(this));
 		this.layer.on('mousedown', (e) => {
 			if (!this.isSelected) return;
 			if ('ignore' in e && e.ignore) return;

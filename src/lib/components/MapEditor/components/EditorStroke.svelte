@@ -17,7 +17,7 @@
 			() => $color,
 			(v) => {
 				$color = v;
-				layer.manager.state.log();
+				layer.manager.state?.log();
 			}
 		}
 	/>
@@ -30,7 +30,7 @@
 			() => $dashed,
 			(v) => {
 				$dashed = v;
-				layer.manager.state.log();
+				layer.manager.state?.log();
 			}
 		}
 	>
@@ -51,7 +51,7 @@
 			() => $width,
 			(v) => {
 				$width = v;
-				layer.manager.state.log();
+				layer.manager.state?.log();
 			}
 		}
 	/>

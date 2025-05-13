@@ -17,7 +17,7 @@
 			() => $color,
 			(v) => {
 				$color = v;
-				layer.manager.state.log();
+				layer.manager.state?.log();
 			}
 		}
 	/>
@@ -30,7 +30,7 @@
 			() => $pattern,
 			(v) => {
 				$pattern = v;
-				layer.manager.state.log();
+				layer.manager.state?.log();
 			}
 		}
 	>
@@ -51,7 +51,7 @@
 			() => $opacity,
 			(v) => {
 				$opacity = v;
-				layer.manager.state.log();
+				layer.manager.state?.log();
 			}
 		}
 	/>

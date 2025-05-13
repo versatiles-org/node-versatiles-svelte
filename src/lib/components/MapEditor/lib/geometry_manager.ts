@@ -1,37 +1,26 @@
-import { get, writable, type Writable } from 'svelte/store';
 import type { AbstractElement } from './element/abstract.js';
-import { MarkerElement } from './element/marker.js';
-import { LineElement } from './element/line.js';
-import type { SelectionNode } from './element/types.js';
-import { PolygonElement } from './element/polygon.js';
-import { Cursor } from './cursor.js';
-import { StateManager } from './state/manager.js';
+import type { GeometryManagerInteractive } from './geometry_manager_interactive.js';
+import type { SelectionHandler } from './selection.js';
+import type { StateManager } from './state/manager.js';
 import type { StateRoot } from './state/types.js';
+import { get, writable, type Writable } from 'svelte/store';
 import { getMapStyle } from '../../../utils/map_style.js';
 import { CircleElement } from './element/circle.js';
-import type { GeoJsonProperties } from 'geojson';
-
-export type ExtendedGeoJSON = GeoJSON.FeatureCollection & {
-	map?: { center: [number, number]; zoom: number };
-};
+import { LineElement } from './element/line.js';
+import { MarkerElement } from './element/marker.js';
+import { PolygonElement } from './element/polygon.js';
 
 export class GeometryManager {
 	public readonly elements: Writable<AbstractElement[]>;
 	public readonly map: maplibregl.Map;
-	public readonly selectedElement: Writable<AbstractElement | undefined> = writable(undefined);
 	public readonly canvas: HTMLElement;
-	public readonly cursor: Cursor;
-	public readonly state: StateManager;
+	public readonly state: StateManager | null = null;
+	public readonly selection: SelectionHandler | null = null;
 
-	private selectionNodes: maplibregl.GeoJSONSource | undefined;
-	private readonly editMode: boolean;
-
-	constructor(map: maplibregl.Map, editMode: boolean) {
-		this.editMode = editMode;
+	constructor(map: maplibregl.Map) {
 		this.elements = writable([]);
 		this.map = map;
 		this.canvas = this.map.getCanvasContainer();
-		this.cursor = new Cursor(this.canvas);
 
 		const style = getMapStyle({ darkMode: false });
 		style.transition = { duration: 0, delay: 0 };
@@ -55,107 +44,33 @@ export class GeometryManager {
 			}
 		});
 
-		if (this.editMode) {
-			map.on('mousedown', 'selection_nodes', (e) => {
-				const element = get(this.selectedElement)!;
-				if (element == undefined) return;
-
-				const feature = map.queryRenderedFeatures(e.point, { layers: ['selection_nodes'] })[0];
-				const selectedNode = element.getSelectionNodeUpdater(feature.properties);
-				if (selectedNode == undefined) return;
-
-				// @ts-expect-error ensure that the event is ignored by other layers
-				e.ignore = true;
-				e.preventDefault();
-
-				if (e.originalEvent.shiftKey) {
-					selectedNode.delete();
-					this.updateSelectionNodes();
-				} else {
-					const onMove = (e: maplibregl.MapMouseEvent) => {
-						e.preventDefault();
-						selectedNode.update(e.lngLat.lng, e.lngLat.lat);
-						this.updateSelectionNodes();
-					};
-
-					map.on('mousemove', onMove);
-					map.once('mouseup', () => {
-						map.off('mousemove', onMove);
-						this.state.log();
-					});
-				}
-			});
-
-			map.on('mouseenter', 'selection_nodes', () => {
-				this.cursor.togglePrecise('selection_nodes');
-			});
-			map.on('mouseleave', 'selection_nodes', () => {
-				this.cursor.togglePrecise('selection_nodes', false);
-			});
-
-			map.on('click', (e) => {
-				if (!e.originalEvent.shiftKey) this.selectElement();
-				e.preventDefault();
-			});
-		}
-
 		map.setStyle(style);
+	}
 
-		this.state = new StateManager(this);
+	public isInteractive(): this is GeometryManagerInteractive {
+		return false;
 	}
 
 	public clear() {
-		this.selectElement();
 		this.elements.update((elements) => {
 			elements.forEach((e) => e.destroy());
 			return [];
 		});
 	}
 
-	public selectElement(element?: AbstractElement) {
-		if (element == get(this.selectedElement)) return;
-		const elements = get(this.elements);
-		elements.forEach((e) => e.select(e == element));
-		this.selectedElement.set(element);
-		this.updateSelectionNodes();
+	protected appendElement(element: AbstractElement) {
+		this.elements.update((elements) => [...elements, element]);
 	}
 
-	public updateSelectionNodes() {
-		const nodes: SelectionNode[] = get(this.selectedElement)?.getSelectionNodes() ?? [];
-		if (!this.selectionNodes) this.selectionNodes = this.map.getSource('selection_nodes')!;
-		this.selectionNodes?.setData({
-			type: 'FeatureCollection',
-			features: nodes.map((n) => ({
-				type: 'Feature',
-				properties: { index: n.index, opacity: n.transparent ? 0.3 : 1 },
-				geometry: { type: 'Point', coordinates: n.coordinates }
-			}))
-		});
-	}
-
-	public getState(): StateRoot {
-		const center = this.map.getCenter();
-		const bounds = this.map.getBounds();
-		const radiusDegrees =
-			Math.min(
-				bounds.getNorth() - bounds.getSouth(),
-				(bounds.getEast() - bounds.getWest()) * Math.cos((center.lat * Math.PI) / 180)
-			) / 2;
-		const radius = 40074000 * (radiusDegrees / 360);
-		return {
-			map: {
-				center: [center.lng, center.lat],
-				radius
-			},
-			elements: get(this.elements).map((element) => element.getState())
-		};
+	public removeElement(element: AbstractElement) {
+		this.elements.update((elements) => elements.filter((e) => e !== element));
 	}
 
 	public async loadState(state: StateRoot) {
 		if (!state) return;
 		this.clear();
 		this.setState(state);
-		this.state.history.reset(state);
+		this.state?.history.reset(state);
 	}
 
 	public async setState(state: StateRoot) {
@@ -199,132 +114,5 @@ export class GeometryManager {
 
 	public getElement(index: number): AbstractElement {
 		return get(this.elements)[index];
-	}
-
-	public addNewElement(type: 'marker'): MarkerElement;
-	public addNewElement(type: 'line'): LineElement;
-	public addNewElement(type: 'polygon'): PolygonElement;
-	public addNewElement(type: 'circle'): CircleElement;
-	public addNewElement(type: 'marker' | 'line' | 'polygon' | 'circle'): AbstractElement;
-	public addNewElement(type: 'marker' | 'line' | 'polygon' | 'circle'): AbstractElement {
-		const AbstractClass = {
-			marker: MarkerElement,
-			line: LineElement,
-			polygon: PolygonElement,
-			circle: CircleElement
-		}[type];
-		const element = new AbstractClass(this);
-		this.appendElement(element);
-		this.selectElement(element);
-		return element;
-	}
-
-	private appendElement(element: AbstractElement) {
-		this.elements.update((elements) => [...elements, element]);
-	}
-
-	public removeElement(element: AbstractElement) {
-		if (get(this.selectedElement) === element) this.selectElement();
-		this.elements.update((elements) => elements.filter((e) => e !== element));
-	}
-
-	public getGeoJSON(): GeoJSON.FeatureCollection {
-		const center = this.map.getCenter();
-		return {
-			type: 'FeatureCollection',
-			map: {
-				center: [center.lng, center.lat],
-				zoom: this.map.getZoom()
-			},
-			features: get(this.elements).map((element) => element.getGeoJSON())
-		} as GeoJSON.FeatureCollection;
-	}
-
-	public addGeoJSON(geojson: ExtendedGeoJSON) {
-		if ('map' in geojson && geojson.map) {
-			const { map } = geojson;
-			if (typeof map.zoom === 'number') {
-				this.map.setZoom(map.zoom);
-			}
-			if (Array.isArray(map.center)) {
-				const [lng, lat] = map.center;
-				if (typeof lng === 'number' && typeof lat === 'number') {
-					this.map.setCenter({ lng, lat });
-				}
-			}
-		}
-
-		for (const feature of flatten(geojson.features)) {
-			let element: AbstractElement;
-			const p = feature.properties;
-
-			switch (feature.geometry.type) {
-				case 'Point':
-					if (p && p.subType == 'Circle' && p.radius != null) {
-						element = CircleElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.Point, { radius: number }>);
-						break;
-					}
-					element = MarkerElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.Point>);
-					break;
-				case 'LineString':
-					element = LineElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.LineString>);
-					break;
-				case 'Polygon':
-					element = PolygonElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.Polygon>);
-					break;
-			}
-			this.appendElement(element);
-		}
-	}
-}
-
-type SimpleGeometry = GeoJSON.Point | GeoJSON.LineString | GeoJSON.Polygon;
-function flatten(features: GeoJSON.Feature[]): GeoJSON.Feature<SimpleGeometry>[] {
-	return features.flatMap((feature) => {
-		if (feature.type !== 'Feature') {
-			throw new Error(`Expected Feature, got ${feature.type}`);
-		}
-		return flattenGeometry(feature.geometry, feature.properties);
-	});
-
-	function flattenGeometry(
-		geometry: GeoJSON.Geometry,
-		properties: GeoJsonProperties
-	): GeoJSON.Feature<SimpleGeometry>[] {
-		switch (geometry.type) {
-			case 'Point':
-			case 'LineString':
-			case 'Polygon':
-				return [
-					{
-						type: 'Feature',
-						properties,
-						geometry
-					}
-				];
-			case 'GeometryCollection':
-				return geometry.geometries.flatMap((g) => flattenGeometry(g, properties));
-			case 'MultiPoint':
-				return geometry.coordinates.map((coordinates) => ({
-					type: 'Feature',
-					properties,
-					geometry: { type: 'Point', coordinates }
-				}));
-			case 'MultiLineString':
-				return geometry.coordinates.map((coordinates) => ({
-					type: 'Feature',
-					properties,
-					geometry: { type: 'LineString', coordinates }
-				}));
-			case 'MultiPolygon':
-				return geometry.coordinates.map((coordinates) => ({
-					type: 'Feature',
-					properties,
-					geometry: { type: 'Polygon', coordinates }
-				}));
-			default:
-				// @ts-expect-error error on unknown geometry type
-				throw new Error(`Unknown geometry type "${geometry?.type}"`);
-		}
 	}
 }

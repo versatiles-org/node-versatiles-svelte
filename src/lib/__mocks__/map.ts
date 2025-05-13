@@ -1,12 +1,14 @@
 import { vi } from 'vitest';
 import maplibre from 'maplibre-gl';
 
+const mockedCanvas = { style: { cursor: 'default' } } as HTMLElement;
+
 export class MockMap {
 	private zoom = 5;
 	private center = new LngLat(1, 2);
 
 	constructor() {}
-	getCanvasContainer = vi.fn(() => ({ style: { cursor: 'default' } }) as HTMLElement);
+	getCanvasContainer = vi.fn(() => mockedCanvas);
 	addSource = vi.fn();
 	removeSource = vi.fn();
 	getSource = vi.fn(() => ({ setData: vi.fn() })) as unknown as MaplibreMap['getSource'];
