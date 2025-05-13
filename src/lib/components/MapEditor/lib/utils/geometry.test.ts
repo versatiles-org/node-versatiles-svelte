@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { getMiddlePoint, lat2mercator, mercator2lat } from './utils.js';
-import type { ElementPoint } from './element/types.js';
+import { getMiddlePoint, lat2mercator, mercator2lat } from './geometry.js';
+import type { ElementPoint } from '../element/types.js';
 
 describe('Coordinate Conversion Utils', () => {
 	it('should convert latitude to Mercator projection correctly', () => {

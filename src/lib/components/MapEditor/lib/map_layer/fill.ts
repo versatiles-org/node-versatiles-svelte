@@ -4,7 +4,7 @@ import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { StateStyle } from '../state/types.js';
-import { removeDefaultFields } from '../utils.js';
+import { removeDefaultFields } from '../state/utils.js';
 
 const size = 32;
 

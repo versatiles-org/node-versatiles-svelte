@@ -4,7 +4,7 @@ import { MapLayer } from './abstract.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { StateStyle } from '../state/types.js';
-import { removeDefaultFields } from '../utils.js';
+import { removeDefaultFields } from '../state/utils.js';
 
 export const dashArrays = new Map<number, { name: string; array: number[] | undefined }>([
 	[0, { name: 'solid', array: [100] }],

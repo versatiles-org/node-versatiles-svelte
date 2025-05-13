@@ -5,7 +5,7 @@ import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { StateStyle } from '../state/types.js';
 import { getSymbol, getSymbolIndexByName } from '../symbols.js';
-import { removeDefaultFields } from '../utils.js';
+import { removeDefaultFields } from '../state/utils.js';
 
 interface LabelAlign {
 	index: 0 | 1 | 2 | 3 | 4;

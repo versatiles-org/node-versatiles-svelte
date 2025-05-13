@@ -1,7 +1,7 @@
 import { AbstractElement } from './abstract.js';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { ElementPath, ElementPoint, SelectionNode, SelectionNodeUpdater } from './types.js';
-import { getMiddlePoint, lat2mercator, mercator2lat } from '../utils.js';
+import { getMiddlePoint, lat2mercator, mercator2lat } from '../utils/geometry.js';
 
 export abstract class AbstractPathElement extends AbstractElement {
 	public path: ElementPath = [];
