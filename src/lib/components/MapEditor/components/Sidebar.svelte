@@ -120,7 +120,7 @@
 
 <style>
 	.sidebar {
-		background-color: rgb(from var(--color-bg) r g b/ 0.7);
+		background: color-mix(in srgb, var(--color-bg) 80%, transparent);
 		backdrop-filter: blur(10px);
 		box-sizing: border-box;
 		color: var(--color-text);
