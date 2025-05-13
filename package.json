@@ -36,13 +36,13 @@
     "!dist/BBoxMap/helpers/*"
   ],
   "peerDependencies": {
-    "sass-embedded": "^1.87.0",
-    "svelte": "^5.28.2"
+    "sass-embedded": "^1.88.0",
+    "svelte": "^5.28.6"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",
     "@sveltejs/adapter-static": "^3.0.8",
-    "@sveltejs/kit": "^2.20.8",
+    "@sveltejs/kit": "^2.21.0",
     "@sveltejs/package": "^2.3.11",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@turf/turf": "^7.2.0",
@@ -53,20 +53,20 @@
     "cookie": "^1.0.2",
     "eslint": "^9.26.0",
     "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-svelte": "^3.5.1",
+    "eslint-plugin-svelte": "^3.6.0",
     "geojson": "^0.5.0",
     "globals": "^16.1.0",
     "happy-dom": "^17.4.7",
     "prettier": "^3.5.3",
     "prettier-plugin-svelte": "^3.3.3",
     "publint": "^0.3.12",
-    "sass": "^1.87.0",
-    "svelte": "^5.28.2",
+    "sass": "^1.88.0",
+    "svelte": "^5.28.6",
     "svelte-check": "^4.1.7",
     "svelte-preprocess": "^6.0.3",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.32.0",
+    "typescript-eslint": "^8.32.1",
     "vite": "^6.3.5",
     "vitest": "^3.1.3"
   },
