@@ -6,7 +6,7 @@ test('site has expected .wrapper', async ({ page }) => {
 	expect(await page.locator('.wrapper').boundingBox()).toStrictEqual({
 		x: 0,
 		y: 0,
-		width: 1024,
-		height: 768
+		width: 1280,
+		height: 720
 	});
 });

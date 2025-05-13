@@ -43,7 +43,7 @@ jobs:
         run: npx vitest run --testTimeout 10000
 
       - name: Test Playwright
-        run: npx playwright test
+        run: npx playwright test --browser=all
 
       - name: Generate test coverage
         run: npm run test-coverage

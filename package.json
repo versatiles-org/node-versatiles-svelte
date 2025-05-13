@@ -15,7 +15,7 @@
     "preview": "vite preview",
     "screenshots": "npx tsx ./scripts/screenshots.ts",
     "release": "vrt release-npm",
-    "test-integration": "playwright test",
+    "test-integration": "playwright test --browser=firefox",
     "test-unit": "vitest run",
     "test-coverage": "vitest run --coverage",
     "test": "npm run test-unit && npm run test-integration",
