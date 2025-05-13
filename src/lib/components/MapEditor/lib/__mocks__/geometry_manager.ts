@@ -26,5 +26,5 @@ export class MockGeometryManager {
 	public addNewLine = vi.fn(() => ({}) as AbstractElement);
 	public addNewPolygon = vi.fn(() => ({}) as AbstractElement);
 	public removeElement = vi.fn();
-	public drawSelectionNodes = vi.fn();
+	public updateSelectionNodes = vi.fn();
 }

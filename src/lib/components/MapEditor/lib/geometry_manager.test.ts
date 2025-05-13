@@ -23,29 +23,29 @@ describe('GeometryManager', () => {
 	});
 
 	it('should add a new marker', () => {
-		const element = manager.addNewMarker();
+		const element = manager.addNewElement('marker');
 		expect(element).toBeInstanceOf(MarkerElement);
 		expect(manager.elements).toBeDefined();
 	});
 
 	it('should add a new line', () => {
-		const element = manager.addNewLine();
+		const element = manager.addNewElement('line');
 		expect(element).toBeInstanceOf(LineElement);
 		expect(manager.elements).toBeDefined();
 	});
 
 	it('should add a new polygon', () => {
-		const element = manager.addNewPolygon();
+		const element = manager.addNewElement('polygon');
 		expect(element).toBeInstanceOf(PolygonElement);
 		expect(manager.elements).toBeDefined();
 	});
 
 	it('should delete an element', () => {
-		const element = manager.addNewMarker();
+		const element = manager.addNewElement('marker');
 		manager.selectElement(element);
 		vi.spyOn(manager, 'selectElement');
 		manager.removeElement(element);
-		expect(manager.selectElement).toHaveBeenCalledWith(undefined);
+		expect(manager.selectElement).toHaveBeenCalledWith();
 	});
 
 	describe('state', () => {
@@ -83,7 +83,7 @@ describe('GeometryManager', () => {
 				type: 'marker'
 			};
 
-			const marker = manager.addNewMarker();
+			const marker = manager.addNewElement('marker');
 			marker.point = element.point;
 			marker.layer.label.set(element.style.label);
 
@@ -108,7 +108,7 @@ describe('GeometryManager', () => {
 				type: 'line'
 			};
 
-			const line = manager.addNewLine();
+			const line = manager.addNewElement('line');
 			line.path = element.points;
 			line.layer.color.set(element.style.color);
 
@@ -134,7 +134,7 @@ describe('GeometryManager', () => {
 				type: 'polygon'
 			};
 
-			const polygon = manager.addNewPolygon();
+			const polygon = manager.addNewElement('polygon');
 			polygon.path = element.points;
 			polygon.fillLayer.color.set(element.style.color);
 			polygon.strokeLayer.color.set(element.strokeStyle.color);
@@ -157,7 +157,7 @@ describe('GeometryManager', () => {
 			vi.spyOn(mockMap, 'getCenter').mockReturnValue(center);
 			vi.spyOn(mockMap, 'getZoom').mockReturnValue(5);
 
-			const marker = manager.addNewMarker();
+			const marker = manager.addNewElement('marker');
 			vi.spyOn(marker, 'getFeature').mockReturnValue({
 				type: 'Feature',
 				geometry: { type: 'Point', coordinates: [10, 20] },

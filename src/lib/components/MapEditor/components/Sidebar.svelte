@@ -50,6 +50,10 @@
 		a.click();
 		URL.revokeObjectURL(url);
 	}
+
+	function addNewElement(type: 'marker' | 'line' | 'polygon' | 'circle') {
+		activeElement.set(geometryManager.addNewElement(type));
+	}
 </script>
 
 <div class="sidebar">
@@ -79,10 +83,10 @@
 		<hr class="thick" />
 		<SidebarPanel title="Add new">
 			<div class="grid2">
-				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewMarker())}>Marker</button>
-				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewLine())}>Line</button>
-				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewPolygon())}>Polygon</button>
-				<button class="btn" onclick={() => activeElement.set(geometryManager.addNewCircle())}>Circle</button>
+				<button class="btn" onclick={() => addNewElement('marker')}>Marker</button>
+				<button class="btn" onclick={() => addNewElement('line')}>Line</button>
+				<button class="btn" onclick={() => addNewElement('polygon')}>Polygon</button>
+				<button class="btn" onclick={() => addNewElement('circle')}>Circle</button>
 			</div>
 		</SidebarPanel>
 		<hr class="thick" />

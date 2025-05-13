@@ -70,12 +70,12 @@ export class GeometryManager {
 
 				if (e.originalEvent.shiftKey) {
 					selectedNode.delete();
-					this.drawSelectionNodes();
+					this.updateSelectionNodes();
 				} else {
 					const onMove = (e: maplibregl.MapMouseEvent) => {
 						e.preventDefault();
 						selectedNode.update(e.lngLat.lng, e.lngLat.lat);
-						this.drawSelectionNodes();
+						this.updateSelectionNodes();
 					};
 
 					map.on('mousemove', onMove);
@@ -94,7 +94,7 @@ export class GeometryManager {
 			});
 
 			map.on('click', (e) => {
-				if (!e.originalEvent.shiftKey) this.selectElement(undefined);
+				if (!e.originalEvent.shiftKey) this.selectElement();
 				e.preventDefault();
 			});
 		}
@@ -105,22 +105,22 @@ export class GeometryManager {
 	}
 
 	public clear() {
-		this.selectElement(undefined);
+		this.selectElement();
 		this.elements.update((elements) => {
 			elements.forEach((e) => e.destroy());
 			return [];
 		});
 	}
 
-	public selectElement(element: AbstractElement | undefined) {
+	public selectElement(element?: AbstractElement) {
 		if (element == get(this.selectedElement)) return;
 		const elements = get(this.elements);
 		elements.forEach((e) => e.select(e == element));
 		this.selectedElement.set(element);
-		this.drawSelectionNodes();
+		this.updateSelectionNodes();
 	}
 
-	public drawSelectionNodes() {
+	public updateSelectionNodes() {
 		const nodes: SelectionNode[] = get(this.selectedElement)?.getSelectionNodes() ?? [];
 		if (!this.selectionNodes) this.selectionNodes = this.map.getSource('selection_nodes')!;
 		this.selectionNodes?.setData({
@@ -161,11 +161,7 @@ export class GeometryManager {
 	public async setState(state: StateRoot) {
 		if (!state) return;
 
-		this.selectElement(undefined);
-		this.elements.update((elements) => {
-			elements.forEach((e) => e.destroy());
-			return [];
-		});
+		this.clear();
 
 		if (state.map) {
 			const { center, radius } = state.map;
@@ -205,29 +201,19 @@ export class GeometryManager {
 		return get(this.elements)[index];
 	}
 
-	public addNewMarker(): MarkerElement {
-		const element = new MarkerElement(this);
-		this.appendElement(element);
-		this.selectElement(element);
-		return element;
-	}
-
-	public addNewLine(): LineElement {
-		const element = new LineElement(this);
-		this.appendElement(element);
-		this.selectElement(element);
-		return element;
-	}
-
-	public addNewPolygon(): PolygonElement {
-		const element = new PolygonElement(this);
-		this.appendElement(element);
-		this.selectElement(element);
-		return element;
-	}
-
-	public addNewCircle(): CircleElement {
-		const element = new CircleElement(this);
+	public addNewElement(type: 'marker'): MarkerElement;
+	public addNewElement(type: 'line'): LineElement;
+	public addNewElement(type: 'polygon'): PolygonElement;
+	public addNewElement(type: 'circle'): CircleElement;
+	public addNewElement(type: 'marker' | 'line' | 'polygon' | 'circle'): AbstractElement;
+	public addNewElement(type: 'marker' | 'line' | 'polygon' | 'circle'): AbstractElement {
+		const AbstractClass = {
+			marker: MarkerElement,
+			line: LineElement,
+			polygon: PolygonElement,
+			circle: CircleElement
+		}[type];
+		const element = new AbstractClass(this);
 		this.appendElement(element);
 		this.selectElement(element);
 		return element;
@@ -238,7 +224,7 @@ export class GeometryManager {
 	}
 
 	public removeElement(element: AbstractElement) {
-		if (get(this.selectedElement) === element) this.selectElement(undefined);
+		if (get(this.selectedElement) === element) this.selectElement();
 		this.elements.update((elements) => elements.filter((e) => e !== element));
 	}
 
@@ -279,7 +265,6 @@ export class GeometryManager {
 						break;
 					}
 					element = MarkerElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.Point>);
-
 					break;
 				case 'LineString':
 					element = LineElement.fromGeoJSON(this, feature as GeoJSON.Feature<GeoJSON.LineString>);

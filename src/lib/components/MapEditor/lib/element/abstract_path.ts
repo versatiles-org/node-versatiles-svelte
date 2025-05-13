@@ -25,7 +25,7 @@ export abstract class AbstractPathElement extends AbstractElement {
 			x0 = lng;
 			this.path = this.path.map(([x, y]) => [x + dx, mercator2lat(lat2mercator(y) + dy)]);
 			this.source.setData(this.getFeature(false));
-			this.manager.drawSelectionNodes();
+			this.manager.updateSelectionNodes();
 			e.preventDefault();
 		};
 		this.manager.map.on('mousemove', moveHandler);
