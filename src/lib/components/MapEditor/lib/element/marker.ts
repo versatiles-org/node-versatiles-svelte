@@ -1,15 +1,16 @@
 import { AbstractElement } from './abstract.js';
 import type { GeometryManager } from '../geometry_manager.js';
-import type { ElementPoint, SelectionNode, SelectionNodeUpdater } from './types.js';
+import type { SelectionNode, SelectionNodeUpdater } from './types.js';
 import { MapLayerSymbol } from '../map_layer/symbol.js';
 import type { StateElementMarker } from '../state/types.js';
+import type { GeoPoint } from '../utils/types.js';
 
 export class MarkerElement extends AbstractElement {
 	public readonly layer: MapLayerSymbol;
 
-	public point: ElementPoint;
+	public point: GeoPoint;
 
-	constructor(manager: GeometryManager, point?: ElementPoint) {
+	constructor(manager: GeometryManager, point?: GeoPoint) {
 		super(manager);
 		this.point = point ?? this.randomPositions(1)[0];
 
@@ -69,7 +70,7 @@ export class MarkerElement extends AbstractElement {
 	}
 
 	static fromGeoJSON(manager: GeometryManager, feature: GeoJSON.Feature<GeoJSON.Point>) {
-		const element = new MarkerElement(manager, feature.geometry.coordinates as ElementPoint);
+		const element = new MarkerElement(manager, feature.geometry.coordinates as GeoPoint);
 		element.layer.setGeoJSONProperties(feature.properties);
 		return element;
 	}

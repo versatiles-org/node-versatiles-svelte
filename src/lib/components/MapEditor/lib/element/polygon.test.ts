@@ -3,8 +3,8 @@ import { PolygonElement } from './polygon.js';
 import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { StateElementPolygon } from '../state/types.js';
-import type { ElementPath } from './types.js';
 import { get } from 'svelte/store';
+import type { GeoPath } from '../utils/types.js';
 
 describe('PolygonElement', () => {
 	let mockManager: GeometryManager;
@@ -21,7 +21,7 @@ describe('PolygonElement', () => {
 	});
 
 	it('should initialize with a provided polygon', () => {
-		const customPolygon: ElementPath = [
+		const customPolygon: GeoPath = [
 			[0, 0],
 			[10, 10],
 			[20, 20],

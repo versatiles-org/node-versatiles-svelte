@@ -1,10 +1,11 @@
 import { AbstractElement } from './abstract.js';
 import type { GeometryManager } from '../geometry_manager.js';
-import type { ElementPath, ElementPoint, SelectionNode, SelectionNodeUpdater } from './types.js';
+import type { SelectionNode, SelectionNodeUpdater } from './types.js';
 import { getMiddlePoint, lat2mercator, mercator2lat } from '../utils/geometry.js';
+import type { GeoPath, GeoPoint } from '../utils/types.js';
 
 export abstract class AbstractPathElement extends AbstractElement {
-	public path: ElementPath = [];
+	public path: GeoPath = [];
 	protected readonly isLine: boolean;
 
 	constructor(manager: GeometryManager, isLine: boolean) {
@@ -51,7 +52,7 @@ export abstract class AbstractPathElement extends AbstractElement {
 	getSelectionNodeUpdater(properties?: Record<string, unknown>): SelectionNodeUpdater | undefined {
 		if (properties == undefined) return;
 		const index = properties.index as number;
-		let point: ElementPoint;
+		let point: GeoPoint;
 		if (index % 1 === 0) {
 			point = this.path[index];
 		} else {

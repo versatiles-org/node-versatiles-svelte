@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { getMiddlePoint, lat2mercator, mercator2lat } from './geometry.js';
-import type { ElementPoint } from '../element/types.js';
+import type { GeoPoint } from './types.js';
 
 describe('Coordinate Conversion Utils', () => {
 	it('should convert latitude to Mercator projection correctly', () => {
@@ -16,8 +16,8 @@ describe('Coordinate Conversion Utils', () => {
 	});
 
 	it('should get the middle point correctly', () => {
-		const p0: ElementPoint = [0, 0];
-		const p1: ElementPoint = [10, 10];
+		const p0: GeoPoint = [0, 0];
+		const p1: GeoPoint = [10, 10];
 		const middle = getMiddlePoint(p0, p1);
 
 		expect(middle[0]).toBeCloseTo(5);

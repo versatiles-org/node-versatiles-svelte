@@ -1,8 +1,7 @@
-export type ElementPoint = [number, number];
-export type ElementPath = ElementPoint[];
+import type { GeoPoint } from '../utils/types.js';
 
 export interface SelectionNode {
-	coordinates: ElementPoint;
+	coordinates: GeoPoint;
 	index: number;
 	transparent?: boolean;
 }

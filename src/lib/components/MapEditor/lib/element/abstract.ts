@@ -1,4 +1,5 @@
-import type { ElementPoint, SelectionNode, SelectionNodeUpdater } from './types.js';
+import type { SelectionNode, SelectionNodeUpdater } from './types.js';
+import type { GeoPoint } from '../utils/types.js';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { StateElement } from '../state/types.js';
 
@@ -28,8 +29,8 @@ export abstract class AbstractElement {
 		this.isSelected = value;
 	}
 
-	protected randomPositions(length: number): ElementPoint[] {
-		const points: ElementPoint[] = [];
+	protected randomPositions(length: number): GeoPoint[] {
+		const points: GeoPoint[] = [];
 		const bounds = this.map.getBounds();
 
 		for (let i = 0; i < length; i++) {

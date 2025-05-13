@@ -3,7 +3,7 @@ import { MarkerElement } from './marker.js';
 import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { StateElementMarker } from '../state/types.js';
-import type { ElementPoint } from './types.js';
+import type { GeoPoint } from '../utils/types.js';
 
 describe('MarkerElement', () => {
 	let mockManager: GeometryManager;
@@ -20,7 +20,7 @@ describe('MarkerElement', () => {
 	});
 
 	it('should initialize with a provided point', () => {
-		const customPoint: ElementPoint = [10, 20];
+		const customPoint: GeoPoint = [10, 20];
 		element = new MarkerElement(mockManager, customPoint);
 		expect(element['point']).toEqual(customPoint);
 	});

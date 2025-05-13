@@ -1,5 +1,6 @@
 import type { GeometryManager } from '../geometry_manager.js';
-import type { ElementPoint, SelectionNode, SelectionNodeUpdater } from './types.js';
+import type { SelectionNode, SelectionNodeUpdater } from './types.js';
+import type { GeoPoint } from '../utils/types.js';
 import { MapLayerFill } from '../map_layer/fill.js';
 import { MapLayerLine } from '../map_layer/line.js';
 import type { StateElementCircle } from '../state/types.js';
@@ -9,10 +10,10 @@ import { circle, distance } from '../utils/geometry.js';
 export class CircleElement extends AbstractElement {
 	public readonly fillLayer: MapLayerFill;
 	public readonly strokeLayer: MapLayerLine;
-	public point: ElementPoint;
+	public point: GeoPoint;
 	public radius: number;
 
-	constructor(manager: GeometryManager, point?: ElementPoint, radius?: number) {
+	constructor(manager: GeometryManager, point?: GeoPoint, radius?: number) {
 		super(manager);
 		this.point = point ?? this.randomPositions(1)[0];
 		this.radius = radius ?? this.randomRadius();
@@ -130,7 +131,7 @@ export class CircleElement extends AbstractElement {
 		>
 	) {
 		const properties = feature.properties;
-		const center = feature.geometry.coordinates as ElementPoint;
+		const center = feature.geometry.coordinates as GeoPoint;
 		const radius = feature.properties.radius;
 
 		const element = new CircleElement(manager, center, radius);

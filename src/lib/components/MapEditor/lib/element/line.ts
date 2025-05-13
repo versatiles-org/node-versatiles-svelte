@@ -1,5 +1,5 @@
 import type { GeometryManager } from '../geometry_manager.js';
-import type { ElementPath } from './types.js';
+import type { GeoPath } from '../utils/types.js';
 import { MapLayerLine } from '../map_layer/line.js';
 import { AbstractPathElement } from './abstract_path.js';
 import type { StateElementLine } from '../state/types.js';
@@ -7,7 +7,7 @@ import type { StateElementLine } from '../state/types.js';
 export class LineElement extends AbstractPathElement {
 	public readonly layer: MapLayerLine;
 
-	constructor(manager: GeometryManager, line?: ElementPath) {
+	constructor(manager: GeometryManager, line?: GeoPath) {
 		super(manager, true);
 		this.path = line ?? this.randomPositions(2);
 
@@ -55,7 +55,7 @@ export class LineElement extends AbstractPathElement {
 	}
 
 	static fromGeoJSON(manager: GeometryManager, feature: GeoJSON.Feature<GeoJSON.LineString>) {
-		const element = new LineElement(manager, feature.geometry.coordinates as ElementPath);
+		const element = new LineElement(manager, feature.geometry.coordinates as GeoPath);
 		element.layer.setGeoJSONProperties(feature.properties);
 		return element;
 	}

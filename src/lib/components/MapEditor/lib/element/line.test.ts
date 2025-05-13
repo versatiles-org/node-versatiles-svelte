@@ -3,7 +3,7 @@ import { LineElement } from './line.js';
 import { MockGeometryManager } from '../__mocks__/geometry_manager.js';
 import type { GeometryManager } from '../geometry_manager.js';
 import type { StateElementLine } from '../state/types.js';
-import type { ElementPoint } from './types.js';
+import type { GeoPoint } from '../utils/types.js';
 
 describe('LineElement', () => {
 	let mockManager: GeometryManager;
@@ -20,7 +20,7 @@ describe('LineElement', () => {
 	});
 
 	it('should initialize with a provided path', () => {
-		const customPath: ElementPoint[] = [
+		const customPath: GeoPoint[] = [
 			[0, 0],
 			[10, 10],
 			[20, 20]

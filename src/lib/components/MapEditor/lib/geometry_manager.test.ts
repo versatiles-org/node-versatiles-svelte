@@ -5,7 +5,7 @@ import { LineElement } from './element/line.js';
 import { PolygonElement } from './element/polygon.js';
 import { LngLat, MockMap, type MaplibreMap } from '../../../__mocks__/map.js';
 import { get } from 'svelte/store';
-import type { ElementPath, ElementPoint } from './element/types.js';
+import type { GeoPath, GeoPoint } from './utils/types.js';
 
 describe('GeometryManager', () => {
 	let mockMap: MockMap;
@@ -78,7 +78,7 @@ describe('GeometryManager', () => {
 	describe('elements', () => {
 		it('should create and restore marker', async () => {
 			const element = {
-				point: [12, 34] as ElementPoint,
+				point: [12, 34] as GeoPoint,
 				style: { label: 'Test' },
 				type: 'marker'
 			};
@@ -103,7 +103,7 @@ describe('GeometryManager', () => {
 				points: [
 					[1, 2],
 					[3, 4]
-				] as ElementPath,
+				] as GeoPath,
 				style: { color: '#ABCDEF' },
 				type: 'line'
 			};
@@ -128,7 +128,7 @@ describe('GeometryManager', () => {
 				points: [
 					[1, 2],
 					[3, 4]
-				] as ElementPath,
+				] as GeoPath,
 				style: { color: '#ABCDEF' },
 				strokeStyle: { color: '#123456' },
 				type: 'polygon'

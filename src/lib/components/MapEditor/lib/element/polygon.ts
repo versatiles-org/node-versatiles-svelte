@@ -1,5 +1,5 @@
 import type { GeometryManager } from '../geometry_manager.js';
-import type { ElementPath } from './types.js';
+import type { GeoPath } from '../utils/types.js';
 import { MapLayerFill } from '../map_layer/fill.js';
 import { MapLayerLine } from '../map_layer/line.js';
 import { AbstractPathElement } from './abstract_path.js';
@@ -9,7 +9,7 @@ export class PolygonElement extends AbstractPathElement {
 	public readonly fillLayer: MapLayerFill;
 	public readonly strokeLayer: MapLayerLine;
 
-	constructor(manager: GeometryManager, polygon?: ElementPath) {
+	constructor(manager: GeometryManager, polygon?: GeoPath) {
 		super(manager, false);
 		this.path = polygon ?? this.randomPositions(3);
 
@@ -65,8 +65,8 @@ export class PolygonElement extends AbstractPathElement {
 	}
 
 	static fromGeoJSON(manager: GeometryManager, feature: GeoJSON.Feature<GeoJSON.Polygon>) {
-		const coordinates = feature.geometry.coordinates[0].slice(0, -1) as ElementPath;
-		const element = new PolygonElement(manager, coordinates as ElementPath);
+		const coordinates = feature.geometry.coordinates[0].slice(0, -1) as GeoPath;
+		const element = new PolygonElement(manager, coordinates as GeoPath);
 		element.fillLayer.setGeoJSONProperties(feature.properties);
 		element.strokeLayer.setGeoJSONProperties(feature.properties);
 		return element;
