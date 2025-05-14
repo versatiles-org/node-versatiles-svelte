@@ -11,7 +11,7 @@ export default defineConfig({
 	expect: {
 		toMatchSnapshot: {
 			maxDiffPixelRatio: 1e-5,
-			threshold: 0.1
+			threshold: 0.01
 		}
 	},
 	use: {
