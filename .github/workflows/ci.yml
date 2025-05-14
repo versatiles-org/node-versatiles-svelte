@@ -39,11 +39,18 @@ jobs:
       - name: Test Code
         run: npx vitest run --testTimeout 10000
 
-      - name: Test Playwright
+      - name: Install Playwright
         run: npx playwright install
 
       - name: Test Playwright
         run: npx playwright test
+
+      - name: Upload Playwright Test Results
+        uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: playwright-test-report
+          path: test-results
 
       - name: Generate test coverage
         run: npm run test-coverage
