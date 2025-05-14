@@ -3,7 +3,6 @@
 	import { getMapStyle, isDarkMode } from '$lib/utils/map_style.js';
 	import maplibre from 'maplibre-gl';
 	import type { MapOptions } from 'maplibre-gl';
-	import { onMount } from 'svelte';
 
 	// Props
 	let {

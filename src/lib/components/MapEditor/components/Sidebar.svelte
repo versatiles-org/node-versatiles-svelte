@@ -76,7 +76,7 @@
 				>GeoJSON:
 				<div class="grid2">
 					<button class="btn" onclick={importGeoJSON}>Import</button>
-					<button class="btn" onclick={exportGeoJSON}>Export</button>
+					<button class="btn" onclick={exportGeoJSON} data-testid="btnExportGeoJSON">Export</button>
 				</div>
 			</label>
 		</SidebarPanel>

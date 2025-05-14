@@ -1,3 +1,4 @@
 *.json
+playwright-tests/__snapshots__/
 pnpm-lock.yaml
 yarn.lock
