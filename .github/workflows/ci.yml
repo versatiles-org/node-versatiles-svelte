@@ -11,7 +11,7 @@ permissions:
 jobs:
   test:
     name: Test
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     container:
       image: mcr.microsoft.com/playwright:v1.52.0-noble
       options: --user 1001
@@ -43,7 +43,7 @@ jobs:
         run: npx vitest run --testTimeout 10000
 
       - name: Test Playwright
-        run: npx playwright test --browser=all
+        run: npx playwright test
 
       - name: Generate test coverage
         run: npm run test-coverage
