@@ -8,6 +8,7 @@ test('works in iframe1', async ({ page }) => {
 
 	await page.goto('/map-editor/iframe-test');
 	await waitForMapIsReady(page, 3);
+	await page.waitForTimeout(3000); // be more patient
 
 	expect(tracker()).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
