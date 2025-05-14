@@ -10,7 +10,8 @@ export default defineConfig({
 	testIgnore: ['**/lib/**'],
 	expect: {
 		toMatchSnapshot: {
-			maxDiffPixelRatio: 1e-5
+			maxDiffPixelRatio: 1e-5,
+			threshold: 0.1,
 		}
 	},
 	use: {
