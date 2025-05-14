@@ -1,6 +1,7 @@
 import type geojson from 'geojson';
 import { get, writable, type Writable } from 'svelte/store';
 import maplibregl from 'maplibre-gl';
+import { getMapStyle } from '$lib/utils/map_style.js';
 
 const { LngLatBounds } = maplibregl;
 
@@ -22,7 +23,7 @@ export type BBox = [number, number, number, number];
 const worldBBox: BBox = [-180, -85, 180, 85];
 
 export class BBoxDrawer {
-	private source?: maplibregl.GeoJSONSource;
+	private sourceId: string;
 	private dragPoint: DragPoint = false;
 	private isDragging = false;
 	private map: maplibregl.Map;
@@ -36,27 +37,29 @@ export class BBoxDrawer {
 		this.inverted = inverted ?? true;
 		this.map = map;
 
-		const sourceId = 'bbox_' + Math.random().toString(36).slice(2);
+		this.sourceId = 'bbox_' + Math.random().toString(36).slice(2);
 
-		if (this.source) throw new Error('BBoxDrawer already added to map');
-		map.addSource(sourceId, { type: 'geojson', data: this.getAsFeatureCollection() });
-		map.addLayer({
+		const style = getMapStyle();
+		style.transition = { duration: 0, delay: 0 };
+
+		style.sources[this.sourceId] = { type: 'geojson', data: this.getAsFeatureCollection() };
+		style.layers.push({
 			id: 'bbox-line_' + Math.random().toString(36).slice(2),
 			type: 'line',
-			source: sourceId,
+			source: this.sourceId,
 			filter: ['==', '$type', 'LineString'],
 			layout: { 'line-cap': 'round', 'line-join': 'round' },
 			paint: { 'line-color': color }
 		});
-		map.addLayer({
+		style.layers.push({
 			id: 'bbox-fill_' + Math.random().toString(36).slice(2),
 			type: 'fill',
-			source: sourceId,
+			source: this.sourceId,
 			filter: ['==', '$type', 'Polygon'],
 			layout: {},
 			paint: { 'fill-color': color, 'fill-opacity': 0.2 }
 		});
-		this.source = map.getSource(sourceId);
+		map.setStyle(style);
 
 		this.canvas = map.getCanvasContainer();
 
@@ -126,7 +129,11 @@ export class BBoxDrawer {
 	}
 
 	private redraw(): void {
-		this.source?.setData(this.getAsFeatureCollection());
+		const source = this.map.getSource(this.sourceId);
+		if (!source) return;
+		if (source instanceof maplibregl.GeoJSONSource) {
+			source.setData(this.getAsFeatureCollection());
+		}
 	}
 
 	private getAsPixel(): BBox {

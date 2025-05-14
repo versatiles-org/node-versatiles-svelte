@@ -7,7 +7,7 @@ export function getMapStyle(
 		transitionDuration?: number;
 	} = {}
 ) {
-	const darkMode = styleOptions.darkMode ?? false;
+	const darkMode = styleOptions.darkMode ?? isDarkMode();
 	const style = styles.colorful({
 		baseUrl: 'https://tiles.versatiles.org',
 		language: getLanguage(),

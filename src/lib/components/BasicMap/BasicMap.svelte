@@ -3,6 +3,7 @@
 	import { getMapStyle, isDarkMode } from '$lib/utils/map_style.js';
 	import maplibre from 'maplibre-gl';
 	import type { MapOptions } from 'maplibre-gl';
+	import { onMount } from 'svelte';
 
 	// Props
 	let {
@@ -24,6 +25,7 @@
 	} = $props();
 
 	let container: HTMLDivElement;
+	let triggeredMapReady = false;
 
 	$effect(() => {
 		if (container) init();
@@ -31,8 +33,6 @@
 
 	async function init(): Promise<void> {
 		if (map) return;
-
-		if (!container) throw Error();
 
 		if (styleOptions.darkMode == null) styleOptions.darkMode = isDarkMode(container);
 
@@ -58,9 +58,15 @@
 
 		if (onMapInit) onMapInit(map, maplibre);
 
-		map.on('load', () => {
+		map.on('idle', checkMapReady);
+
+		function checkMapReady() {
+			if (triggeredMapReady) return;
+			if (!map!.loaded()) return;
+			triggeredMapReady = true;
 			if (onMapLoad) onMapLoad(map!, maplibre);
-		});
+			setTimeout(() => console.log('map_ready'), 100);
+		}
 	}
 </script>
 

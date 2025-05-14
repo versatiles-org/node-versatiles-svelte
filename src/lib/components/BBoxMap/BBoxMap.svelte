@@ -15,15 +15,13 @@
 	let bboxes: { key: string; value: BBox }[] | undefined = $state();
 	let mapContainer: HTMLElement;
 
-	async function onMapLoad(_map: MaplibreMapType) {
+	async function onMapInit(_map: MaplibreMapType) {
 		map = _map;
 		mapContainer = map.getContainer();
 		map.setPadding({ top: 31 + 5, right: 5, bottom: 5, left: 5 });
 		bboxDrawer = new BBoxDrawer(map!, [-180, -86, 180, 86], isDarkMode(mapContainer) ? '#FFFFFF' : '#000000');
 		bboxes = await loadBBoxes();
-		bboxDrawer.bbox.subscribe((bbox) => {
-			selectedBBox = bbox;
-		});
+		bboxDrawer.bbox.subscribe((bbox) => (selectedBBox = bbox));
 	}
 
 	function flyToBBox(bbox: BBox) {
@@ -56,7 +54,7 @@
 			/>
 		</div>
 	{/if}
-	<BasicMap {onMapLoad}></BasicMap>
+	<BasicMap {onMapInit} emptyStyle={true}></BasicMap>
 </div>
 
 <style>
