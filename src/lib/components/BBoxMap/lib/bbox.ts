@@ -1,9 +1,7 @@
 import type geojson from 'geojson';
 import { get, writable, type Writable } from 'svelte/store';
 import maplibregl from 'maplibre-gl';
-import { getMapStyle } from '$lib/utils/map_style.js';
-
-const { LngLatBounds } = maplibregl;
+import { getMapStyle } from '../../../utils/map_style.js';
 
 export type DragPoint = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | false;
 // prettier-ignore
@@ -125,7 +123,7 @@ export class BBoxDrawer {
 	}
 
 	public getBounds(): maplibregl.LngLatBounds {
-		return new LngLatBounds(get(this.bbox));
+		return new maplibregl.LngLatBounds(get(this.bbox));
 	}
 
 	private redraw(): void {
