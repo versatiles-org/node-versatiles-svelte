@@ -24,10 +24,10 @@ test('default', async ({ page }) => {
 		'tiles/osm/1/1/1'
 	]);
 
-	expect(await page.locator('.wrapper').ariaSnapshot()).toBe(`- region \"Map\"
+	expect(await page.locator('.wrapper').ariaSnapshot()).toBe(`- region "Map"
 - group:
   - text: ©
-  - link \"OpenStreetMap\":
+  - link "OpenStreetMap":
     - /url: https://www.openstreetmap.org/copyright
   - text: contributors`);
 	await checkScreenshot(page, 'default', 5e4);
