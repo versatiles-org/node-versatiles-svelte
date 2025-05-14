@@ -3,5 +3,12 @@
 </script>
 
 <div class="wrapper">
-	<BasicMap mapOptions={{ bounds: [-180, -60, 180, 60] }} />
+	<BasicMap
+		mapOptions={{
+			bounds: [
+				[0, 0],
+				[90, 60]
+			]
+		}}
+	/>
 </div>

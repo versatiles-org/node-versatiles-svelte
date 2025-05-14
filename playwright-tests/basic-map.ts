@@ -16,12 +16,15 @@ test('default', async ({ page }) => {
 	});
 
 	expect(tracker()).toStrictEqual([
+		'assets/glyphs/noto_sans_regular/0-255.pbf',
 		'assets/sprites/basics/sprites.json',
 		'assets/sprites/basics/sprites.png',
-		'tiles/osm/1/0/0',
-		'tiles/osm/1/0/1',
-		'tiles/osm/1/1/0',
-		'tiles/osm/1/1/1'
+		'tiles/osm/2/1/1',
+		'tiles/osm/2/1/2',
+		'tiles/osm/2/2/1',
+		'tiles/osm/2/2/2',
+		'tiles/osm/2/3/1',
+		'tiles/osm/2/3/2'
 	]);
 
 	expect(await page.locator('.wrapper').ariaSnapshot()).toBe(`- region "Map"
