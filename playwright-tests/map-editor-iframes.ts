@@ -7,7 +7,7 @@ test('works in iframe1', async ({ page }) => {
 	const tracker = await trackServerRequests(page);
 
 	await page.goto('/map-editor/iframe-test');
-	await waitForMapIsReady(page);
+	await waitForMapIsReady(page, 3);
 
 	expect(tracker()).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
