@@ -29,9 +29,9 @@ export class CircleElement extends AbstractElement {
 
 	getSelectionNodes(): SelectionNode[] {
 		return [
-			{ index: -1, coordinates: this.point },
-			...circle(this.point, this.radius, 4).map((coordinates, index) => ({
-				index,
+			{ index: 0, coordinates: this.point },
+			...circle(this.point, this.radius, 4).map((coordinates) => ({
+				index: 1,
 				transparent: true,
 				coordinates
 			}))
@@ -40,7 +40,7 @@ export class CircleElement extends AbstractElement {
 
 	getSelectionNodeUpdater(properties?: Record<string, unknown>): SelectionNodeUpdater | undefined {
 		if (properties == undefined) return;
-		if ((properties.index as number) < 0) {
+		if (properties.index == 0) {
 			return {
 				update: (lng: number, lat: number) => {
 					this.point[0] = lng;
