@@ -1,25 +1,33 @@
-import { vi } from 'vitest';
+import { vi, type Mock } from 'vitest';
 import maplibre from 'maplibre-gl';
 
 const mockedCanvas = { style: { cursor: 'default' } } as HTMLElement;
 
+type Callback = (data: unknown) => void;
+
 export class MockMap {
 	private zoom = 5;
 	private center = new LngLat(1, 2);
+	private events: { event: string; callback: Callback }[] = [];
 
 	constructor() {}
 	getCanvasContainer = vi.fn(() => mockedCanvas);
 	addSource = vi.fn();
 	removeSource = vi.fn();
-	getSource = vi.fn(() => ({ setData: vi.fn() })) as unknown as MaplibreMap['getSource'];
+	getSource = vi.fn(() => ({ setData: vi.fn() })) as Mock<MaplibreMap['getSource']>;
 	addLayer = vi.fn();
-	on = vi.fn();
-	once = vi.fn();
+	on = vi.fn((event: string, ...rest: unknown[]) => this.events.push({ event, callback: rest.pop() as Callback }));
+	once = vi.fn((event: string, ...rest: unknown[]) => this.events.push({ event, callback: rest.pop() as Callback }));
+	off = vi.fn(
+		(event: string, callback: Callback) =>
+			(this.events = this.events.filter((e) => e.event !== event && e.callback !== callback))
+	);
+	emit = vi.fn((event: string, data?: unknown) => this.events.forEach((e) => e.event === event && e.callback(data)));
 	setZoom = vi.fn((zoom) => (this.zoom = zoom));
 	getZoom = vi.fn(() => this.zoom);
 	setCenter = vi.fn((center: maplibre.LngLat) => (this.center = center));
 	getCenter = vi.fn(() => this.center);
-	queryRenderedFeatures = vi.fn(() => [{ properties: {} }]) as unknown as MaplibreMap['queryRenderedFeatures'];
+	queryRenderedFeatures = vi.fn(() => [{ properties: {} }]) as Mock<MaplibreMap['queryRenderedFeatures']>;
 	setPaintProperty = vi.fn();
 	setLayoutProperty = vi.fn();
 	removeLayer = vi.fn();

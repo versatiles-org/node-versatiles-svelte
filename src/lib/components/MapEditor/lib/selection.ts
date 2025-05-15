@@ -14,11 +14,11 @@ export class SelectionHandler {
 
 		map.on('mousedown', 'selection_nodes', (e) => {
 			const element = get(this.selectedElement)!;
-			if (element == undefined) return;
+			if (element == null) return;
 
 			const feature = map.queryRenderedFeatures(e.point, { layers: ['selection_nodes'] })[0];
 			const selectedNode = element.getSelectionNodeUpdater(feature.properties);
-			if (selectedNode == undefined) return;
+			if (selectedNode == null) return;
 
 			// @ts-expect-error ensure that the event is ignored by other layers
 			e.ignore = true;

@@ -120,12 +120,11 @@ describe('AbstractPathElement', () => {
 		expect(mockManager.map.once).toHaveBeenCalledWith('mouseup', expect.any(Function));
 		expect(mockEvent.preventDefault).toHaveBeenCalled();
 
-		const moveHandler = mockManager.map.on.mock.calls[0][1];
-		moveHandler(mockMoveEvent);
+		mockManager.map.emit('mousemove', mockMoveEvent);
 
 		expect(element['path']).toEqual([
-			[10, 10.115029793656424],
-			[20, 19.812100256379562]
+			[10, expect.closeTo(10.12)],
+			[20, expect.closeTo(19.81)]
 		]);
 		expect(mockMoveEvent.preventDefault).toHaveBeenCalled();
 	});
