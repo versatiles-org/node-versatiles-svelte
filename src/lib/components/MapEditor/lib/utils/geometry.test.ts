@@ -83,7 +83,10 @@ describe('Geometry Utils', () => {
 					name ??= 'linestring';
 					break;
 				case 'MultiPolygon':
-					coordinates = [[path(index), path(index + 1000)], [path(index + 2000), path(index + 3000)]];
+					coordinates = [
+						[path(index), path(index + 1000)],
+						[path(index + 2000), path(index + 3000)]
+					];
 					name ??= 'polygon';
 					break;
 			}
