@@ -13,11 +13,12 @@
     "prepack": "npm run build",
     "prepublishOnly": "npm run package",
     "preview": "vite preview",
-    "screenshots": "npx tsx ./scripts/screenshots.ts",
     "release": "vrt release-npm",
-    "test-unit": "vitest run",
+    "screenshots": "npx tsx ./scripts/screenshots.ts",
     "test-coverage": "vitest run --coverage",
-    "test": "npm run test-unit",
+    "test-playwright": "./scripts/test_playwright.sh",
+    "test-unit": "vitest run",
+    "test": "npm run test-unit && npm run test-playwright",
     "upgrade": "vrt deps-upgrade"
   },
   "exports": {
