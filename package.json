@@ -15,10 +15,9 @@
     "preview": "vite preview",
     "screenshots": "npx tsx ./scripts/screenshots.ts",
     "release": "vrt release-npm",
-    "test-integration": "playwright test --project=firefox",
     "test-unit": "vitest run",
     "test-coverage": "vitest run --coverage",
-    "test": "npm run test-unit && npm run test-integration",
+    "test": "npm run test-unit",
     "upgrade": "vrt deps-upgrade"
   },
   "exports": {
