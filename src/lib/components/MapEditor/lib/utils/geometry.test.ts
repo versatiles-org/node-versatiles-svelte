@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import { circle, distance, flatten, getMiddlePoint, lat2mercator, mercator2lat } from './geometry.js';
 import type { GeoPoint } from './types.js';
 import { degreesToRadians, radiansToDegrees } from './geometry.js';
-import type { Feature } from 'maplibre-gl';
 
 describe('Geometry Utils', () => {
 	it('should convert latitude to Mercator projection correctly', () => {
@@ -133,11 +132,11 @@ describe('Geometry Utils', () => {
 	});
 
 	it('should throw on unknown geometry type in flatten', () => {
-		const badFeature: GeoJSON.Feature = {
+		const badFeature = {
 			type: 'Feature',
 			properties: {},
-			geometry: { type: 'UnknownType', coordinates: [] } as any
-		};
+			geometry: { type: 'UnknownType', coordinates: [] }
+		} as unknown as GeoJSON.Feature;
 		expect(() => flatten([badFeature])).toThrow(/Unknown geometry type/);
 	});
 });
