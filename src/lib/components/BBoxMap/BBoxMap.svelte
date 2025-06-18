@@ -41,6 +41,16 @@
 			map.flyTo({ ...transform, essential: true, speed: 5 });
 		}
 	}
+
+	function getInitialInputText() {
+		let query = getCountryName() ?? '';
+		switch (query) {
+			case 'France':
+				query = 'France, métropolitaine';
+				break;
+		}
+		return query;
+	}
 </script>
 
 <div class="container">
@@ -50,7 +60,7 @@
 				items={bboxes}
 				placeholder="Find country, region or city …"
 				change={(bbox) => flyToBBox(bbox)}
-				initialInputText={getCountryName() ?? ''}
+				initialInputText={getInitialInputText()}
 			/>
 		</div>
 	{/if}
