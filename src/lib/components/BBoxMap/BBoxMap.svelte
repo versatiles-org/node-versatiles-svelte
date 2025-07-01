@@ -19,8 +19,10 @@
 		map = _map;
 		mapContainer = map.getContainer();
 		map.setPadding({ top: 42, right: 10, bottom: 15, left: 10 });
-		bboxDrawer = new BBoxDrawer(map!, [-180, -86, 180, 86], isDarkMode(mapContainer) ? '#FFFFFF' : '#000000');
+		bboxDrawer = new BBoxDrawer(map!, [-180, -85, 180, 85], isDarkMode(mapContainer) ? '#FFFFFF' : '#000000');
 		bboxes = await loadBBoxes();
+		// If an initial bbox is already provided by the parent, display it instead of guessing the user's country
+		if (selectedBBox) flyToBBox(selectedBBox);
 		bboxDrawer.bbox.subscribe((bbox) => (selectedBBox = bbox));
 	}
 
@@ -43,6 +45,11 @@
 	}
 
 	function getInitialInputText() {
+		// When an initial bbox is supplied, we skip the country pre‑fill
+		if (selectedBBox) {
+			const area = (selectedBBox[2] - selectedBBox[0]) * (selectedBBox[3] - selectedBBox[1]);
+			if (area < 60000) return '';
+		}
 		let query = getCountryName() ?? '';
 		switch (query) {
 			case 'France':
