@@ -250,7 +250,7 @@ export class StateWriter {
 	}
 
 	writeColor(color: string) {
-		const rgb = Color.parse(color).toRGB();
+		const rgb = Color.parse(color).asRGB();
 		this.writeInteger(rgb.r, 8);
 		this.writeInteger(rgb.g, 8);
 		this.writeInteger(rgb.b, 8);
