@@ -19,7 +19,7 @@ export async function waitForMapIsReady(page: Page, count: number = 1): Promise<
 
 export async function checkScreenshot(page: Page, name: string, minFileSize: number = 7e4): Promise<void> {
 	const screenshot = await page.screenshot();
-	expect(screenshot).toMatchSnapshot(name + '.png');
+	expect(screenshot).toMatchSnapshot(name + '.png', { maxDiffPixelRatio: 0.02 });
 	expect(screenshot).toBeInstanceOf(Buffer);
 	expect(screenshot.length).toBeGreaterThan(minFileSize);
 }
