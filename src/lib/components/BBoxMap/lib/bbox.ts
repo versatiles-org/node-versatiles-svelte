@@ -1,7 +1,6 @@
 import type geojson from 'geojson';
-import { get, writable, type Writable } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
 import maplibregl from 'maplibre-gl';
-import { getMapStyle } from '../../../utils/map_style.js';
 
 export type DragPoint = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | false;
 // prettier-ignore
@@ -28,20 +27,17 @@ export class BBoxDrawer {
 	private canvas: HTMLElement;
 
 	private inverted: boolean;
-	public readonly bbox: Writable<BBox>;
+	public readonly bbox: Writable<BBox> = writable(worldBBox);
+	#bbox: BBox = [0, 0, 0, 0];
 
 	constructor(map: maplibregl.Map, bbox: BBox, color: string, inverted?: boolean) {
-		this.bbox = writable(bbox);
 		this.inverted = inverted ?? true;
 		this.map = map;
 
 		this.sourceId = 'bbox_' + Math.random().toString(36).slice(2);
 
-		const style = getMapStyle();
-		style.transition = { duration: 0, delay: 0 };
-
-		style.sources[this.sourceId] = { type: 'geojson', data: this.getAsFeatureCollection() };
-		style.layers.push({
+		map.addSource(this.sourceId, { type: 'geojson', data: this.getAsFeatureCollection() });
+		map.addLayer({
 			id: 'bbox-line_' + Math.random().toString(36).slice(2),
 			type: 'line',
 			source: this.sourceId,
@@ -49,7 +45,7 @@ export class BBoxDrawer {
 			layout: { 'line-cap': 'round', 'line-join': 'round' },
 			paint: { 'line-color': color }
 		});
-		style.layers.push({
+		map.addLayer({
 			id: 'bbox-fill_' + Math.random().toString(36).slice(2),
 			type: 'fill',
 			source: this.sourceId,
@@ -57,7 +53,6 @@ export class BBoxDrawer {
 			layout: {},
 			paint: { 'fill-color': color, 'fill-opacity': 0.2 }
 		});
-		map.setStyle(style);
 
 		this.canvas = map.getCanvasContainer();
 
@@ -84,6 +79,8 @@ export class BBoxDrawer {
 			this.isDragging = false;
 			this.updateDragPoint(false);
 		});
+
+		this.setBBox(bbox);
 	}
 
 	private updateDragPoint(dragPoint: DragPoint) {
@@ -93,7 +90,7 @@ export class BBoxDrawer {
 	}
 
 	private getAsFeatureCollection(): geojson.FeatureCollection {
-		const ring = getRing(get(this.bbox));
+		const ring = getRing(this.getBBox());
 		return {
 			type: 'FeatureCollection',
 			features: [this.inverted ? polygon(getRing(worldBBox), ring) : polygon(ring), linestring(ring)]
@@ -117,13 +114,20 @@ export class BBoxDrawer {
 		}
 	}
 
-	public setGeometry(bbox: geojson.BBox): void {
-		this.bbox.set(bbox.slice(0, 4) as BBox);
+	public setBBox(bbox: geojson.BBox): void {
+		const newBbox = bbox.slice(0, 4) as BBox;
+		if (this.#bbox && isSameBBox(this.#bbox, newBbox)) return;
+		this.#bbox = bbox.slice(0, 4) as BBox;
 		this.redraw();
+		this.bbox.set(this.#bbox);
+	}
+
+	public getBBox(): BBox {
+		return this.#bbox;
 	}
 
 	public getBounds(): maplibregl.LngLatBounds {
-		return new maplibregl.LngLatBounds(get(this.bbox));
+		return new maplibregl.LngLatBounds(this.getBBox());
 	}
 
 	private redraw(): void {
@@ -135,7 +139,7 @@ export class BBoxDrawer {
 	}
 
 	private getAsPixel(): BBox {
-		const bbox = get(this.bbox);
+		const bbox = this.getBBox();
 		const p0 = this.map.project([bbox[0], bbox[1]]);
 		const p1 = this.map.project([bbox[2], bbox[3]]);
 		return [Math.min(p0.x, p1.x), Math.min(p0.y, p1.y), Math.max(p0.x, p1.x), Math.max(p0.y, p1.y)];
@@ -168,7 +172,7 @@ export class BBoxDrawer {
 	}
 
 	private doDrag(lngLat: maplibregl.LngLat): void {
-		this.bbox.update((bbox) => {
+		this.#bbox = ((bbox) => {
 			const x = Math.round(lngLat.lng * 1e3) / 1e3;
 			const y = Math.round(lngLat.lat * 1e3) / 1e3;
 
@@ -196,8 +200,11 @@ export class BBoxDrawer {
 				bbox = [bbox[0], bbox[3], bbox[2], bbox[1]];
 				this.updateDragPoint(DragPointMap.get(this.dragPoint)?.flipV ?? false);
 			}
-
 			return bbox;
-		});
+		})(this.#bbox);
 	}
+}
+
+export function isSameBBox(a: geojson.BBox, b: geojson.BBox) {
+	return a[0] === b[0] && a[1] === b[1] && a[2] === b[2] && a[3] === b[3];
 }

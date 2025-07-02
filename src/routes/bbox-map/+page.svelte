@@ -1,7 +1,30 @@
 <script lang="ts">
-	import { BBoxMap } from '$lib/index.js';
+	import { BBoxMap, type BBox } from '$lib/index.js';
+	import { onMount } from 'svelte';
+
+	let selectedBBox = $state<BBox | undefined>(undefined);
+
+	export function setBBox(bbox: BBox) {
+		selectedBBox = bbox as BBox;
+	}
+
+	onMount(() => {
+		loadHash();
+		addEventListener('hashchange', () => loadHash());
+
+		function loadHash() {
+			const hash = window.location.hash.replace('#', '');
+			if (!hash) return;
+			const parts = hash.split(',');
+			if (parts.length !== 4) return;
+			selectedBBox = parts.map((part) => parseFloat(part)) as BBox;
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(window as any).setBBox = (bbox: BBox) => (selectedBBox = bbox);
+	});
 </script>
 
 <div class="wrapper">
-	<BBoxMap />
+	<BBoxMap bind:selectedBBox />
 </div>

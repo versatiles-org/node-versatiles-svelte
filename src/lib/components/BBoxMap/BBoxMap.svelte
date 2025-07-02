@@ -4,32 +4,41 @@
 	import { getCountryName } from '$lib/utils/location.js';
 	import BasicMap from '$lib/components/BasicMap/BasicMap.svelte';
 	import { isDarkMode } from '$lib/utils/map_style.js';
-	import type { BBox } from 'geojson';
 	import { loadBBoxes } from './BBoxMap.js';
-	import { BBoxDrawer } from './lib/bbox.js';
+	import { BBoxDrawer, isSameBBox, type BBox } from './lib/bbox.js';
 
 	let { selectedBBox = $bindable() }: { selectedBBox?: BBox } = $props();
 	const startTime = Date.now();
-	let bboxDrawer: BBoxDrawer;
+	let bboxDrawer: BBoxDrawer | undefined;
 	let map: MaplibreMapType | undefined = $state();
 	let bboxes: { key: string; value: BBox }[] | undefined = $state();
 	let mapContainer: HTMLElement;
+
+	$effect(() => setBBox(selectedBBox));
 
 	async function onMapInit(_map: MaplibreMapType) {
 		map = _map;
 		mapContainer = map.getContainer();
 		map.setPadding({ top: 42, right: 10, bottom: 15, left: 10 });
-		bboxDrawer = new BBoxDrawer(map!, [-180, -85, 180, 85], isDarkMode(mapContainer) ? '#FFFFFF' : '#000000');
 		bboxes = await loadBBoxes();
-		// If an initial bbox is already provided by the parent, display it instead of guessing the user's country
-		if (selectedBBox) flyToBBox(selectedBBox);
-		bboxDrawer.bbox.subscribe((bbox) => (selectedBBox = bbox));
+		const bbox = selectedBBox || [-180, -85, 180, 85];
+		bboxDrawer = new BBoxDrawer(map!, bbox, isDarkMode(mapContainer) ? '#FFFFFF' : '#000000');
+		bboxDrawer.bbox.subscribe(setBBox);
+		if (selectedBBox) setBBox(selectedBBox);
 	}
 
-	function flyToBBox(bbox: BBox) {
+	function setBBox(bbox?: BBox) {
 		if (!map || !bbox) return;
 
-		bboxDrawer.setGeometry(bbox);
+		if (!selectedBBox || !isSameBBox(selectedBBox, bbox)) {
+			selectedBBox = bbox;
+		}
+
+		if (!bboxDrawer) return;
+
+		if (!isSameBBox(bboxDrawer.getBBox(), bbox)) {
+			bboxDrawer.setBBox(bbox);
+		}
 
 		const transform = map.cameraForBounds(bboxDrawer.getBounds()) as CameraOptions;
 		if (transform == null) return;
@@ -37,7 +46,7 @@
 		transform.bearing = 0;
 		transform.pitch = 0;
 
-		if (Date.now() - startTime < 1000) {
+		if (Date.now() - startTime < 3000) {
 			map.jumpTo(transform);
 		} else {
 			map.flyTo({ ...transform, essential: true, speed: 5 });
@@ -66,12 +75,12 @@
 			<AutoComplete
 				items={bboxes}
 				placeholder="Find country, region or city …"
-				change={(bbox) => flyToBBox(bbox)}
+				change={(bbox) => (selectedBBox = bbox)}
 				initialInputText={getInitialInputText()}
 			/>
 		</div>
 	{/if}
-	<BasicMap {onMapInit} emptyStyle={true}></BasicMap>
+	<BasicMap {onMapInit}></BasicMap>
 </div>
 
 <style>

@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { BBoxDrawer } from './bbox.js';
 import type { BBox, DragPoint } from './bbox.js';
-import { get } from 'svelte/store';
 import { LngLat, MockMap, Point, type MaplibreMap } from '../../../__mocks__/map.js';
 
 describe('BBoxDrawer', () => {
@@ -10,17 +9,17 @@ describe('BBoxDrawer', () => {
 	const bboxDrawer = new BBoxDrawer(map as unknown as MaplibreMap, initialBBox, '#ff0000');
 
 	beforeEach(() => {
-		bboxDrawer.setGeometry(initialBBox);
+		bboxDrawer.setBBox(initialBBox);
 	});
 
 	it('should initialize with the correct bbox', () => {
-		expect(get(bboxDrawer.bbox)).toEqual(initialBBox);
+		expect(bboxDrawer.getBBox()).toEqual(initialBBox);
 	});
 
 	it('should update the bbox geometry', () => {
 		const newBBox: BBox = [-30, -20, 20, 30];
-		bboxDrawer.setGeometry(newBBox);
-		expect(get(bboxDrawer.bbox)).toEqual(newBBox);
+		bboxDrawer.setBBox(newBBox);
+		expect(bboxDrawer.getBBox()).toEqual(newBBox);
 	});
 
 	it('should return the correct bounds', () => {
@@ -39,11 +38,11 @@ describe('BBoxDrawer', () => {
 
 	describe('should handle dragging correctly', () => {
 		function testDrag(dragPoint: DragPoint): BBox {
-			bboxDrawer.setGeometry(initialBBox);
+			bboxDrawer.setBBox(initialBBox);
 			const lngLat = new LngLat(0, 0);
 			bboxDrawer['dragPoint'] = dragPoint;
 			bboxDrawer['doDrag'](lngLat);
-			return get(bboxDrawer.bbox);
+			return bboxDrawer.getBBox();
 		}
 
 		it('ne', () => expect(testDrag('ne')).toEqual([-20, -10, 0, 0]));
@@ -61,13 +60,13 @@ describe('BBoxDrawer', () => {
 		const lngLat = new LngLat(-15, -15);
 		bboxDrawer['dragPoint'] = 'nw';
 		bboxDrawer['doDrag'](lngLat);
-		expect(get(bboxDrawer.bbox)).toEqual([-15, -15, 10, -10]);
+		expect(bboxDrawer.getBBox()).toEqual([-15, -15, 10, -10]);
 	});
 
 	it('should redraw the bbox', () => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const redrawSpy = vi.spyOn(bboxDrawer, 'redraw' as any);
-		bboxDrawer.setGeometry([-30, -20, 20, 30]);
+		bboxDrawer.setBBox([-30, -20, 20, 30]);
 		expect(redrawSpy).toHaveBeenCalled();
 	});
 

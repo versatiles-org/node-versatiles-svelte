@@ -4,3 +4,4 @@ import LocatorMap from './components/LocatorMap/LocatorMap.svelte';
 import MapEditor from './components/MapEditor/MapEditor.svelte';
 
 export { BasicMap, BBoxMap, LocatorMap, MapEditor };
+export { type BBox } from './components/BBoxMap/lib/bbox.js';
