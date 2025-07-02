@@ -5,42 +5,52 @@
 	import BasicMap from '$lib/components/BasicMap/BasicMap.svelte';
 	import { isDarkMode } from '$lib/utils/map_style.js';
 	import { loadBBoxes } from './BBoxMap.js';
-	import { BBoxDrawer, isSameBBox, type BBox } from './lib/bbox.js';
+	import { BBoxDrawer, isSameBBox, type BBox } from './lib/bbox_drawer.js';
 
 	let { selectedBBox = $bindable() }: { selectedBBox?: BBox } = $props();
+
 	const startTime = Date.now();
 	let bboxDrawer: BBoxDrawer | undefined;
 	let map: MaplibreMapType | undefined = $state();
 	let bboxes: { key: string; value: BBox }[] | undefined = $state();
 	let mapContainer: HTMLElement;
-
-	$effect(() => setBBox(selectedBBox));
+	let disableZoomTimeout: ReturnType<typeof setTimeout> | undefined;
 
 	async function onMapInit(_map: MaplibreMapType) {
 		map = _map;
 		mapContainer = map.getContainer();
 		map.setPadding({ top: 42, right: 10, bottom: 15, left: 10 });
 		bboxes = await loadBBoxes();
-		const bbox = selectedBBox || [-180, -85, 180, 85];
-		bboxDrawer = new BBoxDrawer(map!, bbox, isDarkMode(mapContainer) ? '#FFFFFF' : '#000000');
-		bboxDrawer.bbox.subscribe(setBBox);
-		if (selectedBBox) setBBox(selectedBBox);
+
+		bboxDrawer = new BBoxDrawer(
+			map!,
+			selectedBBox ?? [-180, -85, 180, 85],
+			isDarkMode(mapContainer) ? '#FFFFFF' : '#000000'
+		);
+
+		if (selectedBBox) {
+			zoom();
+		}
+
+		bboxDrawer.on('dragEnd', (bbox) => {
+			disableZoomTemporarily();
+			if (!selectedBBox || !isSameBBox(bbox, selectedBBox)) {
+				selectedBBox = bbox;
+			}
+		});
 	}
 
-	function setBBox(bbox?: BBox) {
-		if (!map || !bbox) return;
+	$effect(() => {
+		if (!selectedBBox) return;
+		zoom();
+		if (bboxDrawer && selectedBBox) bboxDrawer.bbox = selectedBBox;
+	});
 
-		if (!selectedBBox || !isSameBBox(selectedBBox, bbox)) {
-			selectedBBox = bbox;
-		}
+	function zoom() {
+		if (!bboxDrawer || !map || !selectedBBox) return;
+		if (disableZoomTimeout) return;
 
-		if (!bboxDrawer) return;
-
-		if (!isSameBBox(bboxDrawer.getBBox(), bbox)) {
-			bboxDrawer.setBBox(bbox);
-		}
-
-		const transform = map.cameraForBounds(bboxDrawer.getBounds()) as CameraOptions;
+		const transform = map.cameraForBounds(selectedBBox) as CameraOptions;
 		if (transform == null) return;
 		transform.zoom = transform.zoom ?? 0 - 0.5;
 		transform.bearing = 0;
@@ -67,6 +77,11 @@
 		}
 		return query;
 	}
+
+	function disableZoomTemporarily() {
+		if (disableZoomTimeout) clearTimeout(disableZoomTimeout);
+		disableZoomTimeout = setTimeout(() => (disableZoomTimeout = undefined), 100);
+	}
 </script>
 
 <div class="container">
@@ -85,9 +100,11 @@
 
 <style>
 	.container {
+		position: absolute;
 		width: 100%;
 		height: 100%;
-		position: relative;
+		left: 0;
+		top: 0;
 		min-height: 6em;
 	}
 	.input {

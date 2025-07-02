@@ -1,33 +1,25 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { BBoxDrawer } from './bbox.js';
-import type { BBox, DragPoint } from './bbox.js';
+import { BBoxDrawer } from './bbox_drawer.js';
+import type { BBox, DragPoint } from './bbox_drawer.js';
 import { LngLat, MockMap, Point, type MaplibreMap } from '../../../__mocks__/map.js';
 
 describe('BBoxDrawer', () => {
 	const initialBBox: BBox = [-20, -10, 10, 20];
 	const map = new MockMap();
-	const bboxDrawer = new BBoxDrawer(map as unknown as MaplibreMap, initialBBox, '#ff0000');
+	let bboxDrawer: BBoxDrawer;
 
 	beforeEach(() => {
-		bboxDrawer.setBBox(initialBBox);
+		bboxDrawer = new BBoxDrawer(map as unknown as MaplibreMap, initialBBox, '#ff0000');
 	});
 
 	it('should initialize with the correct bbox', () => {
-		expect(bboxDrawer.getBBox()).toEqual(initialBBox);
+		expect(bboxDrawer.bbox).toEqual(initialBBox);
 	});
 
 	it('should update the bbox geometry', () => {
 		const newBBox: BBox = [-30, -20, 20, 30];
-		bboxDrawer.setBBox(newBBox);
-		expect(bboxDrawer.getBBox()).toEqual(newBBox);
-	});
-
-	it('should return the correct bounds', () => {
-		const bounds = bboxDrawer.getBounds();
-		expect(bounds.getWest()).toBeCloseTo(initialBBox[0]);
-		expect(bounds.getSouth()).toBeCloseTo(initialBBox[1]);
-		expect(bounds.getEast()).toBeCloseTo(initialBBox[2]);
-		expect(bounds.getNorth()).toBeCloseTo(initialBBox[3]);
+		bboxDrawer.bbox = newBBox;
+		expect(bboxDrawer.bbox).toEqual(newBBox);
 	});
 
 	it('should update the cursor style on drag point change', () => {
@@ -38,11 +30,11 @@ describe('BBoxDrawer', () => {
 
 	describe('should handle dragging correctly', () => {
 		function testDrag(dragPoint: DragPoint): BBox {
-			bboxDrawer.setBBox(initialBBox);
+			bboxDrawer.bbox = initialBBox;
 			const lngLat = new LngLat(0, 0);
 			bboxDrawer['dragPoint'] = dragPoint;
 			bboxDrawer['doDrag'](lngLat);
-			return bboxDrawer.getBBox();
+			return bboxDrawer.bbox;
 		}
 
 		it('ne', () => expect(testDrag('ne')).toEqual([-20, -10, 0, 0]));
@@ -60,13 +52,13 @@ describe('BBoxDrawer', () => {
 		const lngLat = new LngLat(-15, -15);
 		bboxDrawer['dragPoint'] = 'nw';
 		bboxDrawer['doDrag'](lngLat);
-		expect(bboxDrawer.getBBox()).toEqual([-15, -15, 10, -10]);
+		expect(bboxDrawer.bbox).toEqual([-15, -15, 10, -10]);
 	});
 
 	it('should redraw the bbox', () => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const redrawSpy = vi.spyOn(bboxDrawer, 'redraw' as any);
-		bboxDrawer.setBBox([-30, -20, 20, 30]);
+		bboxDrawer.bbox = [-30, -20, 20, 30];
 		expect(redrawSpy).toHaveBeenCalled();
 	});
 

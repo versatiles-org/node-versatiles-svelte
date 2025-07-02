@@ -1,6 +1,6 @@
 import type geojson from 'geojson';
-import { writable, type Writable } from 'svelte/store';
-import maplibregl from 'maplibre-gl';
+import type maplibregl from 'maplibre-gl';
+import { EventHandler } from '../../../utils/event_handler.js';
 
 export type DragPoint = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | false;
 // prettier-ignore
@@ -19,19 +19,20 @@ export const DragPointMap = new Map<DragPoint, { cursor: string, flipH: DragPoin
 export type BBox = [number, number, number, number];
 const worldBBox: BBox = [-180, -85, 180, 85];
 
-export class BBoxDrawer {
+export class BBoxDrawer extends EventHandler<{ drag: BBox; dragEnd: BBox }> {
 	private sourceId: string;
 	private dragPoint: DragPoint = false;
 	private isDragging = false;
 	private map: maplibregl.Map;
 	private canvas: HTMLElement;
 
-	private inverted: boolean;
-	public readonly bbox: Writable<BBox> = writable(worldBBox);
-	#bbox: BBox = [0, 0, 0, 0];
+	private insideOut: boolean;
+	#bbox: BBox;
 
-	constructor(map: maplibregl.Map, bbox: BBox, color: string, inverted?: boolean) {
-		this.inverted = inverted ?? true;
+	constructor(map: maplibregl.Map, initialBBox: BBox, color: string, insideOut?: boolean) {
+		super();
+		this.#bbox = [...initialBBox];
+		this.insideOut = insideOut ?? true;
 		this.map = map;
 
 		this.sourceId = 'bbox_' + Math.random().toString(36).slice(2);
@@ -64,6 +65,7 @@ export class BBoxDrawer {
 			this.doDrag(e.lngLat);
 			this.redraw();
 			e.preventDefault();
+			this.emit('drag', [...this.#bbox]);
 		});
 
 		map.on('mousedown', (e) => {
@@ -78,9 +80,8 @@ export class BBoxDrawer {
 		map.on('mouseup', () => {
 			this.isDragging = false;
 			this.updateDragPoint(false);
+			this.emit('dragEnd', [...this.#bbox]);
 		});
-
-		this.setBBox(bbox);
 	}
 
 	private updateDragPoint(dragPoint: DragPoint) {
@@ -90,10 +91,10 @@ export class BBoxDrawer {
 	}
 
 	private getAsFeatureCollection(): geojson.FeatureCollection {
-		const ring = getRing(this.getBBox());
+		const ring = getRing(this.#bbox);
 		return {
 			type: 'FeatureCollection',
-			features: [this.inverted ? polygon(getRing(worldBBox), ring) : polygon(ring), linestring(ring)]
+			features: [this.insideOut ? polygon(getRing(worldBBox), ring) : polygon(ring), linestring(ring)]
 		};
 
 		function getRing(bbox: BBox): geojson.Position[] {
@@ -114,32 +115,24 @@ export class BBoxDrawer {
 		}
 	}
 
-	public setBBox(bbox: geojson.BBox): void {
-		const newBbox = bbox.slice(0, 4) as BBox;
-		if (this.#bbox && isSameBBox(this.#bbox, newBbox)) return;
-		this.#bbox = bbox.slice(0, 4) as BBox;
+	public set bbox(bbox: BBox) {
+		if (isSameBBox(this.#bbox, bbox)) return;
+		this.#bbox = [...bbox];
 		this.redraw();
-		this.bbox.set(this.#bbox);
 	}
 
-	public getBBox(): BBox {
-		return this.#bbox;
-	}
-
-	public getBounds(): maplibregl.LngLatBounds {
-		return new maplibregl.LngLatBounds(this.getBBox());
+	public get bbox(): BBox {
+		return [...this.#bbox];
 	}
 
 	private redraw(): void {
 		const source = this.map.getSource(this.sourceId);
-		if (!source) return;
-		if (source instanceof maplibregl.GeoJSONSource) {
-			source.setData(this.getAsFeatureCollection());
-		}
+		if (!source || source.type !== 'geojson') return;
+		(source as maplibregl.GeoJSONSource).setData(this.getAsFeatureCollection());
 	}
 
 	private getAsPixel(): BBox {
-		const bbox = this.getBBox();
+		const bbox = this.#bbox;
 		const p0 = this.map.project([bbox[0], bbox[1]]);
 		const p1 = this.map.project([bbox[2], bbox[3]]);
 		return [Math.min(p0.x, p1.x), Math.min(p0.y, p1.y), Math.max(p0.x, p1.x), Math.max(p0.y, p1.y)];
