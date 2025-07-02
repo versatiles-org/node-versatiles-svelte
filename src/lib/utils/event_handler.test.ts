@@ -9,7 +9,9 @@ describe('EventHandler', () => {
 
 	describe('on', () => {
 		it('should call all callbacks registered for an event when emit is called', () => {
-			const handler = new EventHandler();
+			const handler = new EventHandler<{
+				testEvent: void;
+			}>();
 			const callback1 = vi.fn();
 			const callback2 = vi.fn();
 			handler.on('testEvent', callback1);
@@ -20,7 +22,10 @@ describe('EventHandler', () => {
 		});
 
 		it('should not call callbacks for other events when emit is called', () => {
-			const handler = new EventHandler();
+			const handler = new EventHandler<{
+				otherEvent: void;
+				testEvent: void;
+			}>();
 			const callback = vi.fn();
 			handler.on('otherEvent', callback);
 			handler.emit('testEvent');
@@ -30,7 +35,9 @@ describe('EventHandler', () => {
 
 	describe('once', () => {
 		it('should call the callback only once when the event is emitted multiple times', () => {
-			const handler = new EventHandler();
+			const handler = new EventHandler<{
+				testEvent: void;
+			}>();
 			const callback = vi.fn();
 			handler.once('testEvent', callback);
 			handler.emit('testEvent');
@@ -40,7 +47,9 @@ describe('EventHandler', () => {
 		});
 
 		it('should not call the callback if the event is never emitted', () => {
-			const handler = new EventHandler();
+			const handler = new EventHandler<{
+				testEvent: void;
+			}>();
 			const callback = vi.fn();
 			handler.once('testEvent', callback);
 			expect(callback).not.toHaveBeenCalled();
@@ -49,7 +58,9 @@ describe('EventHandler', () => {
 
 	describe('off', () => {
 		it('should remove the specified callback from the event', () => {
-			const handler = new EventHandler();
+			const handler = new EventHandler<{
+				testEvent: void;
+			}>();
 			const callback1 = vi.fn();
 			const callback2 = vi.fn();
 			const i = handler.on('testEvent', callback1);
@@ -60,7 +71,9 @@ describe('EventHandler', () => {
 			expect(callback2).toHaveBeenCalledTimes(1);
 		});
 		it('should remove all callbacks for the event if no callback is specified', () => {
-			const handler = new EventHandler();
+			const handler = new EventHandler<{
+				testEvent: void;
+			}>();
 			const callback1 = vi.fn();
 			const callback2 = vi.fn();
 			handler.on('testEvent', callback1);
@@ -71,7 +84,9 @@ describe('EventHandler', () => {
 			expect(callback2).not.toHaveBeenCalled();
 		});
 		it('should not throw an error if trying to remove a callback that does not exist', () => {
-			const handler = new EventHandler();
+			const handler = new EventHandler<{
+				testEvent: void;
+			}>();
 			const callback1 = vi.fn();
 			const callback2 = vi.fn();
 			handler.on('testEvent', callback1);
@@ -81,7 +96,9 @@ describe('EventHandler', () => {
 			expect(callback2).not.toHaveBeenCalled();
 		});
 		it('should not throw an error if trying to remove a callback from an event that has no callbacks', () => {
-			const handler = new EventHandler();
+			const handler = new EventHandler<{
+				testEvent: void;
+			}>();
 			const callback = vi.fn();
 			handler.off('testEvent', 5);
 			handler.emit('testEvent');
@@ -90,7 +107,10 @@ describe('EventHandler', () => {
 	});
 	describe('clear', () => {
 		it('should remove all callbacks for all events', () => {
-			const handler = new EventHandler();
+			const handler = new EventHandler<{
+				testEvent: void;
+				otherEvent: void;
+			}>();
 			const callback1 = vi.fn();
 			const callback2 = vi.fn();
 			handler.on('testEvent', callback1);
@@ -102,11 +122,15 @@ describe('EventHandler', () => {
 			expect(callback2).not.toHaveBeenCalled();
 		});
 		it('should not throw an error if clear is called when there are no events', () => {
-			const handler = new EventHandler();
+			const handler = new EventHandler<{
+				testEvent: void;
+			}>();
 			expect(() => handler.clear()).not.toThrow();
 		});
 		it('should not throw an error if clear is called multiple times', () => {
-			const handler = new EventHandler();
+			const handler = new EventHandler<{
+				testEvent: void;
+			}>();
 			const callback = vi.fn();
 			handler.on('testEvent', callback);
 			handler.clear();
@@ -117,7 +141,10 @@ describe('EventHandler', () => {
 	});
 
 	it('should handle emit being called with no registered callbacks gracefully', () => {
-		const handler = new EventHandler();
+		const handler = new EventHandler<{
+			testEvent: void;
+			nonExistentEvent: void;
+		}>();
 		expect(() => handler.emit('nonExistentEvent')).not.toThrow();
 	});
 });

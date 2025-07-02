@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { EventHandler } from '../lib/utils/event_handler.js';
+	import { EventHandler } from '$lib/utils/event_handler.js';
 
 	let {
 		children = $bindable(),
@@ -15,7 +15,10 @@
 	} = $props();
 
 	let dialog: HTMLDialogElement | null = null;
-	export const eventHandler = new EventHandler();
+	export const eventHandler = new EventHandler<{
+		open: void;
+		close: void;
+	}>();
 
 	export function getNode(): HTMLDialogElement {
 		return dialog!;

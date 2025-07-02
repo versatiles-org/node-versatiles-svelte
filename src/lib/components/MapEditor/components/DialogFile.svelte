@@ -1,13 +1,16 @@
 <script lang="ts">
 	import { tick } from 'svelte';
 	import Dialog from './Dialog.svelte';
-	import { EventHandler } from '../lib/utils/event_handler.js';
+	import { EventHandler } from '$lib/utils/event_handler.js';
 
 	type Mode = 'download' | 'new' | null;
 	let mode: Mode = $state(null);
 	let dialog: Dialog | null = null;
 	let input: HTMLInputElement | null = $state(null);
-	let eventHandler = new EventHandler();
+	let eventHandler = new EventHandler<{
+		A: void;
+		B: void;
+	}>();
 
 	async function openDialog(newMode: Mode) {
 		if (!dialog) return;
