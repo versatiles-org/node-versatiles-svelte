@@ -16,7 +16,7 @@ jobs:
         run: brew install pngquant optipng
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -59,7 +59,7 @@ jobs:
         run: mv screenshots build/
 
       - name: Upload Artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./build
 
