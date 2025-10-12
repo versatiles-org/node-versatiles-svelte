@@ -1,10 +1,13 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import type { Pathname } from '$app/types';
+
 	const baseUrl = 'https://versatiles.org/node-versatiles-svelte/screenshots/';
-	const components = [
-		{ title: 'BasicMap', slug: 'basic-map' },
-		{ title: 'BBoxMap', slug: 'bbox-map' },
-		{ title: 'LocatorMap', slug: 'locator-map' },
-		{ title: 'MapEditor', slug: 'map-editor' }
+	const components: { title: string; path: Pathname }[] = [
+		{ title: 'BasicMap', path: '/basic-map' },
+		{ title: 'BBoxMap', path: '/bbox-map' },
+		{ title: 'LocatorMap', path: '/locator-map' },
+		{ title: 'MapEditor', path: '/map-editor' }
 	];
 </script>
 
@@ -21,23 +24,23 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each components as component (component.slug)}
+			{#each components as component (component.path)}
 				<tr>
-					<th><a href={component.slug}>{component.title}</a></th>
+					<th><a href={resolve(component.path)}>{component.title}</a></th>
 					<td>
-						<a href={component.slug}
+						<a href={resolve(component.path)}
 							><img
 								width="256"
-								src="{baseUrl + component.slug}-light.png"
+								src="{baseUrl + component.path}-light.png"
 								alt="screenshot of {component.title} in light mode"
 							/></a
 						>
 					</td>
 					<td>
-						<a href={component.slug}
+						<a href={resolve(component.path)}
 							><img
 								width="256"
-								src="{baseUrl + component.slug}-dark.png"
+								src="{baseUrl + component.path}-dark.png"
 								alt="screenshot of {component.title} in dark mode"
 							/></a
 						>
