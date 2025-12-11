@@ -5,10 +5,11 @@
   "scripts": {
     "build": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && vite build && npm run package",
     "check-watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "check": "npm run format && npm run lint && npm run build && npm run test",
+    "check": "npm run lint && npm run build && npm run test && npm run format:check",
     "dev": "vite dev",
     "format": "prettier --write --log-level warn .",
-    "lint": "prettier --check . && eslint --color .",
+    "format:check": "prettier --check .",
+    "lint": "eslint --color .",
     "package": "svelte-kit sync && svelte-package && publint",
     "prepack": "npm run build",
     "prepublishOnly": "npm run package",
