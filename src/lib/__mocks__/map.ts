@@ -14,7 +14,7 @@ export class MockMap {
 	getCanvasContainer = vi.fn(() => mockedCanvas);
 	addSource = vi.fn();
 	removeSource = vi.fn();
-	getSource = vi.fn(() => ({ setData: vi.fn() })) as Mock<MaplibreMap['getSource']>;
+	getSource = vi.fn(() => ({ setData: vi.fn() }) as unknown) as Mock<MaplibreMap['getSource']>;
 	addLayer = vi.fn();
 	on = vi.fn((event: string, ...rest: unknown[]) => this.events.push({ event, callback: rest.pop() as Callback }));
 	once = vi.fn((event: string, ...rest: unknown[]) => this.events.push({ event, callback: rest.pop() as Callback }));
