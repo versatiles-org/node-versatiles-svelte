@@ -3,10 +3,9 @@
 	import InputRow from './InputRow.svelte';
 
 	const { layer }: { layer: MapLayerFill } = $props();
-
-	let color = $state(layer.color);
-	let pattern = $state(layer.pattern);
-	let opacity = $state(layer.opacity);
+	const color = $derived(layer.color);
+	const pattern = $derived(layer.pattern);
+	const opacity = $derived(layer.opacity);
 </script>
 
 <InputRow label="Color" id="color">
@@ -16,7 +15,7 @@
 		bind:value={
 			() => $color,
 			(v) => {
-				$color = v;
+				color.set(v);
 				layer.manager.state?.log();
 			}
 		}
@@ -29,7 +28,7 @@
 		bind:value={
 			() => $pattern,
 			(v) => {
-				$pattern = v;
+				pattern.set(v);
 				layer.manager.state?.log();
 			}
 		}
@@ -50,7 +49,7 @@
 		bind:value={
 			() => $opacity,
 			(v) => {
-				$opacity = v;
+				opacity.set(v);
 				layer.manager.state?.log();
 			}
 		}

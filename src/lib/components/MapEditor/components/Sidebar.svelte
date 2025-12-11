@@ -9,10 +9,10 @@
 	const { geometryManager }: { geometryManager: GeometryManagerInteractive } = $props();
 
 	let panelShareMap: DialogShareMap | null = null;
-	let history = geometryManager.state;
-	let undoEnabled = $state(geometryManager.state.history.undoEnabled);
-	let redoEnabled = $state(geometryManager.state.history.redoEnabled);
-	let activeElement = geometryManager.selection.selectedElement;
+	const history = $derived(geometryManager.state);
+	const undoEnabled = $derived(geometryManager.state.history.undoEnabled);
+	const redoEnabled = $derived(geometryManager.state.history.redoEnabled);
+	const activeElement = $derived(geometryManager.selection.selectedElement);
 
 	function importGeoJSON() {
 		const input = document.createElement('input');

@@ -4,14 +4,13 @@
 	import SymbolSelector from './PanelSymbolSelector.svelte';
 
 	const { layer }: { layer: MapLayerSymbol } = $props();
-
-	let symbolIndex = $state(layer.symbolIndex);
-	let color = $state(layer.color);
-	let rotate = $state(layer.rotate);
-	let halo = $state(layer.halo);
-	let label = $state(layer.label);
-	let labelAlign = $state(layer.labelAlign);
-	let size = $state(layer.size);
+	const symbolIndex = $derived(layer.symbolIndex);
+	const color = $derived(layer.color);
+	const rotate = $derived(layer.rotate);
+	const halo = $derived(layer.halo);
+	const label = $derived(layer.label);
+	const labelAlign = $derived(layer.labelAlign);
+	const size = $derived(layer.size);
 </script>
 
 <InputRow id="label" label="Symbol">
@@ -19,7 +18,7 @@
 		bind:symbolIndex={
 			() => $symbolIndex,
 			(v) => {
-				$symbolIndex = v;
+				symbolIndex.set(v);
 				layer.manager.state?.log();
 			}
 		}
@@ -34,7 +33,7 @@
 		bind:value={
 			() => $color,
 			(v) => {
-				$color = v;
+				color.set(v);
 				layer.manager.state?.log();
 			}
 		}
@@ -51,7 +50,7 @@
 		bind:value={
 			() => $size,
 			(v) => {
-				$size = v;
+				size.set(v);
 				layer.manager.state?.log();
 			}
 		}
@@ -68,7 +67,7 @@
 		bind:value={
 			() => $rotate,
 			(v) => {
-				$rotate = v;
+				rotate.set(v);
 				layer.manager.state?.log();
 			}
 		}
@@ -85,7 +84,7 @@
 		bind:value={
 			() => $halo,
 			(v) => {
-				$halo = v;
+				halo.set(v);
 				layer.manager.state?.log();
 			}
 		}
@@ -99,7 +98,7 @@
 		bind:value={
 			() => $label,
 			(v) => {
-				$label = v;
+				label.set(v);
 				layer.manager.state?.log();
 			}
 		}
@@ -112,7 +111,7 @@
 		bind:value={
 			() => $labelAlign,
 			(v) => {
-				$labelAlign = v;
+				labelAlign.set(v);
 				layer.manager.state?.log();
 			}
 		}

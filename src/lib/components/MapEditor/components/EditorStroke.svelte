@@ -3,10 +3,9 @@
 	import InputRow from './InputRow.svelte';
 
 	const { layer }: { layer: MapLayerLine } = $props();
-
-	let color = $state(layer.color);
-	let width = $state(layer.width);
-	let dashed = $state(layer.dashed);
+	const color = $derived(layer.color);
+	const width = $derived(layer.width);
+	const dashed = $derived(layer.dashed);
 </script>
 
 <InputRow id="color" label="Color">
@@ -16,7 +15,7 @@
 		bind:value={
 			() => $color,
 			(v) => {
-				$color = v;
+				color.set(v);
 				layer.manager.state?.log();
 			}
 		}
@@ -29,7 +28,7 @@
 		bind:value={
 			() => $dashed,
 			(v) => {
-				$dashed = v;
+				dashed.set(v);
 				layer.manager.state?.log();
 			}
 		}
@@ -50,7 +49,7 @@
 		bind:value={
 			() => $width,
 			(v) => {
-				$width = v;
+				width.set(v);
 				layer.manager.state?.log();
 			}
 		}

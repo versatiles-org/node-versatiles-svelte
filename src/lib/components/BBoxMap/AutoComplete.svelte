@@ -34,16 +34,18 @@
 	// Escape special characters in search string for use in regex
 	const regExpEscape = (s: string) => s.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&');
 
-	if (inputText.length >= minChar) {
-		const r = filterResults();
-		if (r.length > 0) {
-			const { key, value } = r[0];
-			inputText = key;
-			change(JSON.parse(JSON.stringify(value)));
-		} else {
-			inputText = '';
+	$effect(() => {
+		if (inputText.length >= minChar) {
+			const r = filterResults();
+			if (r.length > 0) {
+				const { key, value } = r[0];
+				inputText = key;
+				change(JSON.parse(JSON.stringify(value)));
+			} else {
+				inputText = '';
+			}
 		}
-	}
+	});
 
 	// Handle input change
 	function onChange() {

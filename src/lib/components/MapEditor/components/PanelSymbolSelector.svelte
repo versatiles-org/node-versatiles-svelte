@@ -12,7 +12,7 @@
 
 	let { symbolIndex = $bindable(), map }: { symbolIndex: number; map: MaplibreMap } = $props();
 
-	const symbolLibrary = new SymbolLibrary(map);
+	const symbolLibrary = $derived(new SymbolLibrary(map));
 
 	const drawIconHalo: Action<HTMLCanvasElement, number> = (canvas, index) => symbolLibrary.drawSymbol(canvas, index, 3);
 
