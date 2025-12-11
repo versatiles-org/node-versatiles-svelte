@@ -232,7 +232,7 @@ describe('StateReader', () => {
 		it('should write and read a map object 2', () => {
 			const map: StateRoot['map'] = {
 				center: [-121.013, 82.65],
-				radius: 10.021315508993023
+				radius: 10.021315508993025
 			};
 			const writer = new StateWriter();
 			writer.writeMap(map);
