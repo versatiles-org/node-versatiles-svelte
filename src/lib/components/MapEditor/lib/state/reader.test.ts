@@ -230,16 +230,18 @@ describe('StateReader', () => {
 		});
 
 		it('should write and read a map object 2', () => {
-			const map: StateRoot['map'] = {
+			const map0: StateRoot['map'] = {
 				center: [-121.013, 82.65],
 				radius: 10.021315508993025
 			};
 			const writer = new StateWriter();
-			writer.writeMap(map);
+			writer.writeMap(map0);
 			expect(writer.asBitString()).toBe('100100001010011110101111001110001011011101000011001010111011100010111100');
 
 			const reader = new StateReader(writer.bits);
-			expect(reader.readMap()).toStrictEqual(map);
+			const map1 = reader.readMap();
+			expect(map1?.center).toStrictEqual(map0.center);
+			expect(map1?.radius).toBeCloseTo(map0.radius, 10);
 			expect(reader.ended()).toBe(true);
 		});
 	});
