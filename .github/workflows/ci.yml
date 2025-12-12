@@ -35,14 +35,17 @@ jobs:
       - name: Install
         run: npm install
 
+      - name: Check code formatting
+        run: npm run format:check
+
+      - name: Lint Code
+        run: npm run lint
+
       - name: Build the project
         run: npm run build
 
-      - name: Lint
-        run: npx eslint --color .
-
       - name: Test Code
-        run: npx vitest run --testTimeout 10000
+        run: npm run test-unit
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -66,7 +69,15 @@ jobs:
           file: docker/stable-slim.Dockerfile
 
       - name: Test Playwright
-        run: docker run -v $(pwd)/src:/code/src -v $(pwd)/static:/code/static -v $(pwd)/playwright-tests:/code/playwright-tests -v $(pwd)/test-results:/code/test-results --ipc=host --rm ${{ env.IMAGE_NAME }} /bin/bash -c "npx playwright test --update-snapshots patch"
+        run:
+          docker run \
+            -v $(pwd)/src:/code/src \
+            -v $(pwd)/static:/code/static \
+            -v $(pwd)/playwright-tests:/code/playwright-tests \
+            -v $(pwd)/test-results:/code/test-results \
+            --ipc=host \
+            --rm ${{ env.IMAGE_NAME }} \
+            /bin/bash -c "npx playwright test --update-snapshots patch"
 
       - name: Upload Playwright Test Results
         uses: actions/upload-artifact@v5
