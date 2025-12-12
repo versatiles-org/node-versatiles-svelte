@@ -20,7 +20,8 @@
     "test-playwright": "./scripts/test_playwright.sh",
     "test-unit": "vitest run --testTimeout 10000",
     "test": "npm run test-unit && npm run test-playwright",
-    "upgrade": "vrt deps-upgrade"
+    "upgrade": "vrt deps-upgrade",
+    "prepare": "husky"
   },
   "exports": {
     ".": {
@@ -58,6 +59,7 @@
     "geojson": "^0.5.0",
     "globals": "^16.5.0",
     "happy-dom": "^20.0.11",
+    "husky": "^9.1.7",
     "prettier": "^3.7.4",
     "prettier-plugin-svelte": "^3.4.0",
     "publint": "^0.3.16",
