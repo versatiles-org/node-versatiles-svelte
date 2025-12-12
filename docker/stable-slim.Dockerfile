@@ -11,7 +11,8 @@ ENV XVFB_RES="${RESOLUTION}"
 ARG XARGS=""
 ENV XVFB_ARGS="${XARGS}"
 WORKDIR /code
-COPY *.json *.ts *.js ./
+COPY package.json package-lock.json ./
 RUN npm i
 RUN npx playwright install --with-deps
+COPY *.ts *.js *.json ./
 ENTRYPOINT ["/bin/bash", "/usr/bin/xvfb-startup.sh"]
