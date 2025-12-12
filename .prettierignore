@@ -1,4 +1,5 @@
-*.json
+node_modules/
+package-lock.json
+package.json
 playwright-tests/__snapshots__/
-pnpm-lock.yaml
-yarn.lock
+src/lib/components/BBoxMap/bboxes.json
