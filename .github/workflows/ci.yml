@@ -69,14 +69,15 @@ jobs:
           file: docker/stable-slim.Dockerfile
 
       - name: Test Playwright
-        run: docker run \
-          -v $(pwd)/src:/code/src \
-          -v $(pwd)/static:/code/static \
-          -v $(pwd)/playwright-tests:/code/playwright-tests \
-          -v $(pwd)/test-results:/code/test-results \
-          --ipc=host \
-          --rm ${{ env.IMAGE_NAME }} \
-          /bin/bash -c "npx playwright test --update-snapshots patch"
+        run: |
+          docker run \
+            -v $(pwd)/src:/code/src \
+            -v $(pwd)/static:/code/static \
+            -v $(pwd)/playwright-tests:/code/playwright-tests \
+            -v $(pwd)/test-results:/code/test-results \
+            --ipc=host \
+            --rm ${{ env.IMAGE_NAME }} \
+            /bin/bash -c "npx playwright test --update-snapshots patch"
 
       - name: Upload Playwright Test Results
         uses: actions/upload-artifact@v5
