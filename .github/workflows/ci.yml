@@ -27,7 +27,7 @@ jobs:
           node-version: 22
 
       - name: Init cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
@@ -80,7 +80,7 @@ jobs:
             /bin/bash -c "npx playwright test --update-snapshots patch"
 
       - name: Upload Playwright Test Results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: ${{ failure() }}
         with:
           path: test-results
