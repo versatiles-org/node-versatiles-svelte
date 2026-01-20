@@ -87,3 +87,43 @@ test('delayed state', async ({ page }) => {
 		'tiles/osm/7/66/43'
 	]);
 });
+
+test('should get width and height from parent container', async ({ page }) => {
+	await page.goto('/bbox-map');
+	await waitForMapIsReady(page);
+
+	// Set a custom size for the wrapper that differs from the viewport
+	const customWidth = 800;
+	const customHeight = 450;
+	await page.evaluate(
+		({ width, height }) => {
+			const wrapper = document.querySelector('.wrapper') as HTMLElement;
+			wrapper.style.width = `${width}px`;
+			wrapper.style.height = `${height}px`;
+		},
+		{ width: customWidth, height: customHeight }
+	);
+
+	// Wait for the map to resize
+	await page.waitForTimeout(100);
+
+	const wrapper = page.locator('.wrapper');
+	const container = page.locator('.wrapper > .container');
+	const canvas = page.locator('.wrapper canvas');
+
+	const wrapperBox = await wrapper.boundingBox();
+	const containerBox = await container.boundingBox();
+	const canvasBox = await canvas.boundingBox();
+
+	expect(wrapperBox).not.toBeNull();
+	expect(containerBox).not.toBeNull();
+	expect(canvasBox).not.toBeNull();
+
+	// Verify container fills the wrapper
+	expect(containerBox!.width).toBe(customWidth);
+	expect(containerBox!.height).toBe(customHeight);
+
+	// Verify canvas also fills the wrapper
+	expect(canvasBox!.width).toBe(customWidth);
+	expect(canvasBox!.height).toBe(customHeight);
+});
