@@ -14,9 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
-      attestations: write
-      id-token: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -46,6 +43,26 @@ jobs:
 
       - name: Test Code
         run: npm run test-unit
+
+      - name: Generate test coverage
+        run: npm run test-coverage
+
+      - name: Upload test coverage
+        uses: codecov/codecov-action@v5
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  playwright:
+    name: Playwright
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -85,11 +102,3 @@ jobs:
         with:
           path: test-results
           name: playwright-test-report
-
-      - name: Generate test coverage
-        run: npm run test-coverage
-
-      - name: Upload test coverage
-        uses: codecov/codecov-action@v5
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
