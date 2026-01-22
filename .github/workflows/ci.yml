@@ -94,7 +94,7 @@ jobs:
             -v $(pwd)/test-results:/code/test-results \
             --ipc=host \
             --rm ${{ env.IMAGE_NAME }} \
-            /bin/bash -c "npx playwright test --update-snapshots patch"
+            /bin/bash -c "npx playwright test"
 
       - name: Upload Playwright Test Results
         uses: actions/upload-artifact@v6
