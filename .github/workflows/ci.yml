@@ -87,6 +87,7 @@ jobs:
 
       - name: Test Playwright
         run: |
+          set -eo pipefail
           docker run \
             -v $(pwd)/src:/code/src \
             -v $(pwd)/static:/code/static \
@@ -94,7 +95,7 @@ jobs:
             -v $(pwd)/test-results:/code/test-results \
             --ipc=host \
             --rm ${{ env.IMAGE_NAME }} \
-            /bin/bash -c "npx playwright test"
+            /bin/bash -c "set -e; npx playwright test"
 
       - name: Upload Playwright Test Results
         uses: actions/upload-artifact@v6
