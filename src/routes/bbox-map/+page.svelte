@@ -26,5 +26,5 @@
 </script>
 
 <div class="wrapper">
-	<BBoxMap bind:selectedBBox />
+	<BBoxMap bind:selectedBBox onMapLoad={() => console.log('map_ready')} />
 </div>

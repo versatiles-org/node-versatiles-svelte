@@ -7,6 +7,12 @@
 	import { GeometryManagerInteractive } from './lib/geometry_manager_interactive.js';
 	import { StateReader } from './lib/state/reader.js';
 
+	let {
+		onMapLoad
+	}: {
+		onMapLoad?: (map: MaplibreMapType, maplibre: typeof import('maplibre-gl')) => void;
+	} = $props();
+
 	let showSidebar = $state(false);
 	let geometryManager: GeometryManager | GeometryManagerInteractive | undefined = $state();
 
@@ -52,6 +58,7 @@
 	<div class="container">
 		<BasicMap
 			{onMapInit}
+			{onMapLoad}
 			emptyStyle={true}
 			mapOptions={{ attributionControl: false }}
 			styleOptions={{ darkMode: false }}

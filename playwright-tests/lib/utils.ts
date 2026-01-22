@@ -6,7 +6,7 @@ export async function waitForMapIsReady(page: Page, count: number = 1): Promise<
 			const text = msg.text();
 			if (text == 'map_ready') {
 				count--;
-				if (count < 1) resolve();
+				if (count < 1) setTimeout(resolve, 100);
 				return;
 			}
 			if (text.includes('[JavaScript Warning: "WebGL warning: texImage:')) return;

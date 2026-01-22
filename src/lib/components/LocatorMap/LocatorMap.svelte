@@ -3,6 +3,12 @@
 	import BasicMap from '$lib/components/BasicMap/BasicMap.svelte';
 	let map: MaplibreMapType;
 
+	let {
+		onMapLoad
+	}: {
+		onMapLoad?: (map: MaplibreMapType, maplibre: typeof import('maplibre-gl')) => void;
+	} = $props();
+
 	function onMapInit(_map: MaplibreMapType) {
 		map = _map;
 		map.on('load', async () => {
@@ -66,7 +72,7 @@
 </script>
 
 <div class="container">
-	<BasicMap {onMapInit}></BasicMap>
+	<BasicMap {onMapInit} {onMapLoad}></BasicMap>
 </div>
 
 <style>

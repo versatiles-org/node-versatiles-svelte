@@ -64,7 +64,6 @@
 			if (!map!.loaded()) return;
 			triggeredMapReady = true;
 			if (onMapLoad) onMapLoad(map!, maplibre);
-			setTimeout(() => console.log('map_ready'), 100);
 		}
 	}
 </script>

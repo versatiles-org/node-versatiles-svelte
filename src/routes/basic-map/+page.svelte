@@ -10,5 +10,6 @@
 				[90, 60]
 			]
 		}}
+		onMapLoad={() => console.log('map_ready')}
 	/>
 </div>

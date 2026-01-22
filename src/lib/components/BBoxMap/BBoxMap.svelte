@@ -7,7 +7,13 @@
 	import { loadBBoxes } from './BBoxMap.js';
 	import { BBoxDrawer, isSameBBox, type BBox } from './lib/bbox_drawer.js';
 
-	let { selectedBBox = $bindable() }: { selectedBBox?: BBox } = $props();
+	let {
+		selectedBBox = $bindable(),
+		onMapLoad
+	}: {
+		selectedBBox?: BBox;
+		onMapLoad?: (map: MaplibreMapType, maplibre: typeof import('maplibre-gl')) => void;
+	} = $props();
 
 	const startTime = Date.now();
 	let bboxDrawer: BBoxDrawer | undefined;
@@ -95,7 +101,7 @@
 			/>
 		</div>
 	{/if}
-	<BasicMap {onMapInit}></BasicMap>
+	<BasicMap {onMapInit} {onMapLoad}></BasicMap>
 </div>
 
 <style>

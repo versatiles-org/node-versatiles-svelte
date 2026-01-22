@@ -3,5 +3,5 @@
 </script>
 
 <div class="wrapper">
-	<LocatorMap />
+	<LocatorMap onMapLoad={() => console.log('map_ready')} />
 </div>

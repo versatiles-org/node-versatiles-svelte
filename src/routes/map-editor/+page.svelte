@@ -3,5 +3,5 @@
 </script>
 
 <div class="wrapper">
-	<MapEditor />
+	<MapEditor onMapLoad={() => console.log('map_ready')} />
 </div>
