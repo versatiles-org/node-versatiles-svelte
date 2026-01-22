@@ -27,4 +27,5 @@
 
 <div class="wrapper">
 	<BBoxMap bind:selectedBBox onMapLoad={() => console.log('map_ready')} />
+	<p style="display:none" class="hidden_result">{JSON.stringify(selectedBBox)}</p>
 </div>

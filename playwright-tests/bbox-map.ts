@@ -127,3 +127,34 @@ test('should get width and height from parent container', async ({ page }) => {
 	expect(canvasBox!.width).toBe(customWidth);
 	expect(canvasBox!.height).toBe(customHeight);
 });
+
+test('autocomplete search and selection', async ({ page }) => {
+	await page.goto('/bbox-map');
+	await waitForMapIsReady(page);
+
+	const input = page.locator('input[type="text"]');
+	const autocomplete = page.locator('div.autocomplete-results');
+	const autocompleteResults = page.locator('div.autocomplete-results button');
+	const hiddenResult = page.locator('p.hidden_result');
+
+	// Select the text input and type "bra"
+	await input.click();
+
+	await input.fill('br');
+	expect(await autocomplete.isVisible()).toBe(false);
+
+	await input.fill('bra');
+	expect(await autocomplete.isVisible()).toBe(true);
+	expect(await autocompleteResults.first().textContent()).toBe('Brazil');
+	expect(await autocompleteResults.nth(1).textContent()).toBe('Germany, Brandenburg');
+	expect(await input.inputValue()).toBe('bra');
+
+	// Press arrow down to move to second result (Germany, Brandenburg)
+	await input.press('ArrowDown');
+	expect(await input.inputValue()).toBe('bra');
+
+	// Press Enter to select
+	await input.press('Enter');
+	expect(await input.inputValue()).toBe('Germany, Brandenburg');
+	expect(await hiddenResult.textContent()).toBe('[11.26,51.36,14.77,53.559]');
+});
