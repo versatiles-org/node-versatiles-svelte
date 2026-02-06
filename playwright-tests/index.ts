@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './lib/test.js';
 
 test('home page has expected h1', async ({ page }) => {
 	await page.goto('/');

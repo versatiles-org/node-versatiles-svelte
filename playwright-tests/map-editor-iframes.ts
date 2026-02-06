@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './lib/test.js';
 import { checkScreenshot, trackServerRequests, waitForMapIsReady } from './lib/utils';
 
 test.use({ viewport: { width: 903, height: 903 }, deviceScaleFactor: 1 });
