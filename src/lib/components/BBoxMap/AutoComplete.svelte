@@ -105,7 +105,7 @@
 	});
 </script>
 
-<svelte:window on:click={() => close()} />
+<svelte:window onclick={() => close()} />
 
 <div class="autocomplete" bind:this={autocompleteElement}>
 	<input
