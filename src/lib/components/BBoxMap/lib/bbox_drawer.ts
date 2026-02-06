@@ -6,7 +6,7 @@ export type DragPoint = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | fals
 // prettier-ignore
 export const DragPointMap = new Map<DragPoint, { cursor: string, flipH: DragPoint, flipV: DragPoint }>([
 	['n', { cursor: 'ns-resize', flipH: 'n', flipV: 's' }],
-	['ne', { cursor: 'nesw-resize', flipH: 'n', flipV: 'se' }],
+	['ne', { cursor: 'nesw-resize', flipH: 'nw', flipV: 'se' }],
 	['e', { cursor: 'ew-resize', flipH: 'w', flipV: 'e' }],
 	['se', { cursor: 'nwse-resize', flipH: 'sw', flipV: 'ne' }],
 	['s', { cursor: 'ns-resize', flipH: 's', flipV: 'n' }],
