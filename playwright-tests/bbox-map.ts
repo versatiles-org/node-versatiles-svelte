@@ -17,17 +17,23 @@ test('default', async ({ page }) => {
 
 	expect(tracker()).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
+		'assets/glyphs/noto_sans_regular/256-511.pbf',
+		'assets/glyphs/noto_sans_regular/512-767.pbf',
 		'assets/sprites/basics/sprites.json',
 		'assets/sprites/basics/sprites.png',
-		'tiles/osm/4/7/4',
-		'tiles/osm/4/7/5',
-		'tiles/osm/4/8/4',
-		'tiles/osm/4/8/5',
-		'tiles/osm/4/9/4',
-		'tiles/osm/4/9/5'
+		'tiles/osm/5/15/10',
+		'tiles/osm/5/15/11',
+		'tiles/osm/5/16/10',
+		'tiles/osm/5/16/11',
+		'tiles/osm/5/17/10',
+		'tiles/osm/5/17/11',
+		'tiles/osm/5/18/10',
+		'tiles/osm/5/18/11'
 	]);
 
 	expect(await page.locator('.wrapper').ariaSnapshot()).toBe(`- textbox "Find country, region or city …": Germany
+- button "Use visible area as bounding box":
+  - img
 - region "Map"
 - group:
   - text: ©
@@ -47,8 +53,12 @@ test('initial state', async ({ page }) => {
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
 		'assets/sprites/basics/sprites.json',
 		'assets/sprites/basics/sprites.png',
-		'tiles/osm/6/32/21',
-		'tiles/osm/6/33/21'
+		'tiles/osm/7/64/42',
+		'tiles/osm/7/64/43',
+		'tiles/osm/7/65/42',
+		'tiles/osm/7/65/43',
+		'tiles/osm/7/66/42',
+		'tiles/osm/7/66/43'
 	]);
 });
 
@@ -63,16 +73,24 @@ test('delayed state', async ({ page }) => {
 
 	expect(tracker()).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
+		'assets/glyphs/noto_sans_regular/256-511.pbf',
+		'assets/glyphs/noto_sans_regular/512-767.pbf',
 		'assets/sprites/basics/sprites.json',
 		'assets/sprites/basics/sprites.png',
-		'tiles/osm/4/7/4',
-		'tiles/osm/4/7/5',
-		'tiles/osm/4/8/4',
-		'tiles/osm/4/8/5',
-		'tiles/osm/4/9/4',
-		'tiles/osm/4/9/5',
-		'tiles/osm/6/32/21',
-		'tiles/osm/6/33/21'
+		'tiles/osm/5/15/10',
+		'tiles/osm/5/15/11',
+		'tiles/osm/5/16/10',
+		'tiles/osm/5/16/11',
+		'tiles/osm/5/17/10',
+		'tiles/osm/5/17/11',
+		'tiles/osm/5/18/10',
+		'tiles/osm/5/18/11',
+		'tiles/osm/7/64/42',
+		'tiles/osm/7/64/43',
+		'tiles/osm/7/65/42',
+		'tiles/osm/7/65/43',
+		'tiles/osm/7/66/42',
+		'tiles/osm/7/66/43'
 	]);
 });
 
