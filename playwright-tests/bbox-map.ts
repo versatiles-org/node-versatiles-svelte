@@ -134,6 +134,104 @@ test('should get width and height from parent container', async ({ page }) => {
 	expect(canvasBox!.height).toBe(customHeight);
 });
 
+test('select visible area button', async ({ page }) => {
+	await page.goto('/bbox-map');
+	await waitForMapIsReady(page);
+
+	const hiddenResult = page.locator('p.hidden_result');
+	const button = page.locator('button.select-visible');
+
+	// Click the "select visible area" button on the default view
+	await button.click();
+	await page.waitForTimeout(500);
+
+	// The bbox should now be set (was undefined before)
+	const bboxText = await hiddenResult.textContent();
+	const bbox = JSON.parse(bboxText!);
+	expect(bbox).toHaveLength(4);
+	// west < east, south < north
+	expect(bbox[0]).toBeLessThan(bbox[2]);
+	expect(bbox[1]).toBeLessThan(bbox[3]);
+	// Values should be rounded to 3 decimal places
+	for (const v of bbox) {
+		expect(Math.round(v * 1e3)).toBe(v * 1e3);
+	}
+});
+
+test('select visible area round-trip stability', async ({ page }) => {
+	await page.goto('/bbox-map');
+	await waitForMapIsReady(page);
+
+	const hiddenResult = page.locator('p.hidden_result');
+	const button = page.locator('button.select-visible');
+
+	// Set a specific bbox and wait for zoom
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	await page.waitForFunction(() => (window as any).setBBox([8, 48, 12, 52]));
+	await page.waitForTimeout(3000);
+
+	// Click the button to select the visible area
+	await button.click();
+	await page.waitForTimeout(500);
+
+	const bboxFirst = JSON.parse((await hiddenResult.textContent())!);
+
+	// Click again — the bbox should remain stable (round-trip is lossless)
+	await button.click();
+	await page.waitForTimeout(500);
+
+	const bboxSecond = JSON.parse((await hiddenResult.textContent())!);
+
+	expect(bboxSecond[0]).toBeCloseTo(bboxFirst[0], 2);
+	expect(bboxSecond[1]).toBeCloseTo(bboxFirst[1], 2);
+	expect(bboxSecond[2]).toBeCloseTo(bboxFirst[2], 2);
+	expect(bboxSecond[3]).toBeCloseTo(bboxFirst[3], 2);
+});
+
+test('bbox drag updates selectedBBox', async ({ page }) => {
+	await page.goto('/bbox-map#5,47,15,55');
+	await waitForMapIsReady(page);
+
+	const hiddenResult = page.locator('p.hidden_result');
+	const canvas = page.locator('.maplibregl-canvas');
+
+	const bboxBefore = await hiddenResult.textContent();
+	expect(bboxBefore).toBe('[5,47,15,55]');
+
+	const canvasBox = await canvas.boundingBox();
+	expect(canvasBox).not.toBeNull();
+
+	// Use map.project() to get the actual pixel position of the east edge,
+	// since cameraForBounds may not fill the full viewport width.
+	const eastEdgePixel = await page.evaluate(() => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const map = (window as any).__testMap;
+		const p = map.project([15, 51]); // east lon, center lat of bbox
+		return { x: p.x, y: p.y };
+	});
+
+	const eastEdgeX = canvasBox!.x + eastEdgePixel.x;
+	const centerY = canvasBox!.y + eastEdgePixel.y;
+	const dragTargetX = eastEdgeX - 100;
+
+	await page.mouse.move(eastEdgeX, centerY);
+	await page.mouse.down();
+	await page.mouse.move(dragTargetX, centerY, { steps: 10 });
+	await page.mouse.up();
+	await page.waitForTimeout(500);
+
+	// The bbox should have changed
+	const bboxAfter = await hiddenResult.textContent();
+	expect(bboxAfter).not.toBe(bboxBefore);
+
+	const bbox = JSON.parse(bboxAfter!);
+	expect(bbox).toHaveLength(4);
+	expect(bbox[0]).toBeLessThan(bbox[2]);
+	expect(bbox[1]).toBeLessThan(bbox[3]);
+	// The east edge should have moved west (smaller longitude)
+	expect(bbox[2]).toBeLessThan(15);
+});
+
 test('autocomplete search and selection', async ({ page }) => {
 	await page.goto('/bbox-map');
 	await waitForMapIsReady(page);

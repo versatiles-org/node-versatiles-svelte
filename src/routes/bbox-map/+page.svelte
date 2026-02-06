@@ -26,6 +26,13 @@
 </script>
 
 <div class="wrapper">
-	<BBoxMap bind:selectedBBox onMapLoad={() => console.log('map_ready')} />
+	<BBoxMap
+		bind:selectedBBox
+		onMapLoad={(map) => {
+			console.log('map_ready');
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(window as any).__testMap = map;
+		}}
+	/>
 	<p style="display:none" class="hidden_result">{JSON.stringify(selectedBBox)}</p>
 </div>
