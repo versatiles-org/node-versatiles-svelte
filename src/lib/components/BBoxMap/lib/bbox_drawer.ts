@@ -78,6 +78,7 @@ export class BBoxDrawer extends EventHandler<{ drag: BBox; dragEnd: BBox }> {
 		});
 
 		map.on('mouseup', () => {
+			if (!this.isDragging) return;
 			this.isDragging = false;
 			this.updateDragPoint(false);
 			this.emit('dragEnd', [...this.#bbox]);
