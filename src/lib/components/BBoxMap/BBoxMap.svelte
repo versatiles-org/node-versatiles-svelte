@@ -4,6 +4,7 @@
 	import { getCountryName } from '$lib/utils/location.js';
 	import BasicMap from '$lib/components/BasicMap/BasicMap.svelte';
 	import { isDarkMode } from '$lib/utils/map_style.js';
+	import { onDestroy } from 'svelte';
 	import { loadBBoxes } from './BBoxMap.js';
 	import { BBoxDrawer, isSameBBox, type BBox } from './lib/bbox_drawer.js';
 
@@ -88,6 +89,10 @@
 		if (disableZoomTimeout) clearTimeout(disableZoomTimeout);
 		disableZoomTimeout = setTimeout(() => (disableZoomTimeout = undefined), 100);
 	}
+
+	onDestroy(() => {
+		bboxDrawer?.destroy();
+	});
 </script>
 
 <div class="container">

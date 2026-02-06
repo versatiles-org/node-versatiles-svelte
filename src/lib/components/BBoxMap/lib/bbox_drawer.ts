@@ -165,6 +165,17 @@ export class BBoxDrawer extends EventHandler<{ drag: BBox; dragEnd: BBox }> {
 		return DragPointMap.get(drag)?.cursor ?? 'default';
 	}
 
+	public destroy(): void {
+		this.map.off('mousemove', this.handleMouseMove);
+		this.map.off('mousedown', this.handleMouseDown);
+		this.map.off('mouseup', this.handleMouseUp);
+		if (this.map.getLayer(this.lineLayerId)) this.map.removeLayer(this.lineLayerId);
+		if (this.map.getLayer(this.fillLayerId)) this.map.removeLayer(this.fillLayerId);
+		if (this.map.getSource(this.sourceId)) this.map.removeSource(this.sourceId);
+		this.canvas.style.cursor = '';
+		this.clear();
+	}
+
 	private doDrag(lngLat: maplibregl.LngLat): void {
 		this.#bbox = ((bbox) => {
 			const x = Math.round(lngLat.lng * 1e3) / 1e3;
