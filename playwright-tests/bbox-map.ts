@@ -17,16 +17,14 @@ test('default', async ({ page }) => {
 
 	expect(tracker()).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
-		'assets/glyphs/noto_sans_regular/256-511.pbf',
-		'assets/glyphs/noto_sans_regular/512-767.pbf',
 		'assets/sprites/basics/sprites.json',
 		'assets/sprites/basics/sprites.png',
-		'tiles/osm/5/15/10',
-		'tiles/osm/5/15/11',
-		'tiles/osm/5/16/10',
-		'tiles/osm/5/16/11',
-		'tiles/osm/5/17/10',
-		'tiles/osm/5/17/11'
+		'tiles/osm/4/7/4',
+		'tiles/osm/4/7/5',
+		'tiles/osm/4/8/4',
+		'tiles/osm/4/8/5',
+		'tiles/osm/4/9/4',
+		'tiles/osm/4/9/5'
 	]);
 
 	expect(await page.locator('.wrapper').ariaSnapshot()).toBe(`- textbox "Find country, region or city …": Germany
@@ -36,7 +34,7 @@ test('default', async ({ page }) => {
   - link "OpenStreetMap":
     - /url: https://www.openstreetmap.org/copyright
   - text: contributors`);
-	await checkScreenshot(page, 'default', 3e5);
+	await checkScreenshot(page, 'default', 1e5);
 });
 
 test('initial state', async ({ page }) => {
@@ -49,12 +47,8 @@ test('initial state', async ({ page }) => {
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
 		'assets/sprites/basics/sprites.json',
 		'assets/sprites/basics/sprites.png',
-		'tiles/osm/7/64/42',
-		'tiles/osm/7/64/43',
-		'tiles/osm/7/65/42',
-		'tiles/osm/7/65/43',
-		'tiles/osm/7/66/42',
-		'tiles/osm/7/66/43'
+		'tiles/osm/6/32/21',
+		'tiles/osm/6/33/21'
 	]);
 });
 
@@ -69,22 +63,16 @@ test('delayed state', async ({ page }) => {
 
 	expect(tracker()).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
-		'assets/glyphs/noto_sans_regular/256-511.pbf',
-		'assets/glyphs/noto_sans_regular/512-767.pbf',
 		'assets/sprites/basics/sprites.json',
 		'assets/sprites/basics/sprites.png',
-		'tiles/osm/5/15/10',
-		'tiles/osm/5/15/11',
-		'tiles/osm/5/16/10',
-		'tiles/osm/5/16/11',
-		'tiles/osm/5/17/10',
-		'tiles/osm/5/17/11',
-		'tiles/osm/7/64/42',
-		'tiles/osm/7/64/43',
-		'tiles/osm/7/65/42',
-		'tiles/osm/7/65/43',
-		'tiles/osm/7/66/42',
-		'tiles/osm/7/66/43'
+		'tiles/osm/4/7/4',
+		'tiles/osm/4/7/5',
+		'tiles/osm/4/8/4',
+		'tiles/osm/4/8/5',
+		'tiles/osm/4/9/4',
+		'tiles/osm/4/9/5',
+		'tiles/osm/6/32/21',
+		'tiles/osm/6/33/21'
 	]);
 });
 
