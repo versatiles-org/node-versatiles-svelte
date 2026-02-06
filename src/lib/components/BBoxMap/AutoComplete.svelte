@@ -46,7 +46,7 @@
 	}
 
 	function onFocus() {
-		inputElement.setSelectionRange(0, 1000);
+		inputElement.setSelectionRange(0, inputElement.value.length);
 	}
 
 	// Filter results based on search query
@@ -122,7 +122,7 @@
 		aria-autocomplete="list"
 		aria-controls="autocomplete-results"
 	/>
-	<div class="autocomplete-results" class:hide-results={!isOpen}>
+	<div class="autocomplete-results" class:hide-results={!isOpen} id="autocomplete-results" role="listbox">
 		{#each results as result, i (result.key)}
 			<button
 				onclick={() => close(i)}
