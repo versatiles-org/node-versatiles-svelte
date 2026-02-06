@@ -16,6 +16,7 @@
 		onMapLoad?: (map: MaplibreMapType, maplibre: typeof import('maplibre-gl')) => void;
 	} = $props();
 
+	const bboxPadding = 20;
 	const startTime = Date.now();
 	let bboxDrawer: BBoxDrawer | undefined;
 	let map: MaplibreMapType | undefined = $state();
@@ -57,9 +58,8 @@
 		if (!bboxDrawer || !map || !selectedBBox) return;
 		if (disableZoomTimeout) return;
 
-		const transform = map.cameraForBounds(selectedBBox) as CameraOptions;
+		const transform = map.cameraForBounds(selectedBBox, { padding: bboxPadding }) as CameraOptions;
 		if (transform == null) return;
-		transform.zoom = (transform.zoom ?? 0) - 0.5;
 		transform.bearing = 0;
 		transform.pitch = 0;
 
@@ -92,14 +92,12 @@
 
 	function selectVisibleArea() {
 		if (!map) return;
-		const bounds = map.getBounds();
+		const pad = map.getPadding();
+		const { clientWidth: w, clientHeight: h } = map.getContainer();
+		const nw = map.unproject([(pad.left ?? 0) + bboxPadding, (pad.top ?? 0) + bboxPadding]);
+		const se = map.unproject([w - (pad.right ?? 0) - bboxPadding, h - (pad.bottom ?? 0) - bboxPadding]);
 		const round = (v: number) => Math.round(v * 1e3) / 1e3;
-		selectedBBox = [
-			round(bounds.getWest()),
-			round(bounds.getSouth()),
-			round(bounds.getEast()),
-			round(bounds.getNorth())
-		];
+		selectedBBox = [round(nw.lng), round(se.lat), round(se.lng), round(nw.lat)];
 	}
 
 	onDestroy(() => {
