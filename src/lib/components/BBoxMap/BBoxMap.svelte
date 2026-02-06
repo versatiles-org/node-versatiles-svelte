@@ -58,7 +58,7 @@
 
 		const transform = map.cameraForBounds(selectedBBox) as CameraOptions;
 		if (transform == null) return;
-		transform.zoom = transform.zoom ?? 0 - 0.5;
+		transform.zoom = (transform.zoom ?? 0) - 0.5;
 		transform.bearing = 0;
 		transform.pitch = 0;
 
