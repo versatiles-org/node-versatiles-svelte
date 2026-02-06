@@ -1,4 +1,10 @@
 import { expect, type Page } from '@playwright/test';
+import { createHash } from 'crypto';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+const CACHE_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', '.request-cache');
 
 export async function waitForMapIsReady(page: Page, count: number = 1): Promise<void> {
 	await new Promise<void>((resolve) => {
@@ -34,7 +40,49 @@ export async function trackServerRequests(page: Page): Promise<() => string[]> {
 		url = url.replace('sprites@2x.', 'sprites.');
 
 		tileServerRequests.push(url);
-		route.continue();
+		route.fallback();
 	});
 	return () => tileServerRequests.sort();
+}
+
+export async function setupRequestCache(page: Page): Promise<void> {
+	if (!existsSync(CACHE_DIR)) {
+		mkdirSync(CACHE_DIR, { recursive: true });
+	}
+
+	await page.route('**', async (route) => {
+		const url = route.request().url();
+		const { hostname } = new URL(url);
+
+		if (hostname === 'localhost' || hostname === '127.0.0.1') {
+			return route.continue();
+		}
+
+		const hash = createHash('sha256').update(url).digest('hex').slice(0, 16);
+		const metaPath = join(CACHE_DIR, hash + '.meta.json');
+		const bodyPath = join(CACHE_DIR, hash + '.body');
+
+		if (existsSync(metaPath) && existsSync(bodyPath)) {
+			const meta = JSON.parse(readFileSync(metaPath, 'utf-8'));
+			const body = readFileSync(bodyPath);
+			return route.fulfill({ status: meta.status, headers: meta.headers, body });
+		}
+
+		try {
+			const response = await route.fetch();
+			const body = await response.body();
+			const headers = response.headers();
+			// route.fetch() decompresses the body, so these headers no longer apply
+			delete headers['content-encoding'];
+			delete headers['content-length'];
+			const meta = { status: response.status(), headers, url };
+
+			writeFileSync(metaPath, JSON.stringify(meta, null, '\t'));
+			writeFileSync(bodyPath, body);
+
+			return route.fulfill({ status: meta.status, headers, body });
+		} catch {
+			// Page may have been closed while request was in flight
+		}
+	});
 }
