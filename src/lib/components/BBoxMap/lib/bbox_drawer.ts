@@ -21,10 +21,15 @@ const worldBBox: BBox = [-180, -85, 180, 85];
 
 export class BBoxDrawer extends EventHandler<{ drag: BBox; dragEnd: BBox }> {
 	private sourceId: string;
+	private lineLayerId: string;
+	private fillLayerId: string;
 	private dragPoint: DragPoint = false;
 	private isDragging = false;
 	private map: maplibregl.Map;
 	private canvas: HTMLElement;
+	private handleMouseMove: (e: maplibregl.MapMouseEvent) => void;
+	private handleMouseDown: (e: maplibregl.MapMouseEvent) => void;
+	private handleMouseUp: () => void;
 
 	private insideOut: boolean;
 	#bbox: BBox;
@@ -35,11 +40,14 @@ export class BBoxDrawer extends EventHandler<{ drag: BBox; dragEnd: BBox }> {
 		this.insideOut = insideOut ?? true;
 		this.map = map;
 
-		this.sourceId = 'bbox_' + Math.random().toString(36).slice(2);
+		const uid = Math.random().toString(36).slice(2);
+		this.sourceId = 'bbox_' + uid;
+		this.lineLayerId = 'bbox-line_' + uid;
+		this.fillLayerId = 'bbox-fill_' + uid;
 
 		map.addSource(this.sourceId, { type: 'geojson', data: this.getAsFeatureCollection() });
 		map.addLayer({
-			id: 'bbox-line_' + Math.random().toString(36).slice(2),
+			id: this.lineLayerId,
 			type: 'line',
 			source: this.sourceId,
 			filter: ['==', '$type', 'LineString'],
@@ -47,7 +55,7 @@ export class BBoxDrawer extends EventHandler<{ drag: BBox; dragEnd: BBox }> {
 			paint: { 'line-color': color }
 		});
 		map.addLayer({
-			id: 'bbox-fill_' + Math.random().toString(36).slice(2),
+			id: this.fillLayerId,
 			type: 'fill',
 			source: this.sourceId,
 			filter: ['==', '$type', 'Polygon'],
@@ -57,7 +65,7 @@ export class BBoxDrawer extends EventHandler<{ drag: BBox; dragEnd: BBox }> {
 
 		this.canvas = map.getCanvasContainer();
 
-		map.on('mousemove', (e) => {
+		this.handleMouseMove = (e) => {
 			if (e.originalEvent.buttons % 2 === 0) return this.checkDragPointAt(e.point);
 			if (!this.isDragging) return;
 			if (!this.dragPoint) return this.checkDragPointAt(e.point);
@@ -66,23 +74,27 @@ export class BBoxDrawer extends EventHandler<{ drag: BBox; dragEnd: BBox }> {
 			this.redraw();
 			e.preventDefault();
 			this.emit('drag', [...this.#bbox]);
-		});
+		};
 
-		map.on('mousedown', (e) => {
+		this.handleMouseDown = (e) => {
 			if (this.isDragging) return;
 			if (e.originalEvent.buttons % 2) {
 				this.checkDragPointAt(e.point);
 				if (this.dragPoint) this.isDragging = true;
 				if (this.isDragging) e.preventDefault();
 			}
-		});
+		};
 
-		map.on('mouseup', () => {
+		this.handleMouseUp = () => {
 			if (!this.isDragging) return;
 			this.isDragging = false;
 			this.updateDragPoint(false);
 			this.emit('dragEnd', [...this.#bbox]);
-		});
+		};
+
+		map.on('mousemove', this.handleMouseMove);
+		map.on('mousedown', this.handleMouseDown);
+		map.on('mouseup', this.handleMouseUp);
 	}
 
 	private updateDragPoint(dragPoint: DragPoint) {
