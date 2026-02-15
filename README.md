@@ -1,7 +1,8 @@
-[![NPM Version](https://img.shields.io/npm/v/%40versatiles%2Fsvelte)](https://www.npmjs.com/package/@versatiles/svelte)
-[![NPM Downloads](https://img.shields.io/npm/dy/%40versatiles%2Fsvelte)](https://www.npmjs.com/package/@versatiles/svelte)
-[![Code Coverage](https://codecov.io/gh/versatiles-org/node-versatiles-svelte/branch/main/graph/badge.svg?token=DaJDN0E3Ae)](https://codecov.io/gh/versatiles-org/node-versatiles-svelte)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/versatiles-org/node-versatiles-svelte/ci.yml)](https://github.com/versatiles-org/node-versatiles-svelte/actions/workflows/ci.yml)
+[![NPM version](https://img.shields.io/npm/v/%40versatiles%2Fsvelte)](https://www.npmjs.com/package/@versatiles/svelte)
+[![NPM downloads](https://img.shields.io/npm/dy/%40versatiles%2Fsvelte)](https://www.npmjs.com/package/@versatiles/svelte)
+[![Code coverage](https://codecov.io/gh/versatiles-org/node-versatiles-svelte/branch/main/graph/badge.svg?token=DaJDN0E3Ae)](https://codecov.io/gh/versatiles-org/node-versatiles-svelte)
+[![CI status](https://img.shields.io/github/actions/workflow/status/versatiles-org/node-versatiles-svelte/ci.yml)](https://github.com/versatiles-org/node-versatiles-svelte/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 # Svelte Components for VersaTiles
 
