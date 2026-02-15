@@ -79,6 +79,6 @@ describe('BBoxDrawer', () => {
 		expect(bboxDrawer['getCursor']('sw')).toEqual('nesw-resize');
 		expect(bboxDrawer['getCursor']('w')).toEqual('ew-resize');
 		expect(bboxDrawer['getCursor']('nw')).toEqual('nwse-resize');
-		expect(bboxDrawer['getCursor'](false)).toEqual('default');
+		expect(bboxDrawer['getCursor'](false)).toEqual('');
 	});
 });

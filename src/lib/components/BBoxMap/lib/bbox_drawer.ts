@@ -13,7 +13,7 @@ export const DragPointMap = new Map<DragPoint, { cursor: string, flipH: DragPoin
 	['sw', { cursor: 'nesw-resize', flipH: 'se', flipV: 'nw' }],
 	['w', { cursor: 'ew-resize', flipH: 'e', flipV: 'w' }],
 	['nw', { cursor: 'nwse-resize', flipH: 'ne', flipV: 'sw' }],
-	[false, { cursor: 'default', flipH: false, flipV: false }],
+	[false, { cursor: '', flipH: false, flipV: false }],
 ])
 
 export type BBox = [number, number, number, number];
@@ -174,7 +174,7 @@ export class BBoxDrawer extends EventHandler<{ drag: BBox; dragEnd: BBox }> {
 	}
 
 	private getCursor(drag: DragPoint): string {
-		return DragPointMap.get(drag)?.cursor ?? 'default';
+		return DragPointMap.get(drag)?.cursor ?? '';
 	}
 
 	public destroy(): void {
