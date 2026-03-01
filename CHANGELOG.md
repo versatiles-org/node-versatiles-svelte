@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.2] - 2026-03-01
+
+### Features
+
+- add TypeScript configuration file for project setup
+
+### Bug Fixes
+
+- update badge labels in README.md for consistency
+- add @eslint/js and playwright to devDependencies
+- remove unused dependencies from package.json and package-lock.json
+- initialize result array as undefined for later assignment
+- update @versatiles/release-tool to version 2.7.4 and remove deprecated mdast dependency
+
+### Chores
+
+- **deps:** update dependencies to latest versions
+
 ## [2.2.1] - 2026-02-15
 
 ### Bug Fixes
