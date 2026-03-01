@@ -43,7 +43,7 @@ export async function processData(input: string, labelTemplate: string, populati
 	type Entry = { label: string; population: number; bbox: BBox };
 
 	// Initialize the result array
-	let result: Entry[] = [];
+	let result: Entry[];
 
 	if (input.endsWith('.geojson')) {
 		// If the input is a GeoJSON file, process it directly
