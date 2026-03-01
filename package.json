@@ -42,6 +42,7 @@
     "svelte": "^5.45.8"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.58.2",
     "@sveltejs/adapter-static": "^3.0.10",
     "@sveltejs/kit": "^2.53.4",
@@ -60,6 +61,7 @@
     "globals": "^17.4.0",
     "happy-dom": "^20.7.0",
     "husky": "^9.1.7",
+    "playwright": "^1.58.2",
     "prettier": "^3.8.1",
     "prettier-plugin-svelte": "^3.5.0",
     "publint": "^0.3.18",
