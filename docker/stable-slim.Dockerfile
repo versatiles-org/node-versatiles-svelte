@@ -1,9 +1,5 @@
-# Thanks to https://github.com/bengreenier/docker-xvfb/blob/master/docker/stable-slim.Dockerfile
-FROM node:24-slim
+FROM mcr.microsoft.com/playwright:v1.60.0-noble
 WORKDIR /usr/bin
-RUN apt-get update -y \
-  && apt-get install --no-install-recommends -y xvfb libgl1-mesa-dri \
-  && rm -rf /var/lib/apt/lists/*
 COPY docker/xvfb-startup.sh .
 RUN sed -i 's/\r$//' xvfb-startup.sh
 ARG RESOLUTION="1920x1080x24"
@@ -13,6 +9,5 @@ ENV XVFB_ARGS="${XARGS}"
 WORKDIR /code
 COPY package.json package-lock.json ./
 RUN npm i
-RUN npx playwright install --with-deps
 COPY *.ts *.js *.json ./
 ENTRYPOINT ["/bin/bash", "/usr/bin/xvfb-startup.sh"]
