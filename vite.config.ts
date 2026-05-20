@@ -12,11 +12,6 @@ export default defineConfig({
 			reporter: ['lcov', 'text']
 		}
 	},
-	esbuild: {
-		supported: {
-			'top-level-await': true
-		}
-	},
 	build: {
 		target: 'esnext',
 		chunkSizeWarningLimit: 1500,
