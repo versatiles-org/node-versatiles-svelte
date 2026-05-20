@@ -71,6 +71,7 @@ test('empty map', async ({ page }) => {
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
 		'assets/glyphs/noto_sans_regular/256-511.pbf',
 		'assets/glyphs/noto_sans_regular/512-767.pbf',
+		'assets/glyphs/noto_sans_regular/8192-8447.pbf',
 		'assets/sprites/basics/sprites.json',
 		'assets/sprites/basics/sprites.png',
 		'tiles/osm/5/16/10',
