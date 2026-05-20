@@ -1,13 +1,8 @@
 FROM mcr.microsoft.com/playwright:v1.60.0-noble
-WORKDIR /usr/bin
-COPY docker/xvfb-startup.sh .
-RUN sed -i 's/\r$//' xvfb-startup.sh
-ARG RESOLUTION="1920x1080x24"
-ENV XVFB_RES="${RESOLUTION}"
-ARG XARGS=""
-ENV XVFB_ARGS="${XARGS}"
 WORKDIR /code
+COPY docker/xvfb-startup.sh /usr/local/bin/xvfb-startup.sh
+RUN chmod +x /usr/local/bin/xvfb-startup.sh
 COPY package.json package-lock.json ./
-RUN npm i
+RUN npm ci
 COPY *.ts *.js *.json ./
-ENTRYPOINT ["/bin/bash", "/usr/bin/xvfb-startup.sh"]
+ENTRYPOINT ["/usr/local/bin/xvfb-startup.sh"]
