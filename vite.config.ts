@@ -4,7 +4,12 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
 	plugins: [sveltekit()],
 	test: {
-		include: ['{src,scripts}/**/*.{test,spec}.{js,ts}']
+		environment: 'happy-dom',
+		include: ['{src,scripts}/**/*.{test,spec}.{js,ts}'],
+		coverage: {
+			provider: 'v8',
+			reporter: ['lcov', 'text']
+		}
 	},
 	build: {
 		target: 'esnext',
