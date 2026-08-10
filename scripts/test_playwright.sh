@@ -2,7 +2,11 @@
 set -e
 cd "$(dirname "$0")/.."
 
-docker build -t playwright-tests -f docker/stable-slim.Dockerfile .
+PLAYWRIGHT_VERSION="$(node -p "require('playwright/package.json').version")"
+
+docker build -t playwright-tests \
+  --build-arg "PLAYWRIGHT_VERSION=$PLAYWRIGHT_VERSION" \
+  -f docker/stable-slim.Dockerfile .
 docker run \
   -v "$(pwd)/src:/code/src" \
   -v "$(pwd)/static:/code/static" \
