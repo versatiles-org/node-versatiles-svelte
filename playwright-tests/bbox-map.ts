@@ -234,6 +234,56 @@ test('bbox drag updates selectedBBox', async ({ page }) => {
 	expect(bbox[2]).toBeLessThan(15);
 });
 
+test('bbox is drawn even when the style loads slowly', async ({ page }) => {
+	// The drawer is created from `onMapInit`, which runs synchronously after `new Map()`.
+	// maplibre marks an inline style loaded one animation frame later, so whether
+	// `await loadBBoxes()` or the style wins is a race — Safari loses it, Chrome and Firefox
+	// do not. Holding back the first animation frames reproduces Safari's ordering here:
+	// the drawer then calls `addSource()` while the style is still loading, and maplibre
+	// throws "Style is not done loading.".
+	await page.addInitScript(() => {
+		const requestFrame = window.requestAnimationFrame.bind(window);
+		const delayUntil = performance.now() + 500;
+		window.requestAnimationFrame = (callback) => {
+			if (performance.now() >= delayUntil) return requestFrame(callback);
+			return setTimeout(() => callback(performance.now()), 500) as unknown as number;
+		};
+	});
+
+	const errors: string[] = [];
+	page.on('pageerror', (error) => errors.push(error.message));
+
+	await page.goto('/bbox-map#5,47,15,55');
+	await waitForMapIsReady(page);
+
+	expect(errors).toStrictEqual([]);
+
+	// the geojson source and both layers were added
+	const layerIds = await page.evaluate(() => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const map = (window as any).__testMap;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		return map.getStyle().layers.map((layer: any) => layer.id as string);
+	});
+	expect(layerIds.filter((id: string) => /^bbox-line_/.test(id))).toHaveLength(1);
+	expect(layerIds.filter((id: string) => /^bbox-fill_/.test(id))).toHaveLength(1);
+
+	// zoom() ran, so the map is centred on the requested bbox
+	const center = await page.evaluate(() => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const { lng, lat } = (window as any).__testMap.getCenter();
+		return { lng, lat };
+	});
+	expect(center.lng).toBeCloseTo(10, 1);
+	// not exactly 51: the map has a 42px top padding, which shifts the centre north
+	expect(center.lat).toBeGreaterThan(47);
+	expect(center.lat).toBeLessThan(55);
+
+	// the dragEnd listener was registered, so dragging still updates selectedBBox
+	const hiddenResult = page.locator('p.hidden_result');
+	expect(await hiddenResult.textContent()).toBe('[5,47,15,55]');
+});
+
 test('autocomplete search and selection', async ({ page }) => {
 	await page.goto('/bbox-map');
 	await waitForMapIsReady(page);
