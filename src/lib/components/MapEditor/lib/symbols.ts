@@ -1,3 +1,5 @@
+import type * as maplibregl from 'maplibre-gl';
+
 const entries: [number, string, string?, [number, number]?][] = [
 	[0, 'none'],
 	[1, 'airplane', 'basics:icon-airfield'],

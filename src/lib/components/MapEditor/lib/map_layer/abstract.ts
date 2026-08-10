@@ -1,3 +1,5 @@
+import type * as maplibregl from 'maplibre-gl';
+import type { AllLayoutProperties, AllPaintProperties, LayerSpecification } from '@maplibre/maplibre-gl-style-spec';
 import type { LayerFill, LayerLine, LayerSymbol } from './types.js';
 import { Color } from '@versatiles/style';
 import type { GeometryManager } from '../geometry_manager.js';
@@ -32,7 +34,7 @@ export abstract class MapLayer<T extends LayerSpec> {
 		this.layout = layout;
 		this.paint = paint;
 
-		this.map.addLayer({ id: this.id, source, type, layout, paint } as maplibregl.LayerSpecification, 'selection_nodes');
+		this.map.addLayer({ id: this.id, source, type, layout, paint } as LayerSpecification, 'selection_nodes');
 
 		this.addEvents();
 
@@ -100,7 +102,11 @@ export abstract class MapLayer<T extends LayerSpec> {
 		if (value instanceof Color) value = value.asString() as V;
 
 		if (this.paint[key] == value) return;
-		this.map.setPaintProperty(this.id, key as string, value);
+		this.map.setPaintProperty(
+			this.id,
+			key as keyof AllPaintProperties,
+			value as AllPaintProperties[keyof AllPaintProperties]
+		);
 		this.paint[key] = value;
 	}
 
@@ -109,7 +115,11 @@ export abstract class MapLayer<T extends LayerSpec> {
 	updateLayout<K extends keyof T['layout'], V extends T['layout'][K]>(arg1: K | T['layout'], arg2?: V) {
 		if (typeof arg1 === 'string') {
 			if (this.layout[arg1] == arg2) return;
-			this.map.setLayoutProperty(this.id, arg1 as string, arg2);
+			this.map.setLayoutProperty(
+				this.id,
+				arg1 as keyof AllLayoutProperties,
+				arg2 as AllLayoutProperties[keyof AllLayoutProperties]
+			);
 			if (arg2 == null) {
 				delete this.layout[arg1];
 			} else {

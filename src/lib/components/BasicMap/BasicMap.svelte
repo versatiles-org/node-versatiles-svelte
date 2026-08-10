@@ -1,7 +1,7 @@
 <script lang="ts">
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { getMapStyle, isDarkMode } from '$lib/utils/map_style.js';
-	import maplibre from 'maplibre-gl';
+	import * as maplibre from 'maplibre-gl';
 	import type { MapOptions } from 'maplibre-gl';
 
 	// Props

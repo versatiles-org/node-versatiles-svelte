@@ -1,3 +1,4 @@
+import type * as maplibregl from 'maplibre-gl';
 import type { SelectionNode, SelectionNodeUpdater } from './types.js';
 import type { GeoPoint } from '../utils/types.js';
 import type { GeometryManager } from '../geometry_manager.js';

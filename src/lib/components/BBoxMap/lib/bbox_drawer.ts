@@ -1,5 +1,5 @@
 import type geojson from 'geojson';
-import type maplibregl from 'maplibre-gl';
+import type * as maplibregl from 'maplibre-gl';
 import { EventHandler } from '../../../utils/event_handler.js';
 
 export type DragPoint = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | false;

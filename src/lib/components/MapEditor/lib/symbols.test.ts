@@ -1,3 +1,4 @@
+import type * as maplibregl from 'maplibre-gl';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { getSymbol, getSymbolIndexByName, SymbolLibrary } from './symbols.js';
 import { MockMap } from '../../../__mocks__/map.js';

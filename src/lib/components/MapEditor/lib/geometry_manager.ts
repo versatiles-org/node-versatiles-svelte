@@ -1,3 +1,4 @@
+import type * as maplibregl from 'maplibre-gl';
 import type { AbstractElement } from './element/abstract.js';
 import type { GeometryManagerInteractive } from './geometry_manager_interactive.js';
 import type { SelectionHandler } from './selection.js';

@@ -1,3 +1,4 @@
+import type * as maplibregl from 'maplibre-gl';
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { AbstractPathElement } from './abstract_path.js';
 import { MockGeometryManager } from '../__mocks__/geometry_manager.js';

@@ -1,3 +1,4 @@
+import type * as maplibregl from 'maplibre-gl';
 import { get, writable, type Writable } from 'svelte/store';
 import type { AbstractElement } from './element/abstract.js';
 import type { SelectionNode } from './element/types.js';

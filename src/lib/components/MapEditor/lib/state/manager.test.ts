@@ -1,3 +1,4 @@
+import type * as maplibregl from 'maplibre-gl';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { StateManager } from './manager.js';
 import { GeometryManagerInteractive } from '../geometry_manager_interactive.js';

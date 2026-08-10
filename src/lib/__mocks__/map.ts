@@ -1,5 +1,5 @@
 import { vi, type Mock } from 'vitest';
-import maplibre from 'maplibre-gl';
+import * as maplibre from 'maplibre-gl';
 
 const mockedCanvas = { style: { cursor: 'default' } } as HTMLElement;
 

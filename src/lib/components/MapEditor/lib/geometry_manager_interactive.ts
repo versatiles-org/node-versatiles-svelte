@@ -1,3 +1,4 @@
+import type * as maplibregl from 'maplibre-gl';
 import { get } from 'svelte/store';
 import type { AbstractElement } from './element/abstract.js';
 import { CircleElement } from './element/circle.js';
