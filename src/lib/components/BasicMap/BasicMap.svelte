@@ -3,12 +3,12 @@
 	import { getMapStyle, isDarkMode } from '$lib/utils/map_style.js';
 	import * as maplibre from 'maplibre-gl';
 	import type { MapOptions } from 'maplibre-gl';
-	// Since v6 MapLibre loads its worker from a separate file that bundlers cannot resolve
-	// via `import.meta.url`, so the URL has to be set explicitly. `?worker&url` (instead of
-	// plain `?url`) makes Vite emit a self-contained chunk, including the worker's imports.
-	import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
-
-	maplibre.setWorkerUrl(workerUrl);
+	// Since v6 MapLibre loads its worker from a separate file, which bundlers cannot resolve
+	// via `import.meta.url` once they have inlined `maplibre-gl.mjs` into a chunk. So we ship
+	// a self-contained copy of the worker (see scripts/bundle_worker.ts) and point MapLibre at
+	// it. Plain `new URL(..., import.meta.url)` keeps this readable by every bundler — a
+	// Vite-only `?worker&url` import breaks Vite's own dependency pre-bundling, see issue #90.
+	maplibre.setWorkerUrl(new URL('../../maplibre-gl-worker.js', import.meta.url).href);
 
 	// Props
 	let {

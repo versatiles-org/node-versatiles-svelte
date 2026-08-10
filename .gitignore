@@ -11,3 +11,4 @@
 /playwright-tests/.request-cache
 /test-results
 Thumbs.db
+/src/lib/maplibre-gl-worker.js

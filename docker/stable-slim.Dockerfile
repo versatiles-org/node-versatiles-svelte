@@ -8,4 +8,6 @@ RUN chmod +x /usr/local/bin/xvfb-startup.sh
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY *.ts *.js *.json ./
+# `npm run build` bundles the MapLibre worker via scripts/bundle_worker.ts
+COPY scripts ./scripts
 ENTRYPOINT ["/usr/local/bin/xvfb-startup.sh"]

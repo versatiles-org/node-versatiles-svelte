@@ -7,14 +7,15 @@
     "url": "git+https://github.com/versatiles-org/node-versatiles-svelte.git"
   },
   "scripts": {
-    "build": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && vite build && npm run package",
+    "bundle-worker": "tsx scripts/bundle_worker.ts",
+    "build": "npm run bundle-worker && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && vite build && npm run package",
     "check-watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "check": "npm run lint && npm run build && npm run test && npm run format:check",
-    "dev": "vite dev",
+    "dev": "npm run bundle-worker && vite dev",
     "format": "prettier --write --log-level warn .",
     "format:check": "prettier --check .",
     "lint": "eslint --color .",
-    "package": "svelte-kit sync && svelte-package && publint",
+    "package": "npm run bundle-worker && svelte-kit sync && svelte-package && publint",
     "prepack": "npm run build",
     "prepublishOnly": "npm run package",
     "preview": "vite preview",
@@ -36,6 +37,7 @@
   "files": [
     "dist",
     "!dist/**/*.spec.*",
+    "!dist/maplibre-gl-worker.d.ts",
     "!dist/**/__mocks__/*",
     "!dist/**/*.test.*",
     "!dist/BBoxMap/data/*",
@@ -55,6 +57,7 @@
     "@types/node": "^26.2.0",
     "@versatiles/release-tool": "^2.9.0",
     "@vitest/coverage-v8": "^4.1.10",
+    "esbuild": "^0.28.2",
     "eslint": "^10.8.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-svelte": "^3.22.0",
@@ -80,7 +83,7 @@
   "dependencies": {
     "@maplibre/maplibre-gl-style-spec": "^26.2.1",
     "@versatiles/style": "^5.13.0",
-    "maplibre-gl": "^6.2.0"
+    "maplibre-gl": "6.2.0"
   },
   "overrides": {
     "cookie": "^0.7.0"
