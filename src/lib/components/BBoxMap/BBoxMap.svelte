@@ -23,12 +23,27 @@
 	let bboxes: { key: string; value: BBox }[] | undefined = $state();
 	let mapContainer: HTMLElement;
 	let disableZoomTimeout: ReturnType<typeof setTimeout> | undefined;
+	let destroyed = false;
 
 	async function onMapInit(_map: MaplibreMapType) {
 		map = _map;
 		mapContainer = map.getContainer();
 		map.setPadding({ top: 42, right: 10, bottom: 15, left: 10 });
+
+		// `BBoxDrawer` adds a source, which maplibre rejects with "Style is not done loading."
+		// until the style is up. Subscribing here rather than after the awaits below is what
+		// makes this race-free: `onMapInit` runs synchronously after `new maplibre.Map()`, and
+		// the style needs at least one animation frame, so `style.load` cannot have fired yet.
+		// Testing `isStyleLoaded()` instead would not work — it additionally requires all
+		// sources and the sprite, so it stays false long after `style.load` fired.
+		const styleLoaded = new Promise<void>((resolve) => _map.once('style.load', () => resolve()));
+
 		bboxes = await loadBBoxes();
+		await styleLoaded;
+
+		// The awaits above can outlive the component, so bail out instead of leaking a drawer
+		// that `onDestroy` has already run past.
+		if (destroyed) return;
 
 		bboxDrawer = new BBoxDrawer(
 			map!,
@@ -101,6 +116,7 @@
 	}
 
 	onDestroy(() => {
+		destroyed = true;
 		bboxDrawer?.destroy();
 	});
 </script>
