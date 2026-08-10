@@ -122,7 +122,7 @@
 	</div>
 </Dialog>
 
-<style type="text/scss">
+<style>
 	.grid {
 		display: grid;
 		grid-template-columns: 1fr auto;

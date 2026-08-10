@@ -38,7 +38,6 @@
     "!dist/BBoxMap/helpers/*"
   ],
   "peerDependencies": {
-    "sass-embedded": "^1.96.0",
     "svelte": "^5.45.8"
   },
   "devDependencies": {
@@ -63,10 +62,8 @@
     "prettier": "^3.9.6",
     "prettier-plugin-svelte": "^4.1.1",
     "publint": "^0.3.23",
-    "sass-embedded": "^1.100.0",
     "svelte": "^5.56.8",
     "svelte-check": "^4.7.5",
-    "svelte-preprocess": "^6.0.5",
     "tsx": "^4.23.12",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.67.0",
@@ -86,7 +83,6 @@
   "allowScripts": {
     "@parcel/watcher": true,
     "esbuild": true,
-    "fsevents": true,
-    "svelte-preprocess": true
+    "fsevents": true
   }
 }

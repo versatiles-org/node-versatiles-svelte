@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '../style/index.scss';
+	import '../style/index.css';
 	import Editor from './Editor.svelte';
 	import SidebarPanel from './SidebarPanel.svelte';
 	import DialogShareMap from './DialogShare.svelte';
