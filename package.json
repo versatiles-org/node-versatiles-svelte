@@ -2,6 +2,10 @@
   "name": "@versatiles/svelte",
   "version": "2.2.2",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/versatiles-org/node-versatiles-svelte.git"
+  },
   "scripts": {
     "build": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && vite build && npm run package",
     "check-watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
