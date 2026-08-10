@@ -61,15 +61,7 @@ export interface LayerSymbol {
 		'icon-keep-upright'?: boolean;
 		'icon-offset'?: [number, number];
 		'icon-anchor'?:
-			| 'center'
-			| 'left'
-			| 'right'
-			| 'top'
-			| 'bottom'
-			| 'top-left'
-			| 'top-right'
-			| 'bottom-left'
-			| 'bottom-right';
+			'center' | 'left' | 'right' | 'top' | 'bottom' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 		'icon-pitch-alignment'?: 'map' | 'viewport' | 'auto';
 		'text-pitch-alignment'?: 'map' | 'viewport' | 'auto';
 		'text-rotation-alignment'?: 'map' | 'viewport' | 'viewport-glyph' | 'auto';
@@ -86,15 +78,7 @@ export interface LayerSymbol {
 		>;
 		'text-variable-anchor-offset'?: maplibregl.VariableAnchorOffsetCollectionSpecification;
 		'text-anchor'?:
-			| 'center'
-			| 'left'
-			| 'right'
-			| 'top'
-			| 'bottom'
-			| 'top-left'
-			| 'top-right'
-			| 'bottom-left'
-			| 'bottom-right';
+			'center' | 'left' | 'right' | 'top' | 'bottom' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 		'text-max-angle'?: number;
 		'text-writing-mode'?: Array<'horizontal' | 'vertical'>;
 		'text-rotate'?: number;
