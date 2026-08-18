@@ -7,6 +7,9 @@ updates:
     groups:
       npm:
         patterns: ['*']
+      security:
+        applies-to: security-updates
+        patterns: ['*']
     versioning-strategy: increase-if-necessary
 
   - package-ecosystem: github-actions
@@ -16,6 +19,9 @@ updates:
     groups:
       action:
         patterns: ['*']
+      security:
+        applies-to: security-updates
+        patterns: ['*']
 
   - package-ecosystem: docker
     directory: /docker
@@ -23,4 +29,7 @@ updates:
       interval: monthly
     groups:
       docker:
+        patterns: ['*']
+      security:
+        applies-to: security-updates
         patterns: ['*']
