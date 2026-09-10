@@ -83,7 +83,7 @@
   "dependencies": {
     "@maplibre/maplibre-gl-style-spec": "^26.2.1",
     "@versatiles/style": "^5.13.0",
-    "maplibre-gl": "6.2.0"
+    "maplibre-gl": "6.4.1"
   },
   "overrides": {
     "cookie": "^0.7.0"
