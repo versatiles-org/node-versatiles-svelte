@@ -17,8 +17,8 @@ test('default', async ({ page }) => {
 
 	expect(tracker()).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
-		'assets/sprites/basics/sprites.json',
-		'assets/sprites/basics/sprites.png',
+		'assets/sprites/base.json',
+		'assets/sprites/base.png',
 		'tiles/osm/2/1/1',
 		'tiles/osm/2/1/2',
 		'tiles/osm/2/2/1',

@@ -9,7 +9,7 @@ describe('getSymbol', () => {
 		expect(symbol).toEqual({
 			index: 1,
 			name: 'airplane',
-			image: 'basics:icon-airfield'
+			image: 'base:icon-airfield'
 		});
 	});
 
@@ -18,7 +18,7 @@ describe('getSymbol', () => {
 		expect(symbol).toEqual({
 			index: 38,
 			name: 'flag',
-			image: 'basics:icon-embassy',
+			image: 'base:icon-embassy',
 			offset: [0, 0]
 		});
 	});
@@ -50,7 +50,7 @@ describe('SymbolLibrary', () => {
 		expect(symbol).toEqual({
 			index: 1,
 			name: 'airplane',
-			image: 'basics:icon-airfield'
+			image: 'base:icon-airfield'
 		});
 	});
 
@@ -85,7 +85,7 @@ describe('SymbolLibrary', () => {
 		});
 
 		symbolLibrary.drawSymbol(canvas, 1);
-		expect(map.getImage).toBeCalledWith('basics:icon-airfield');
+		expect(map.getImage).toBeCalledWith('base:icon-airfield');
 		expect(canvas.getContext).toBeCalledWith('2d');
 		expect(ctx.putImageData).toBeCalledWith(expect.any(MyImageData), 0, 0);
 	});

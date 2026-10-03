@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { CameraOptions, Map as MaplibreMapType } from 'maplibre-gl';
 	import AutoComplete from './AutoComplete.svelte';
-	import { getCountryName } from '$lib/utils/location.js';
-	import BasicMap from '$lib/components/BasicMap/BasicMap.svelte';
-	import { isDarkMode } from '$lib/utils/map_style.js';
+	import { getCountryName } from '../../utils/location.js';
+	import BasicMap from '../BasicMap/BasicMap.svelte';
+	import { isDarkMode } from '../../utils/map_style.js';
 	import { onDestroy } from 'svelte';
 	import { loadBBoxes } from './BBoxMap.js';
 	import { BBoxDrawer, isSameBBox, type BBox } from './lib/bbox_drawer.js';

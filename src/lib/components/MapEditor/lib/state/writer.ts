@@ -250,15 +250,15 @@ export class StateWriter {
 	}
 
 	writeColor(color: string) {
-		const rgb = Color.parse(color).asRGB();
-		this.writeInteger(rgb.r, 8);
-		this.writeInteger(rgb.g, 8);
-		this.writeInteger(rgb.b, 8);
-		if (rgb.a == 1) {
+		const rgb = Color.parse(color).toGamut().srgb;
+		this.writeInteger(Math.round(rgb.r), 8);
+		this.writeInteger(Math.round(rgb.g), 8);
+		this.writeInteger(Math.round(rgb.b), 8);
+		if (rgb.alpha == 1) {
 			this.bits.push(false);
 		} else {
 			this.bits.push(true);
-			this.writeInteger(Math.round(rgb.a * 255), 8);
+			this.writeInteger(Math.round(rgb.alpha * 255), 8);
 		}
 	}
 

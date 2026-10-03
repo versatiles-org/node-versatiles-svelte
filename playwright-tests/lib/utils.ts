@@ -37,7 +37,7 @@ export async function trackServerRequests(page: Page): Promise<() => string[]> {
 		let url = route.request().url();
 		url = url.replace(prefix, '');
 		// ignore retina requests
-		url = url.replace('sprites@2x.', 'sprites.');
+		url = url.replace('base@2x.', 'base.');
 
 		tileServerRequests.push(url);
 		route.fallback();

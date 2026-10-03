@@ -34,7 +34,7 @@ describe('MapLayerSymbol', () => {
 				id: 'test-layer',
 				layout: {
 					'icon-allow-overlap': true,
-					'icon-image': 'basics:icon-embassy',
+					'icon-image': 'base:icon-embassy',
 					'icon-offset': [0, 0],
 					'icon-rotate': 0,
 					'icon-size': 1,
@@ -76,7 +76,7 @@ describe('MapLayerSymbol', () => {
 
 	it('should update symbol index correctly', () => {
 		layer.symbolIndex.set(1);
-		expect(mockManager.map.setLayoutProperty).toHaveBeenCalledWith('test-layer', 'icon-image', 'basics:icon-airfield');
+		expect(mockManager.map.setLayoutProperty).toHaveBeenCalledWith('test-layer', 'icon-image', 'base:icon-airfield');
 	});
 
 	it('should return correct state object', () => {

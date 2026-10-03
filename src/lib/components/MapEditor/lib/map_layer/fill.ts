@@ -59,7 +59,7 @@ export class MapLayerFill extends MapLayer<LayerFill> {
 			const length = alpha.length;
 
 			const data = new Uint8ClampedArray(size * size * 4);
-			const c = color.asRGB().asArray();
+			const c = color.to('srgb').asArray();
 
 			for (let y = 0; y < size; y++) {
 				for (let x = 0; x < size; x++) {

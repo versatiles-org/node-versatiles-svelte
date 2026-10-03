@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LocatorMap } from '$lib/index.js';
+	import { LocatorMap } from '../../lib/index.js';
 </script>
 
 <div class="wrapper">

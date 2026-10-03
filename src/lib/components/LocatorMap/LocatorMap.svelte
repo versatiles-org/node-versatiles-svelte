@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Map as MaplibreMapType, GeoJSONSource } from 'maplibre-gl';
-	import BasicMap from '$lib/components/BasicMap/BasicMap.svelte';
+	import BasicMap from '../BasicMap/BasicMap.svelte';
 	let map: MaplibreMapType;
 
 	let {
@@ -42,7 +42,7 @@
 				source: 'marker',
 				type: 'symbol',
 				layout: {
-					'icon-image': 'basics:icon-embassy',
+					'icon-image': 'base:icon-embassy',
 					'icon-size': 1,
 					'icon-overlap': 'always'
 				},

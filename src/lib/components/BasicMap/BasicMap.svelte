@@ -1,6 +1,6 @@
 <script lang="ts">
 	import 'maplibre-gl/dist/maplibre-gl.css';
-	import { getMapStyle, isDarkMode } from '$lib/utils/map_style.js';
+	import { getMapStyle, isDarkMode } from '../../utils/map_style.js';
 	import * as maplibre from 'maplibre-gl';
 	import type { MapOptions } from 'maplibre-gl';
 	// Since v6 MapLibre loads its worker from a separate file, which bundlers cannot resolve

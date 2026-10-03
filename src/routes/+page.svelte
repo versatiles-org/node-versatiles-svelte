@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import type { Pathname } from '$app/types';
+	import type { RouteId } from '$app/types';
 
 	const baseUrl = 'https://versatiles.org/node-versatiles-svelte/screenshots/';
-	const components: { title: string; path: Pathname }[] = [
+	const components: { title: string; path: RouteId }[] = [
 		{ title: 'BasicMap', path: '/basic-map' },
 		{ title: 'BBoxMap', path: '/bbox-map' },
 		{ title: 'LocatorMap', path: '/locator-map' },

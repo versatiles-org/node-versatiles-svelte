@@ -314,7 +314,7 @@ export class StateReader {
 
 			let a = 1;
 			if (this.readBit()) a = this.readInteger(8) / 255;
-			return new Color.RGB(r, g, b, a).asHex();
+			return Color.srgb(r, g, b, a).asHex();
 		} catch (cause) {
 			throw new Error(`Error reading color`, { cause });
 		}

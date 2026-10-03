@@ -17,11 +17,12 @@ test('default', async ({ page }) => {
 
 	expect(tracker()).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
+		'assets/glyphs/noto_sans_regular/1024-1279.pbf',
 		'assets/glyphs/noto_sans_regular/256-511.pbf',
 		'assets/glyphs/noto_sans_regular/512-767.pbf',
 		'assets/glyphs/noto_sans_regular/8192-8447.pbf',
-		'assets/sprites/basics/sprites.json',
-		'assets/sprites/basics/sprites.png',
+		'assets/sprites/base.json',
+		'assets/sprites/base.png',
 		'tiles/osm/5/15/10',
 		'tiles/osm/5/15/11',
 		'tiles/osm/5/16/10',
@@ -52,8 +53,9 @@ test('initial state', async ({ page }) => {
 
 	expect(tracker()).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
-		'assets/sprites/basics/sprites.json',
-		'assets/sprites/basics/sprites.png',
+		'assets/glyphs/noto_sans_regular/256-511.pbf',
+		'assets/sprites/base.json',
+		'assets/sprites/base.png',
 		'tiles/osm/7/64/42',
 		'tiles/osm/7/64/43',
 		'tiles/osm/7/65/42',
@@ -74,11 +76,12 @@ test('delayed state', async ({ page }) => {
 
 	expect(tracker()).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
+		'assets/glyphs/noto_sans_regular/1024-1279.pbf',
 		'assets/glyphs/noto_sans_regular/256-511.pbf',
 		'assets/glyphs/noto_sans_regular/512-767.pbf',
 		'assets/glyphs/noto_sans_regular/8192-8447.pbf',
-		'assets/sprites/basics/sprites.json',
-		'assets/sprites/basics/sprites.png',
+		'assets/sprites/base.json',
+		'assets/sprites/base.png',
 		'tiles/osm/5/15/10',
 		'tiles/osm/5/15/11',
 		'tiles/osm/5/16/10',

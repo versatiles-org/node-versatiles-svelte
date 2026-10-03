@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getMapStyle, isDarkMode } from './map_style.js';
-import { styles } from '@versatiles/style';
+import { osm } from '@versatiles/style';
 import { getLanguage } from './location.js';
 
 vi.mock('@versatiles/style', { spy: true });
@@ -9,52 +9,63 @@ vi.mock('./location.js', () => ({
 	getLanguage: vi.fn()
 }));
 
+const urls = {
+	base: 'https://tiles.versatiles.org',
+	osm: {
+		tiles: ['https://tiles.versatiles.org/tiles/osm/{z}/{x}/{y}'],
+		vector_layers: [],
+		minzoom: 0,
+		maxzoom: 14,
+		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+	}
+};
+
 describe('src/lib/utils/map_style.ts', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
 	describe('getMapStyle', () => {
-		it('should call styles.colorful with dark mode options', () => {
+		it('should call osm with dark mode options', () => {
 			vi.mocked(getLanguage).mockReturnValue('en');
 			getMapStyle({ darkMode: true });
 
-			expect(styles.colorful).toHaveBeenCalledWith({
-				baseUrl: 'https://tiles.versatiles.org',
-				language: 'en',
-				darkMode: true,
+			expect(osm).toHaveBeenCalledWith({
+				projection: 'mercator',
 				recolor: {
 					invertBrightness: true,
 					gamma: 0.5
-				}
+				},
+				urls,
+				text: { language: 'en' }
 			});
 		});
 
-		it('should call styles.colorful with light mode options', () => {
+		it('should call osm with light mode options', () => {
 			vi.mocked(getLanguage).mockReturnValue('de');
 			getMapStyle({ darkMode: false });
-			expect(styles.colorful).toHaveBeenCalledWith({
-				baseUrl: 'https://tiles.versatiles.org',
-				language: 'de',
-				darkMode: false,
+			expect(osm).toHaveBeenCalledWith({
+				projection: 'mercator',
 				recolor: {
 					invertBrightness: false,
 					gamma: 1
-				}
+				},
+				urls,
+				text: { language: 'de' }
 			});
 		});
 
 		it('should handle missing styleOptions gracefully', () => {
 			vi.mocked(getLanguage).mockReturnValue(null);
 			getMapStyle({ darkMode: true });
-			expect(styles.colorful).toHaveBeenCalledWith({
-				baseUrl: 'https://tiles.versatiles.org',
-				language: null,
-				darkMode: true,
+			expect(osm).toHaveBeenCalledWith({
+				projection: 'mercator',
 				recolor: {
 					invertBrightness: true,
 					gamma: 0.5
-				}
+				},
+				urls,
+				text: { language: 'local' }
 			});
 		});
 	});

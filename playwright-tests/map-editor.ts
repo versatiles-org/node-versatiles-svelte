@@ -69,11 +69,12 @@ test('empty map', async ({ page }) => {
 
 	expect(tracker()).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
+		'assets/glyphs/noto_sans_regular/1024-1279.pbf',
 		'assets/glyphs/noto_sans_regular/256-511.pbf',
 		'assets/glyphs/noto_sans_regular/512-767.pbf',
 		'assets/glyphs/noto_sans_regular/8192-8447.pbf',
-		'assets/sprites/basics/sprites.json',
-		'assets/sprites/basics/sprites.png',
+		'assets/sprites/base.json',
+		'assets/sprites/base.png',
 		'tiles/osm/5/16/10',
 		'tiles/osm/5/16/11',
 		'tiles/osm/5/17/10',
@@ -94,8 +95,8 @@ test('filled map', async ({ page }) => {
 
 	expect(tracker()).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
-		'assets/sprites/basics/sprites.json',
-		'assets/sprites/basics/sprites.png',
+		'assets/sprites/base.json',
+		'assets/sprites/base.png',
 		'tiles/osm/13/4399/2686',
 		'tiles/osm/13/4399/2687',
 		'tiles/osm/13/4400/2686',

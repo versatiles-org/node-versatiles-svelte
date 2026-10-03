@@ -1,24 +1,38 @@
-import { styles, type StyleBuilderOptions } from '@versatiles/style';
+import { osm, type OsmOptions } from '@versatiles/style';
 import { getLanguage } from './location.js';
 
 export function getMapStyle(
-	styleOptions: StyleBuilderOptions & {
+	styleOptions: OsmOptions & {
 		darkMode?: boolean;
 		transitionDuration?: number;
 	} = {}
 ) {
-	const darkMode = styleOptions.darkMode ?? isDarkMode();
-	const style = styles.colorful({
-		baseUrl: 'https://tiles.versatiles.org',
-		language: getLanguage(),
+	const { darkMode = isDarkMode(), transitionDuration, ...options } = styleOptions;
+	const base = options.urls?.base ?? 'https://tiles.versatiles.org';
+	const style = osm({
+		projection: 'mercator',
 		recolor: {
 			invertBrightness: darkMode,
 			gamma: darkMode ? 0.5 : 1
 		},
-		...styleOptions
+		...options,
+		urls: {
+			base,
+			// The tile server's TileJSON lists relative tile URLs, which MapLibre resolves
+			// against the page instead of the tile server. So define the source inline.
+			osm: {
+				tiles: [base + '/tiles/osm/{z}/{x}/{y}'],
+				vector_layers: [],
+				minzoom: 0,
+				maxzoom: 14,
+				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+			},
+			...options.urls
+		},
+		text: { language: getLanguage() ?? 'local', ...options.text }
 	});
-	if (styleOptions.transitionDuration != null) {
-		style.transition = { duration: styleOptions.transitionDuration, delay: 0 };
+	if (transitionDuration != null) {
+		style.transition = { duration: transitionDuration, delay: 0 };
 	}
 	return style;
 }

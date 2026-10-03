@@ -1,4 +1,3 @@
-import type { Language } from '@versatiles/style';
 import { timezone2countrycode } from './zones.js';
 
 export function getCountryName(): string | null {
@@ -24,7 +23,7 @@ export function getCountryCode(): string | null {
 	}
 }
 
-export function getLanguage(): Language {
+export function getLanguage(): string | null {
 	try {
 		const language = Intl.DateTimeFormat().resolvedOptions().locale.split('-')[0].toLowerCase();
 		switch (language) {

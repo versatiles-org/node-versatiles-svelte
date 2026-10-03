@@ -85,9 +85,6 @@
     "@versatiles/style": "^6.1.1",
     "maplibre-gl": "6.12.0"
   },
-  "overrides": {
-    "cookie": "^0.7.0"
-  },
   "allowScripts": {
     "@parcel/watcher": true,
     "esbuild": true,

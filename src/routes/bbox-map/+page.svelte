@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { BBoxMap, type BBox } from '$lib/index.js';
+	import { BBoxMap, type BBox } from '../../lib/index.js';
 	import { onMount } from 'svelte';
 
 	let selectedBBox = $state<BBox | undefined>(undefined);

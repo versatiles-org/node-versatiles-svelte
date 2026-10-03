@@ -16,8 +16,8 @@ test('default', async ({ page }) => {
 	});
 
 	expect(tracker()).toStrictEqual([
-		'assets/sprites/basics/sprites.json',
-		'assets/sprites/basics/sprites.png',
+		'assets/sprites/base.json',
+		'assets/sprites/base.png',
 		'tiles/osm/1/0/0',
 		'tiles/osm/1/0/1',
 		'tiles/osm/1/1/0',
