@@ -15,7 +15,7 @@
 
 import { build } from 'esbuild';
 import { createRequire } from 'node:module';
-import { stat } from 'node:fs/promises';
+import { readFile, stat, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 
@@ -41,6 +41,13 @@ await build({
 		)
 	}
 });
+
+// The worker loads external scripts (e.g. the RTL text plugin) with `import(url)`. Vite cannot
+// analyse these and warns about them, in our dev server as well as in projects using this package.
+const code = await readFile(outfile, 'utf8');
+const dynamicImport = /\bimport\((?!\/\*)/g;
+if (!dynamicImport.test(code)) throw new Error('expected dynamic imports in the MapLibre worker');
+await writeFile(outfile, code.replace(dynamicImport, 'import(/* @vite-ignore */'));
 
 const { size } = await stat(outfile);
 console.log(`bundled maplibre-gl ${version} worker → ${(size / 1024).toFixed(0)} kB`);
