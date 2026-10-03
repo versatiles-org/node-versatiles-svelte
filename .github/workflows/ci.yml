@@ -74,10 +74,16 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
+      # The image must match the installed playwright version, otherwise the prebuilt browsers are missing.
+      - name: Get Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('./package-lock.json').packages['node_modules/playwright'].version")" >> "$GITHUB_OUTPUT"
+
       - name: Prepare Playwright
         uses: docker/build-push-action@v7
         with:
           context: .
+          build-args: PLAYWRIGHT_VERSION=${{ steps.playwright.outputs.version }}
           push: true
           load: true
           tags: ${{ env.IMAGE_NAME }}
