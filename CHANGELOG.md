@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.2] - 2026-10-04
+
+### Bug Fixes
+
+- update dependabot configuration to ignore TypeScript major version updates ([6536a0e](https://github.com/versatiles-org/node-versatiles-svelte/commit/6536a0ee411e89c0731804df3acbd8dc7548e506))
+- enhance MapLibre worker script to handle dynamic imports correctly ([0bd5f83](https://github.com/versatiles-org/node-versatiles-svelte/commit/0bd5f834843abba33f6b646b238c09e4e6512af4))
+- update Playwright version retrieval in CI workflow ([a5327dc](https://github.com/versatiles-org/node-versatiles-svelte/commit/a5327dc64bb33904cdd8ff1a600b9b004836d456))
+
+### Code Refactoring
+
+- map assets and update tests ([802846b](https://github.com/versatiles-org/node-versatiles-svelte/commit/802846ba37ee0fbb5f85855831349c92d3f159a6))
+
+### Chores
+
+- add security update groups for GitHub Actions and npm in dependabot configuration ([5b881e9](https://github.com/versatiles-org/node-versatiles-svelte/commit/5b881e9e1e21dbc6068fefe1e5941e38c2007b33))
+- update dependencies to latest versions ([074e234](https://github.com/versatiles-org/node-versatiles-svelte/commit/074e234f34bea40a426fc4516c8783f0c2ee3036))
+
 ## [2.3.1] - 2026-08-10
 
 ### Features
