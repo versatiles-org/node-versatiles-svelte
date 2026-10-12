@@ -6,6 +6,9 @@
 
 # Svelte Components for VersaTiles
 
+> [!NOTE]
+> The `MapEditor` component has moved to its own repository: [versatiles-map-editor](https://github.com/versatiles-org/versatiles-map-editor)
+
 Play with them: https://versatiles.org/node-versatiles-svelte/
 
 ## Install
