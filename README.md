@@ -37,9 +37,4 @@ npm i @versatiles/svelte
 		<td><img width="512" src="https://versatiles.org/node-versatiles-svelte/screenshots/locator-map-light.png"></td>
 		<td><img width="512" src="https://versatiles.org/node-versatiles-svelte/screenshots/locator-map-dark.png"></td>
 	</tr>
-	<tr>
-		<th>MapEditor</th>
-		<td><img width="512" src="https://versatiles.org/node-versatiles-svelte/screenshots/map-editor-light.png"></td>
-		<td><img width="512" src="https://versatiles.org/node-versatiles-svelte/screenshots/map-editor-dark.png"></td>
-	</tr>
 </table>

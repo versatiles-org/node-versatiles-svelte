@@ -6,8 +6,7 @@
 	const components: { title: string; path: RouteId }[] = [
 		{ title: 'BasicMap', path: '/basic-map' },
 		{ title: 'BBoxMap', path: '/bbox-map' },
-		{ title: 'LocatorMap', path: '/locator-map' },
-		{ title: 'MapEditor', path: '/map-editor' }
+		{ title: 'LocatorMap', path: '/locator-map' }
 	];
 </script>
 

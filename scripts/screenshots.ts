@@ -17,11 +17,7 @@ mkdirSync(path, { recursive: true });
 	const sites = [
 		{ name: 'basic-map' },
 		{ name: 'bbox-map' },
-		{ name: 'locator-map', hash: '#14.89/13.408956/52.519744' },
-		{
-			name: 'map-editor',
-			hash: '#Fk2UZ1xMayU0hNExzxiEwxgqXoVwXyjHnBichRjOhTkBBjXhZBiMhJiSiDhYjZImR6ejPxWlCiqAAAAm2vxielvgqXEiqAABIz4RCgDLDPGJ7HGCpcSKoAAElbCDICAZDotMYhLcYKhyKDbAAZB6ExIqgAABZSKoAAAA'
-		}
+		{ name: 'locator-map', hash: '#14.89/13.408956/52.519744' }
 	];
 
 	const browser = await firefox.launch();
