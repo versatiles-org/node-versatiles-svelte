@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-10-12
+
+### Breaking Changes
+
+- remove MapEditor, moved to repo versatiles-map-editor ([72b2314](https://github.com/versatiles-org/node-versatiles-svelte/commit/72b2314250bbd4ac2e04402ab33a1ed7be6b0c95))
+
+### Bug Fixes
+
+- reorder commands in build, dev, and package scripts for consistency ([21b5591](https://github.com/versatiles-org/node-versatiles-svelte/commit/21b5591b211f2632565b46bad9c1f4d09d89b27f))
+
+### Documentation
+
+- update README to reflect MapEditor relocation to separate repository ([2ef2664](https://github.com/versatiles-org/node-versatiles-svelte/commit/2ef2664aed6ea76d39e38a2c517fef57d5137daa))
+
+### Chores
+
+- update dependencies in package.json ([0bcf2e9](https://github.com/versatiles-org/node-versatiles-svelte/commit/0bcf2e9c09abde1c3ce73aca42bdd870b9243763))
+
 ## [2.3.2] - 2026-10-04
 
 ### Bug Fixes
