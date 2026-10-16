@@ -17,12 +17,14 @@
 	} = $props();
 
 	const bboxPadding = 20;
-	const startTime = Date.now();
 	let bboxDrawer: BBoxDrawer | undefined;
 	let map: MaplibreMapType | undefined = $state();
 	let bboxes: { key: string; value: BBox }[] | undefined = $state();
 	let mapContainer: HTMLElement;
 	let disableZoomTimeout: ReturnType<typeof setTimeout> | undefined;
+	// Until the map has settled for the first time, bbox changes jump instead of animating,
+	// so initial positioning does not depend on how fast the device loads the map.
+	let initiallySettled = false;
 	let destroyed = false;
 
 	async function onMapInit(_map: MaplibreMapType) {
@@ -37,6 +39,7 @@
 		// Testing `isStyleLoaded()` instead would not work — it additionally requires all
 		// sources and the sprite, so it stays false long after `style.load` fired.
 		const styleLoaded = new Promise<void>((resolve) => _map.once('style.load', () => resolve()));
+		_map.once('idle', () => (initiallySettled = true));
 
 		bboxes = await loadBBoxes();
 		await styleLoaded;
@@ -78,10 +81,10 @@
 		transform.bearing = 0;
 		transform.pitch = 0;
 
-		if (Date.now() - startTime < 3000) {
-			map.jumpTo(transform);
-		} else {
+		if (initiallySettled) {
 			map.flyTo({ ...transform, essential: true, speed: 5 });
+		} else {
+			map.jumpTo(transform);
 		}
 	}
 

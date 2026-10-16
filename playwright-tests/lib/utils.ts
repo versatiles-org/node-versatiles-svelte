@@ -23,6 +23,24 @@ export async function waitForMapIsReady(page: Page, count: number = 1): Promise<
 	await new Promise((resolve) => setTimeout(resolve, 1000));
 }
 
+/**
+ * Waits until the map has finished any camera movement and loaded all tiles for the final view.
+ * Waits one frame first, so that a movement triggered just before is already under way.
+ */
+export async function waitForMapIdle(page: Page): Promise<void> {
+	await page.evaluate(
+		() =>
+			new Promise<void>((resolve) => {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const map = (window as any).__testMap as import('maplibre-gl').Map;
+				requestAnimationFrame(() => {
+					if (map.loaded() && !map.isMoving()) resolve();
+					else map.once('idle', () => resolve());
+				});
+			})
+	);
+}
+
 export async function checkScreenshot(page: Page, name: string, minFileSize: number = 7e4): Promise<void> {
 	const screenshot = await page.screenshot();
 	expect(screenshot).toMatchSnapshot(name + '.png', { maxDiffPixelRatio: 0.02 });

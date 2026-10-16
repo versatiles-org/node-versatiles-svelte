@@ -1,5 +1,5 @@
 import { expect, test } from './lib/test.js';
-import { checkScreenshot, trackServerRequests, waitForMapIsReady } from './lib/utils.js';
+import { checkScreenshot, trackServerRequests, waitForMapIdle, waitForMapIsReady } from './lib/utils.js';
 
 test('default', async ({ page }) => {
 	const tracker = await trackServerRequests(page);
@@ -72,9 +72,14 @@ test('delayed state', async ({ page }) => {
 	await waitForMapIsReady(page);
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	await page.waitForFunction(() => (window as any).setBBox([2.52, 49.495, 6.38, 51.497]));
-	await page.waitForTimeout(3000); // wait for the bbox to be set
+	await waitForMapIdle(page);
 
-	expect(tracker()).toStrictEqual([
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	expect(await page.evaluate(() => Math.floor((window as any).__testMap.getZoom()))).toBe(7);
+
+	// The map animates to the new bbox. Tiles requested for intermediate frames depend on
+	// timing, so only check the tiles of the initial view (z5) and the final view (z7).
+	expect(tracker().filter((url) => !url.startsWith('tiles/') || /^tiles\/osm\/[57]\//.test(url))).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
 		'assets/glyphs/noto_sans_regular/1024-1279.pbf',
 		'assets/glyphs/noto_sans_regular/256-511.pbf',
@@ -173,7 +178,7 @@ test('select visible area round-trip stability', async ({ page }) => {
 	// Set a specific bbox and wait for zoom
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	await page.waitForFunction(() => (window as any).setBBox([8, 48, 12, 52]));
-	await page.waitForTimeout(3000);
+	await waitForMapIdle(page);
 
 	// Click the button to select the visible area
 	await button.click();
