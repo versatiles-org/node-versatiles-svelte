@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.2] - 2026-11-03
+
+### Bug Fixes
+
+- ensure consistent WebGL rendering on Apple Silicon by setting platform to linux/amd64 in test_playwright.sh ([8b2f126](https://github.com/versatiles-org/node-versatiles-svelte/commit/8b2f126bd1a428bb662ac7cc4e9bf9a737603125))
+
+### Code Refactoring
+
+- introduce waitForMapIdle utility and update bbox-map tests for improved map loading handling ([be4a0f9](https://github.com/versatiles-org/node-versatiles-svelte/commit/be4a0f969122e814e149240c351d50bf81e5d2aa))
+
+### Tests
+
+- drop glyph ranges that maplibre-gl 6.15 no longer requests for buffered labels ([3e7593d](https://github.com/versatiles-org/node-versatiles-svelte/commit/3e7593df360e9c53807c33eb608aa94949797dc1))
+- update bbox-map snapshot for Firefox on Linux ([1126ae3](https://github.com/versatiles-org/node-versatiles-svelte/commit/1126ae376e1414a5a8aeb35984cd3313063e7485))
+
+### Chores
+
+- update dependencies in package.json ([9b839b1](https://github.com/versatiles-org/node-versatiles-svelte/commit/9b839b13fbaf493a93002388ca33cb0e3783c581))
+
 ## [3.0.1] - 2026-10-16
 
 ### Chores
