@@ -17,7 +17,6 @@ test('default', async ({ page }) => {
 
 	expect(tracker()).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
-		'assets/glyphs/noto_sans_regular/1024-1279.pbf',
 		'assets/glyphs/noto_sans_regular/256-511.pbf',
 		'assets/glyphs/noto_sans_regular/512-767.pbf',
 		'assets/glyphs/noto_sans_regular/8192-8447.pbf',
@@ -53,7 +52,6 @@ test('initial state', async ({ page }) => {
 
 	expect(tracker()).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
-		'assets/glyphs/noto_sans_regular/256-511.pbf',
 		'assets/sprites/base.json',
 		'assets/sprites/base.png',
 		'tiles/osm/7/64/42',
@@ -81,7 +79,6 @@ test('delayed state', async ({ page }) => {
 	// timing, so only check the tiles of the initial view (z5) and the final view (z7).
 	expect(tracker().filter((url) => !url.startsWith('tiles/') || /^tiles\/osm\/[57]\//.test(url))).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
-		'assets/glyphs/noto_sans_regular/1024-1279.pbf',
 		'assets/glyphs/noto_sans_regular/256-511.pbf',
 		'assets/glyphs/noto_sans_regular/512-767.pbf',
 		'assets/glyphs/noto_sans_regular/8192-8447.pbf',
