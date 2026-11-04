@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.3] - 2026-11-04
+
+### Bug Fixes
+
+- ensure initial bbox zoom occurs before the first map frame renders ([16bea12](https://github.com/versatiles-org/node-versatiles-svelte/commit/16bea12c86d76dde783af4cad27b22b0e4b0a65c))
+
 ## [3.0.2] - 2026-11-03
 
 ### Bug Fixes
