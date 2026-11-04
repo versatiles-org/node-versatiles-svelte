@@ -32,6 +32,11 @@
 		mapContainer = map.getContainer();
 		map.setPadding({ top: 42, right: 10, bottom: 15, left: 10 });
 
+		// Jump to the initial bbox before the map draws its first frame, so it never loads the
+		// tiles of the world view. The camera needs neither the style nor the list of bboxes, and
+		// a bbox that arrives later is applied by the `$effect` below, also before the first frame.
+		zoom();
+
 		// `BBoxDrawer` adds a source, which maplibre rejects with "Style is not done loading."
 		// until the style is up. Subscribing here rather than after the awaits below is what
 		// makes this race-free: `onMapInit` runs synchronously after `new maplibre.Map()`, and
@@ -54,10 +59,6 @@
 			isDarkMode(mapContainer) ? '#FFFFFF' : '#000000'
 		);
 
-		if (selectedBBox) {
-			zoom();
-		}
-
 		bboxDrawer.on('dragEnd', (bbox) => {
 			disableZoomTemporarily();
 			if (!selectedBBox || !isSameBBox(bbox, selectedBBox)) {
@@ -73,7 +74,7 @@
 	});
 
 	function zoom() {
-		if (!bboxDrawer || !map || !selectedBBox) return;
+		if (!map || !selectedBBox) return;
 		if (disableZoomTimeout) return;
 
 		const transform = map.cameraForBounds(selectedBBox, { padding: bboxPadding }) as CameraOptions;
