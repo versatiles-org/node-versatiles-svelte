@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0] - 2026-11-08
+
+### Breaking Changes
+
+- use the osm-vector tileset and @versatiles/style 9 (closes #97) ([aff295a](https://github.com/versatiles-org/node-versatiles-svelte/commit/aff295aa0a3c705871d2d1468dce682ad7e9485f))
+
+### Chores
+
+- update dependencies to latest versions in package.json and package-lock.json ([6935450](https://github.com/versatiles-org/node-versatiles-svelte/commit/693545049708f7b8faf5a0924eee6decc0162544))
+
 ## [3.0.3] - 2026-11-04
 
 ### Bug Fixes
