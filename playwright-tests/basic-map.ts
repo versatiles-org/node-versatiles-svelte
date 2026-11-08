@@ -19,12 +19,12 @@ test('default', async ({ page }) => {
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
 		'assets/sprites/base.json',
 		'assets/sprites/base.png',
-		'tiles/osm/2/1/1',
-		'tiles/osm/2/1/2',
-		'tiles/osm/2/2/1',
-		'tiles/osm/2/2/2',
-		'tiles/osm/2/3/1',
-		'tiles/osm/2/3/2'
+		'tiles/osm-vector/2/1/1',
+		'tiles/osm-vector/2/1/2',
+		'tiles/osm-vector/2/2/1',
+		'tiles/osm-vector/2/2/2',
+		'tiles/osm-vector/2/3/1',
+		'tiles/osm-vector/2/3/2'
 	]);
 
 	expect(await page.locator('.wrapper').ariaSnapshot()).toBe(`- region "Map"

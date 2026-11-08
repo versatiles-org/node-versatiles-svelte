@@ -12,7 +12,7 @@ vi.mock('./location.js', () => ({
 const urls = {
 	base: 'https://tiles.versatiles.org',
 	osm: {
-		tiles: ['https://tiles.versatiles.org/tiles/osm/{z}/{x}/{y}'],
+		tiles: ['https://tiles.versatiles.org/tiles/osm-vector/{z}/{x}/{y}'],
 		vector_layers: [],
 		minzoom: 0,
 		maxzoom: 14,

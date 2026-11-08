@@ -18,10 +18,10 @@ test('default', async ({ page }) => {
 	expect(tracker()).toStrictEqual([
 		'assets/sprites/base.json',
 		'assets/sprites/base.png',
-		'tiles/osm/1/0/0',
-		'tiles/osm/1/0/1',
-		'tiles/osm/1/1/0',
-		'tiles/osm/1/1/1'
+		'tiles/osm-vector/1/0/0',
+		'tiles/osm-vector/1/0/1',
+		'tiles/osm-vector/1/1/0',
+		'tiles/osm-vector/1/1/1'
 	]);
 
 	expect(await page.locator('.wrapper').ariaSnapshot()).toBe(`- region "Map"

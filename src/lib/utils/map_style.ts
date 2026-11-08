@@ -21,7 +21,7 @@ export function getMapStyle(
 			// The tile server's TileJSON lists relative tile URLs, which MapLibre resolves
 			// against the page instead of the tile server. So define the source inline.
 			osm: {
-				tiles: [base + '/tiles/osm/{z}/{x}/{y}'],
+				tiles: [base + '/tiles/osm-vector/{z}/{x}/{y}'],
 				vector_layers: [],
 				minzoom: 0,
 				maxzoom: 14,

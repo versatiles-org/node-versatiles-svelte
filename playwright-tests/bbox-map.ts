@@ -22,14 +22,14 @@ test('default', async ({ page }) => {
 		'assets/glyphs/noto_sans_regular/8192-8447.pbf',
 		'assets/sprites/base.json',
 		'assets/sprites/base.png',
-		'tiles/osm/5/15/10',
-		'tiles/osm/5/15/11',
-		'tiles/osm/5/16/10',
-		'tiles/osm/5/16/11',
-		'tiles/osm/5/17/10',
-		'tiles/osm/5/17/11',
-		'tiles/osm/5/18/10',
-		'tiles/osm/5/18/11'
+		'tiles/osm-vector/5/15/10',
+		'tiles/osm-vector/5/15/11',
+		'tiles/osm-vector/5/16/10',
+		'tiles/osm-vector/5/16/11',
+		'tiles/osm-vector/5/17/10',
+		'tiles/osm-vector/5/17/11',
+		'tiles/osm-vector/5/18/10',
+		'tiles/osm-vector/5/18/11'
 	]);
 
 	expect(await page.locator('.wrapper').ariaSnapshot()).toBe(`- textbox "Find country, region or city …": Germany
@@ -54,12 +54,12 @@ test('initial state', async ({ page }) => {
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
 		'assets/sprites/base.json',
 		'assets/sprites/base.png',
-		'tiles/osm/7/64/42',
-		'tiles/osm/7/64/43',
-		'tiles/osm/7/65/42',
-		'tiles/osm/7/65/43',
-		'tiles/osm/7/66/42',
-		'tiles/osm/7/66/43'
+		'tiles/osm-vector/7/64/42',
+		'tiles/osm-vector/7/64/43',
+		'tiles/osm-vector/7/65/42',
+		'tiles/osm-vector/7/65/43',
+		'tiles/osm-vector/7/66/42',
+		'tiles/osm-vector/7/66/43'
 	]);
 });
 
@@ -77,27 +77,27 @@ test('delayed state', async ({ page }) => {
 
 	// The map animates to the new bbox. Tiles requested for intermediate frames depend on
 	// timing, so only check the tiles of the initial view (z5) and the final view (z7).
-	expect(tracker().filter((url) => !url.startsWith('tiles/') || /^tiles\/osm\/[57]\//.test(url))).toStrictEqual([
+	expect(tracker().filter((url) => !url.startsWith('tiles/') || /^tiles\/osm-vector\/[57]\//.test(url))).toStrictEqual([
 		'assets/glyphs/noto_sans_regular/0-255.pbf',
 		'assets/glyphs/noto_sans_regular/256-511.pbf',
 		'assets/glyphs/noto_sans_regular/512-767.pbf',
 		'assets/glyphs/noto_sans_regular/8192-8447.pbf',
 		'assets/sprites/base.json',
 		'assets/sprites/base.png',
-		'tiles/osm/5/15/10',
-		'tiles/osm/5/15/11',
-		'tiles/osm/5/16/10',
-		'tiles/osm/5/16/11',
-		'tiles/osm/5/17/10',
-		'tiles/osm/5/17/11',
-		'tiles/osm/5/18/10',
-		'tiles/osm/5/18/11',
-		'tiles/osm/7/64/42',
-		'tiles/osm/7/64/43',
-		'tiles/osm/7/65/42',
-		'tiles/osm/7/65/43',
-		'tiles/osm/7/66/42',
-		'tiles/osm/7/66/43'
+		'tiles/osm-vector/5/15/10',
+		'tiles/osm-vector/5/15/11',
+		'tiles/osm-vector/5/16/10',
+		'tiles/osm-vector/5/16/11',
+		'tiles/osm-vector/5/17/10',
+		'tiles/osm-vector/5/17/11',
+		'tiles/osm-vector/5/18/10',
+		'tiles/osm-vector/5/18/11',
+		'tiles/osm-vector/7/64/42',
+		'tiles/osm-vector/7/64/43',
+		'tiles/osm-vector/7/65/42',
+		'tiles/osm-vector/7/65/43',
+		'tiles/osm-vector/7/66/42',
+		'tiles/osm-vector/7/66/43'
 	]);
 });
 
