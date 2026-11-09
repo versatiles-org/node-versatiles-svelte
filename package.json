@@ -2,6 +2,10 @@
   "name": "@versatiles/svelte",
   "version": "4.0.0",
   "license": "MIT",
+  "funding": [
+    { "type": "github", "url": "https://github.com/sponsors/versatiles-org" },
+    { "type": "opencollective", "url": "https://opencollective.com/versatiles" }
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/versatiles-org/node-versatiles-svelte.git"
