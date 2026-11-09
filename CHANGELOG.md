@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.1] - 2026-11-09
+
+### Documentation
+
+- add sponsors section to README ([12a2aa7](https://github.com/versatiles-org/node-versatiles-svelte/commit/12a2aa78be9ad5b5bffa9d527e641f26a1d92294))
+- add funding section to package.json ([8f0c64e](https://github.com/versatiles-org/node-versatiles-svelte/commit/8f0c64e3bf785528731a0567685ba939c67543d4))
+- format funding section in package.json for consistency ([f9cb463](https://github.com/versatiles-org/node-versatiles-svelte/commit/f9cb463b6c7417e5ecb8c077460a172b3ce6411a))
+
+### Chores
+
+- update dependencies for improved stability and features ([69a12f4](https://github.com/versatiles-org/node-versatiles-svelte/commit/69a12f414e04fa6a298416e694e148acefbbc2eb))
+
 ## [4.0.0] - 2026-11-08
 
 ### Breaking Changes
