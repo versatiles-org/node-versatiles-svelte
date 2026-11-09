@@ -41,3 +41,9 @@ npm i @versatiles/svelte
 		<td><img width="512" src="https://versatiles.org/node-versatiles-svelte/screenshots/locator-map-dark.png"></td>
 	</tr>
 </table>
+
+## Sponsors
+
+VersaTiles is free and open source, and its sponsors fund its servers and development. If you or your organisation rely on it, please support it through [GitHub Sponsors](https://github.com/sponsors/versatiles-org) or [Open Collective](https://opencollective.com/versatiles).
+
+[![VersaTiles sponsors](https://versatiles.org/sponsors/sponsors.png)](https://versatiles.org/sponsors/)
