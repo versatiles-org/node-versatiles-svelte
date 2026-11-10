@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.2] - 2026-11-10
+
+### CI/CD
+
+- **release:** publish to npm from the release workflow with trusted publishing, closes #98 ([7491362](https://github.com/versatiles-org/node-versatiles-svelte/commit/74913626e145169871006b760c481ac93f0d4497))
+
+### Chores
+
+- update dependencies to latest versions for improved stability ([aecf40f](https://github.com/versatiles-org/node-versatiles-svelte/commit/aecf40fe487c990acb22492715b3a467d9b3b22f))
+
 ## [4.0.1] - 2026-11-09
 
 ### Documentation
