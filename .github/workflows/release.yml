@@ -1,16 +1,61 @@
 name: Release
 
-on:
-  release:
-    types: [published]
-  workflow_dispatch:
+# Started by the tag that `vrt release` pushes. The reusable workflow checks the tag, tests
+# and packs the tagged commit, then the publish job publishes the tested tarball to npm and
+# creates the GitHub release. Setup: https://github.com/versatiles-org/node-release-tool#release-workflow
+# npm's trusted publisher for @versatiles/svelte must name this file, release.yml.
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
+  build:
+    uses: versatiles-org/node-release-tool/.github/workflows/release.yml@v2.23.0
+    permissions:
+      contents: read
+    with:
+      # The same Node.js as ci.yml and pages.yml, so the release tests what CI tested.
+      node-version: '22'
+
+  # npm only accepts trusted publishing from the workflow file configured on npmjs.com,
+  # so this job lives here and not in the reusable workflow.
+  publish:
+    name: Publish
+    needs: build
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: write # GitHub release
+      id-token: write # npm trusted publishing
+    steps:
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - uses: actions/download-artifact@v8
+        with:
+          name: release
+          path: release
+      - run: npx --yes "@versatiles/release-tool@${{ needs.build.outputs.tool-version }}" release-publish release --tag "$GITHUB_REF_NAME"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+
+  # A release created with GITHUB_TOKEN doesn't trigger other workflows, so pages.yml
+  # can't listen for "release: published". It runs here, once the version is on npm.
   pages:
     name: Pages
+    needs: publish
     uses: ./.github/workflows/pages.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
