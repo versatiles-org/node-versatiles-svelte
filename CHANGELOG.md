@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.3] - 2026-11-24
+
+### Chores
+
+- update dependencies, @versatiles/style to 9.1.2 and maplibre-gl to 6.19.0 ([7b26b08](https://github.com/versatiles-org/node-versatiles-svelte/commit/7b26b0845659bb44e4be019c1ce2c4269c9988fe))
+
+### Styles
+
+- format for prettier-plugin-svelte 4.2 ([f7ef5b4](https://github.com/versatiles-org/node-versatiles-svelte/commit/f7ef5b4cbe40161c6f8ba0f13fbdfd0a80af8a8c))
+
 ## [4.0.2] - 2026-11-10
 
 ### CI/CD
