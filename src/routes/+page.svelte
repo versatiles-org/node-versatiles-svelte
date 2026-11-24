@@ -27,22 +27,22 @@
 				<tr>
 					<th><a href={resolve(component.path)}>{component.title}</a></th>
 					<td>
-						<a href={resolve(component.path)}
-							><img
+						<a href={resolve(component.path)}>
+							<img
 								width="256"
 								src="{baseUrl + component.path}-light.png"
 								alt="screenshot of {component.title} in light mode"
-							/></a
-						>
+							/>
+						</a>
 					</td>
 					<td>
-						<a href={resolve(component.path)}
-							><img
+						<a href={resolve(component.path)}>
+							<img
 								width="256"
 								src="{baseUrl + component.path}-dark.png"
 								alt="screenshot of {component.title} in dark mode"
-							/></a
-						>
+							/>
+						</a>
 					</td>
 				</tr>
 			{/each}
