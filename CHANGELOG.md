@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.4] - 2026-11-26
+
+### Chores
+
+- update dependencies, @versatiles/style to 9.1.3 ([7fd26e3](https://github.com/versatiles-org/node-versatiles-svelte/commit/7fd26e397c738ad582825b8fbf5c4a3470e41bd2))
+
 ## [4.0.3] - 2026-11-24
 
 ### Chores
